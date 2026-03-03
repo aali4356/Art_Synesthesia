@@ -9,12 +9,13 @@ import {
 } from '@/lib/color/contrast';
 import type { OklchColor } from '@/lib/color/dedup';
 import {
-  useMode, modeOklch, modeRgb,
+  useMode, modeOklch, modeRgb, modeLrgb,
   converter, wcagContrast,
 } from 'culori/fn';
 
 useMode(modeOklch);
 useMode(modeRgb);
+useMode(modeLrgb);
 
 const toRgb = converter('rgb');
 
