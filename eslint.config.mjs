@@ -13,6 +13,21 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // CORE-07: Ban Math.random() in rendering and pipeline code
+  {
+    files: ["src/lib/render/**/*.{ts,tsx}", "src/lib/pipeline/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            'MemberExpression[object.name="Math"][property.name="random"]',
+          message:
+            "Math.random() is banned in rendering and pipeline code. Use createPRNG() from @/lib/engine/prng instead.",
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
