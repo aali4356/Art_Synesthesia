@@ -51,12 +51,12 @@ Plans:
   2. Running the calibration harness against 30+ reference text inputs produces parameter distribution histograms with no dimension having more than 50% of values in any 0.2-wide band
   3. Generated palettes use OKLCH color space, reject near-duplicate colors, and maintain readable contrast against both dark and light backgrounds
   4. Every parameter carries provenance metadata showing contributing signals, weights, and a plain-English explanation
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Parameter vector schema and normalization engine
-- [ ] 02-02: Calibration harness and reference corpus
-- [ ] 02-03: OKLCH palette generation and color coherence
+- [ ] 02-01-PLAN.md — Quantile normalization engine, weighted-blend parameter mapping, provenance generation (Wave 1)
+- [ ] 02-02-PLAN.md — Calibration reference corpus (35+ texts), distribution quality gate, version-corpus coupling (Wave 2)
+- [ ] 02-03-PLAN.md — OKLCH palette generation with harmony, near-duplicate rejection, dual lightness profiles (Wave 1)
 
 ### Phase 3: Text Analysis & Input UI
 **Goal**: Users can type or paste text and see it flow through the analysis pipeline with real-time feedback
