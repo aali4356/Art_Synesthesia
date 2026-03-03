@@ -28,11 +28,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Text Analysis
 
 - [ ] **TEXT-01**: User can enter any text (single word to multiple paragraphs) and receive generated artwork
-- [ ] **TEXT-02**: Text analyzer extracts character frequency distribution, word count, average word length, sentence count, average sentence length
-- [ ] **TEXT-03**: Text analyzer computes vocabulary richness (unique words / total words)
-- [ ] **TEXT-04**: Text analyzer computes sentiment polarity and magnitude via lexicon-based method (AFINN-165 or equivalent)
-- [ ] **TEXT-05**: Text analyzer computes punctuation density, syllable pattern variance, character entropy (Shannon), uppercase ratio
-- [ ] **TEXT-06**: Analysis completes in under 500ms for inputs up to 10,000 characters
+- [x] **TEXT-02**: Text analyzer extracts character frequency distribution, word count, average word length, sentence count, average sentence length
+- [x] **TEXT-03**: Text analyzer computes vocabulary richness (unique words / total words)
+- [x] **TEXT-04**: Text analyzer computes sentiment polarity and magnitude via lexicon-based method (AFINN-165 or equivalent)
+- [x] **TEXT-05**: Text analyzer computes punctuation density, syllable pattern variance, character entropy (Shannon), uppercase ratio
+- [x] **TEXT-06**: Analysis completes in under 500ms for inputs up to 10,000 characters
 
 ### URL Analysis
 
