@@ -116,7 +116,7 @@ describe('Distribution quality gate', () => {
       for (const entry of corpus) {
         const rawSignals = extractMockSignals(entry.text);
         const { vector } = computeParameterVector(rawSignals, calibration, TEXT_MAPPINGS);
-        parameterValues.push(vector[mapping.parameter]);
+        parameterValues.push(vector[mapping.parameter] as number);
       }
 
       const quality = checkDistributionQuality(parameterValues);

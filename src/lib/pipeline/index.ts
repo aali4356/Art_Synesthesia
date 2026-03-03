@@ -15,3 +15,13 @@ export type { SignalWeight, ParameterMapping, MappingTable } from './mapping';
 
 // Provenance summaries
 export { generateSummary, generateAllSummaries } from './provenance';
+
+// Calibration harness
+export {
+  loadCorpus,
+  computeCalibrationDistributions,
+  checkDistributionQuality,
+  extractMockSignals,
+  CORPUS_HASH,
+} from './calibration';
+export type { CorpusEntry } from './calibration';

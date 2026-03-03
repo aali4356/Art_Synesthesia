@@ -3,7 +3,7 @@ import type { VersionInfo } from '@/types/engine';
 export const CURRENT_VERSION: VersionInfo = {
   engineVersion: '0.1.0',
   analyzerVersion: '0.1.0',
-  normalizerVersion: '0.1.0',
+  normalizerVersion: '0.2.0',
   rendererVersion: '0.1.0',
 };
 

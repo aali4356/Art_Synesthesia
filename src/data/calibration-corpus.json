@@ -173,5 +173,50 @@
     "id": "mixed-csv-tabular",
     "text": "Name,Age,City,Score,Grade\nAlice,28,Portland,92.5,A\nBob,34,Seattle,78.3,B+\nCarla,22,Denver,95.1,A+\nDavid,41,Austin,61.7,C\nEva,29,Boston,88.9,B+\nFrank,36,Miami,73.2,B\nGrace,25,Chicago,97.4,A+",
     "category": "mixed"
+  },
+  {
+    "id": "extreme-simple-repetitive",
+    "text": "the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the the",
+    "category": "sentence"
+  },
+  {
+    "id": "extreme-complex-academic",
+    "text": "The epistemological ramifications of Heisenberg's uncertainty principle fundamentally reconceptualize our phenomenological understanding of deterministic causality, necessitating a paradigmatic recalibration of ontological presuppositions. Consequently, the axiological implications of quantum indeterminacy challenge the teleological framework of classical thermodynamics, particularly regarding the entropic irreversibility of macroscopic systems. Furthermore, the hermeneutical interpretation of wave function collapse reveals an incommensurability between Copenhagen and many-worlds interpretations that defies reconciliation through conventional epistemological methodologies. The dialectical tension between instrumentalism and scientific realism thus remains an unresolved antinomy at the foundation of contemporary theoretical physics.",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-exclamatory-caps",
+    "text": "WOW!!! THIS IS AMAZING!!! I CAN'T BELIEVE IT!!! ABSOLUTELY INCREDIBLE!!! THE BEST THING EVER!!! SO EXCITING!!! UNBELIEVABLE!!! FANTASTIC!!! MIND-BLOWING!!! SPECTACULAR!!!",
+    "category": "sentence"
+  },
+  {
+    "id": "extreme-questions-only",
+    "text": "Why? What for? How come? Who says? Where now? When then? Which way? Whose idea? What if? How so? Why not? Who knows? Where to? When? What? How?",
+    "category": "sentence"
+  },
+  {
+    "id": "extreme-minimal-entropy",
+    "text": "aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa",
+    "category": "single-word"
+  },
+  {
+    "id": "extreme-high-complexity",
+    "text": "Antidisestablishmentarianism, defenestration, onomatopoeia, sesquipedalian, phantasmagoria, juxtaposition, serendipity, perspicacious, quintessential, metamorphosis, kaleidoscope, effervescence, luminescence, transcendental, idiosyncratic, surreptitious, uncharacteristically, compartmentalization, disproportionate, extraterrestrial, incomprehensible, multidimensional, prestidigitation, tintinnabulation, verisimilitude, anthropomorphism, electroencephalography, supercalifragilisticexpialidocious, counterrevolutionary, deinstitutionalization.",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-low-complexity",
+    "text": "I go. I go. I go. I go. I go. I go. I go. I go. I go. I go. I go. I go. I go. I go. I go.",
+    "category": "sentence"
+  },
+  {
+    "id": "extreme-warm-enthusiastic",
+    "text": "YES! YES! YES! I LOVE THIS! AMAZING! WONDERFUL! BEAUTIFUL! PERFECT! INCREDIBLE! OUTSTANDING! MAGNIFICENT! GLORIOUS! SPECTACULAR! PHENOMENAL! EXTRAORDINARY! FABULOUS! SENSATIONAL! BRILLIANT! MARVELOUS! SUPERB!",
+    "category": "sentence"
+  },
+  {
+    "id": "extreme-dense-long",
+    "text": "In the beginning, before the cosmic microwave background radiation had cooled sufficiently to allow the formation of neutral hydrogen atoms, the universe existed as an opaque plasma of quarks, gluons, and leptons, governed by the fundamental forces of nature: the strong nuclear force binding quarks into hadrons, the weak nuclear force mediating beta decay and neutrino interactions, the electromagnetic force coupling charged particles to photons, and gravitation curving the fabric of spacetime itself according to Einstein's field equations, which relate the stress-energy tensor of matter-energy to the Ricci curvature tensor and the metric tensor through a beautifully simple proportionality constant involving Newton's gravitational constant and the speed of light, quantities that have been measured with extraordinary precision through centuries of increasingly sophisticated experimental techniques spanning from Cavendish's torsion balance to the Laser Interferometer Gravitational-Wave Observatory.",
+    "category": "technical"
   }
 ]
