@@ -114,11 +114,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### UI — Translation Panel
 
-- [ ] **UI-11**: Collapsible panel (expanded on desktop, collapsed on mobile)
-- [ ] **UI-12**: Each parameter displayed as labeled bar (0-1) with numeric value
-- [ ] **UI-13**: Parameters grouped by source with top contributing signals and weights shown
-- [ ] **UI-14**: Brief plain-English explanation per parameter
-- [ ] **UI-15**: Engine version displayed at bottom of panel
+- [x] **UI-11**: Collapsible panel (expanded on desktop, collapsed on mobile)
+- [x] **UI-12**: Each parameter displayed as labeled bar (0-1) with numeric value
+- [x] **UI-13**: Parameters grouped by source with top contributing signals and weights shown
+- [x] **UI-14**: Brief plain-English explanation per parameter
+- [x] **UI-15**: Engine version displayed at bottom of panel
 
 ### UI — Quick Start & Progress
 
@@ -279,11 +279,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-08 | Phase 4 | Complete |
 | UI-09 | Phase 4 | Complete |
 | UI-10 | Phase 4 | Complete |
-| UI-11 | Phase 4 | Pending |
-| UI-12 | Phase 4 | Pending |
-| UI-13 | Phase 4 | Pending |
-| UI-14 | Phase 4 | Pending |
-| UI-15 | Phase 4 | Pending |
+| UI-11 | Phase 4 | Complete |
+| UI-12 | Phase 4 | Complete |
+| UI-13 | Phase 4 | Complete |
+| UI-14 | Phase 4 | Complete |
+| UI-15 | Phase 4 | Complete |
 | ORGN-01 | Phase 5 | Pending |
 | ORGN-02 | Phase 5 | Pending |
 | ORGN-03 | Phase 5 | Pending |
