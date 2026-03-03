@@ -72,7 +72,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — Text analyzer with AFINN-165 sentiment, syllable counting, all 31 signals, calibration update (Wave 1, TDD)
-- [ ] 03-02-PLAN.md — Input zone UI with tabs, pipeline hook, page transition, parameter panel, placeholder canvas, progress indicator (Wave 2)
+- [x] 03-02-PLAN.md — Input zone UI with tabs, pipeline hook, page transition, parameter panel, placeholder canvas, progress indicator (Wave 2)
 - [ ] 03-03-PLAN.md — Quick-start buttons, Surprise me with curated phrase pool, end-to-end verification checkpoint (Wave 3)
 
 ### Phase 4: Geometric Renderer & Canvas UI
@@ -191,7 +191,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 |-------|----------------|--------|-----------|
 | 1. Foundation & Determinism Infrastructure | 4/4 | Complete | 2026-03-02 |
 | 2. Parameter System & Color | 3/3 | Complete | 2026-03-03 |
-| 3. Text Analysis & Input UI | 1/3 | In progress | - |
+| 3. Text Analysis & Input UI | 2/3 | In progress | - |
 | 4. Geometric Renderer & Canvas UI | 0/3 | Not started | - |
 | 5. Additional Renderers | 0/4 | Not started | - |
 | 6. URL & Data Input | 0/4 | Not started | - |

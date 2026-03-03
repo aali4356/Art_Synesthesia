@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Text Analysis
 
-- [ ] **TEXT-01**: User can enter any text (single word to multiple paragraphs) and receive generated artwork
+- [x] **TEXT-01**: User can enter any text (single word to multiple paragraphs) and receive generated artwork
 - [x] **TEXT-02**: Text analyzer extracts character frequency distribution, word count, average word length, sentence count, average sentence length
 - [x] **TEXT-03**: Text analyzer computes vocabulary richness (unique words / total words)
 - [x] **TEXT-04**: Text analyzer computes sentiment polarity and magnitude via lexicon-based method (AFINN-165 or equivalent)
@@ -98,12 +98,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### UI — Input
 
-- [ ] **UI-01**: Large, prominent input zone with tab selector for input type (Text, URL, Data)
-- [ ] **UI-02**: Text tab: textarea with placeholder "Paste anything. A name, a paragraph, a poem, a recipe..."
-- [ ] **UI-03**: URL tab: single input field with "Analyze" button
-- [ ] **UI-04**: Data tab: file drop zone accepting .csv and .json, plus textarea for pasting raw data
-- [ ] **UI-05**: Prominent "Generate" button with satisfying click feedback
-- [ ] **UI-06**: Private mode toggle with lock icon
+- [x] **UI-01**: Large, prominent input zone with tab selector for input type (Text, URL, Data)
+- [x] **UI-02**: Text tab: textarea with placeholder "Paste anything. A name, a paragraph, a poem, a recipe..."
+- [x] **UI-03**: URL tab: single input field with "Analyze" button *(tab rendered, disabled until Phase 6)*
+- [x] **UI-04**: Data tab: file drop zone accepting .csv and .json, plus textarea for pasting raw data *(tab rendered, disabled until Phase 6)*
+- [x] **UI-05**: Prominent "Generate" button with satisfying click feedback
+- [x] **UI-06**: Private mode toggle with lock icon
 
 ### UI — Canvas & Styles
 
@@ -124,7 +124,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **UI-16**: Quick-start buttons below input: "Try: your name / a haiku / a recipe / a random Wikipedia paragraph"
 - [ ] **UI-17**: "Surprise me" button generates random interesting phrase client-side
-- [ ] **UI-18**: Staged progress bar tied to real pipeline stages (Parsing, Analyzing, Normalizing, Rendering)
+- [x] **UI-18**: Staged progress bar tied to real pipeline stages (Parsing, Analyzing, Normalizing, Rendering)
 
 ### Export
 
