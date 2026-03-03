@@ -91,10 +91,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Palette & Color
 
-- [ ] **COLOR-01**: Palettes generated in perceptual color space (OKLCH) with perceptual adjustments
-- [ ] **COLOR-02**: Palette coherence function rejects near-duplicate colors (deltaE < 10 in LAB space), shifting hue by minimum viable amount
-- [ ] **COLOR-03**: Sufficient contrast ensured against dark backgrounds in dark mode and white in light mode
-- [ ] **COLOR-04**: Saturation and contrast parameters modulate palette but never to unreadable output
+- [x] **COLOR-01**: Palettes generated in perceptual color space (OKLCH) with perceptual adjustments
+- [x] **COLOR-02**: Palette coherence function rejects near-duplicate colors (deltaE < 10 in LAB space), shifting hue by minimum viable amount
+- [x] **COLOR-03**: Sufficient contrast ensured against dark backgrounds in dark mode and white in light mode
+- [x] **COLOR-04**: Saturation and contrast parameters modulate palette but never to unreadable output
 
 ### UI — Input
 
@@ -251,10 +251,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PARAM-03 | Phase 2 | Pending |
 | PARAM-04 | Phase 2 | Complete |
 | PARAM-05 | Phase 2 | Pending |
-| COLOR-01 | Phase 2 | Pending |
-| COLOR-02 | Phase 2 | Pending |
-| COLOR-03 | Phase 2 | Pending |
-| COLOR-04 | Phase 2 | Pending |
+| COLOR-01 | Phase 2 | Complete |
+| COLOR-02 | Phase 2 | Complete |
+| COLOR-03 | Phase 2 | Complete |
+| COLOR-04 | Phase 2 | Complete |
 | TEXT-01 | Phase 3 | Pending |
 | TEXT-02 | Phase 3 | Pending |
 | TEXT-03 | Phase 3 | Pending |
