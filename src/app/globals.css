@@ -1,6 +1,124 @@
 @import "tailwindcss";
 
+/* ===== DESIGN TOKENS ===== */
 @theme {
+  /* Font families (from Geist package via next/font) */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Spacing scale (gallery-generous whitespace) */
+  --spacing-gallery: 2rem;
+  --spacing-gallery-lg: 4rem;
+
+  /* Radius (minimal) */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* Colors — OKLCH for perceptual uniformity */
+  /* Violet accent */
+  --color-accent: oklch(0.65 0.25 285);
+  --color-accent-hover: oklch(0.72 0.25 285);
+  --color-accent-muted: oklch(0.55 0.15 285);
+
+  /* Transition */
+  --transition-color: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+}
+
+/* ===== BASE STYLES ===== */
+@layer base {
+  :root {
+    /* Light mode colors */
+    --background: oklch(0.985 0.002 250);
+    --foreground: oklch(0.13 0.005 250);
+    --muted: oklch(0.95 0.005 250);
+    --muted-foreground: oklch(0.45 0.01 250);
+    --border: oklch(0.9 0.005 250);
+    --ring: oklch(0.65 0.25 285);
+  }
+
+  .dark {
+    /* Dark mode colors — gallery near-black */
+    --background: oklch(0.09 0.005 250); /* ~#0a0a0a */
+    --foreground: oklch(0.93 0.005 250);
+    --muted: oklch(0.15 0.005 250);
+    --muted-foreground: oklch(0.55 0.01 250);
+    --border: oklch(0.2 0.005 250);
+    --ring: oklch(0.65 0.25 285);
+  }
+
+  html {
+    color-scheme: dark light;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    transition: var(--transition-color);
+  }
+
+  /* Gallery aesthetic: minimal chrome, custom focus rings with accent color */
+  *:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+@layer utilities {
+  .text-muted {
+    color: var(--muted-foreground);
+  }
+
+  .bg-muted {
+    background-color: var(--muted);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Ghost button style (user locked: buttons are text or ghost-style) */
+  .btn-ghost {
+    background: transparent;
+    color: var(--foreground);
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: var(--transition-color);
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--muted);
+  }
+
+  /* Accent button (sparse usage per user decision) */
+  .btn-accent {
+    background-color: var(--color-accent);
+    color: oklch(1 0 0);
+    border: none;
+    padding: 0.5rem 1.5rem;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    transition: var(--transition-color);
+  }
+
+  .btn-accent:hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  /* Gallery darkspace (generous spacing) */
+  .gallery-padding {
+    padding: var(--spacing-gallery);
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-padding {
+      padding: var(--spacing-gallery-lg);
+    }
+  }
 }
