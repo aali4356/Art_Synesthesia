@@ -17,6 +17,10 @@ describe('Engine versioning', () => {
     expect(CURRENT_VERSION.rendererVersion).toMatch(semverRegex);
   });
 
+  it('rendererVersion reflects geometric renderer (0.2.0)', () => {
+    expect(CURRENT_VERSION.rendererVersion).toBe('0.2.0');
+  });
+
   it('getVersionString returns formatted version string', () => {
     const str = getVersionString();
     expect(str).toContain('engine:');
