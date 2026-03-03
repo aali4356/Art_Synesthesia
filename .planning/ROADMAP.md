@@ -68,12 +68,12 @@ Plans:
   3. Input zone shows tabs for Text, URL, and Data (URL and Data are placeholder/disabled until Phase 6)
   4. Quick-start buttons ("Try: your name / a haiku / a recipe") and "Surprise me" insert text and trigger generation
   5. A staged progress bar shows real pipeline stages (Parsing, Analyzing, Normalizing, Rendering) tied to actual progress
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Text analyzer pipeline (NLP features, sentiment, entropy)
-- [ ] 03-02: Input zone UI with tabs, generate button, and private mode toggle
-- [ ] 03-03: Quick-start buttons, surprise-me, and staged progress animation
+- [ ] 03-01-PLAN.md — Text analyzer with AFINN-165 sentiment, syllable counting, all 31 signals, calibration update (Wave 1, TDD)
+- [ ] 03-02-PLAN.md — Input zone UI with tabs, pipeline hook, page transition, parameter panel, placeholder canvas, progress indicator (Wave 2)
+- [ ] 03-03-PLAN.md — Quick-start buttons, Surprise me with curated phrase pool, end-to-end verification checkpoint (Wave 3)
 
 ### Phase 4: Geometric Renderer & Canvas UI
 **Goal**: Users see their text transformed into a geometric artwork with a full translation panel explaining every parameter
