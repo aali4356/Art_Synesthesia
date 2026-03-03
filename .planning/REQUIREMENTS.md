@@ -61,11 +61,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Rendering — Geometric
 
-- [ ] **GEOM-01**: Geometric style renders grid-based compositions using rectangles, circles, triangles, and lines
-- [ ] **GEOM-02**: Composition law: minimum element size never thinner than 4px; at high density, reduce grid count rather than element size
-- [ ] **GEOM-03**: Composition law: minimum 2% padding between composition edge and frame
-- [ ] **GEOM-04**: Composition law: all strokes use at most 2 different weights (primary and secondary)
-- [ ] **GEOM-05**: Canvas rendering completes in under 1 second at 800x800
+- [x] **GEOM-01**: Geometric style renders grid-based compositions using rectangles, circles, triangles, and lines
+- [x] **GEOM-02**: Composition law: minimum element size never thinner than 4px; at high density, reduce grid count rather than element size
+- [x] **GEOM-03**: Composition law: minimum 2% padding between composition edge and frame
+- [x] **GEOM-04**: Composition law: all strokes use at most 2 different weights (primary and secondary)
+- [x] **GEOM-05**: Canvas rendering completes in under 1 second at 800x800
 
 ### Rendering — Organic
 
@@ -270,11 +270,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-16 | Phase 3 | Pending |
 | UI-17 | Phase 3 | Pending |
 | UI-18 | Phase 3 | Pending |
-| GEOM-01 | Phase 4 | Pending |
-| GEOM-02 | Phase 4 | Pending |
-| GEOM-03 | Phase 4 | Pending |
-| GEOM-04 | Phase 4 | Pending |
-| GEOM-05 | Phase 4 | Pending |
+| GEOM-01 | Phase 4 | Complete |
+| GEOM-02 | Phase 4 | Complete |
+| GEOM-03 | Phase 4 | Complete |
+| GEOM-04 | Phase 4 | Complete |
+| GEOM-05 | Phase 4 | Complete |
 | UI-07 | Phase 4 | Pending |
 | UI-08 | Phase 4 | Pending |
 | UI-09 | Phase 4 | Pending |
