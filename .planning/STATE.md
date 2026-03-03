@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-03-02)
 
 **Core value:** Any input deterministically produces beautiful, unique artwork with fully transparent translation rules
-**Current focus:** Phase 1 complete -- ready for Phase 2
+**Current focus:** Phase 2 in progress -- parameter system & color pipeline
 
 ## Current Position
 
-Phase: 1 of 9 (Foundation & Determinism Infrastructure) -- COMPLETE
-Plan: 4 of 4 in current phase (all done)
-Status: Phase 1 verified and complete
-Last activity: 2026-03-02 -- All 4 plans executed, 74 tests passing, build succeeds
+Phase: 2 of 9 (Parameter System & Color)
+Plan: 1 of 3 in current phase (02-01 complete)
+Status: Executing Phase 2 plans
+Last activity: 2026-03-02 -- 02-01 pipeline core complete, 42 pipeline tests passing
 
-Progress: [#.........] 11%
+Progress: [##........] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~13 min
-- Total execution time: ~52 min
+- Total plans completed: 5
+- Average duration: ~11 min
+- Total execution time: ~56 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 4/4 | ~52 min | ~13 min |
+| 2. Parameter System & Color | 1/3 | ~4 min | ~4 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (15m), 01-02 (12m), 01-03 (15m), 01-04 (10m)
-- Trend: Consistent, fast execution
+- Last 5 plans: 01-02 (12m), 01-03 (15m), 01-04 (10m), 02-01 (4m)
+- Trend: Accelerating with TDD pure-function tasks
 
 *Updated after each plan completion*
 
@@ -56,6 +57,9 @@ Recent decisions affecting current work:
 - [01-04]: Violet accent oklch(0.65 0.25 285) -- high chroma at 285 hue
 - [01-04]: Dark mode background oklch(0.09 0.005 250) approximating #0a0a0a
 - [01-04]: ThemeProvider uses storageKey='synesthesia-theme' for namespaced localStorage
+- [02-01]: percentileRank uses binary search + linear interpolation; midpoint for single/all-same
+- [02-01]: TEXT_MAPPINGS signal names prefigure Phase 3 text analyzer outputs
+- [02-01]: Provenance summary level thresholds: <0.33 low, 0.33-0.66 moderate, >0.66 high
 
 ### Pending Todos
 
@@ -69,5 +73,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Phase 1 complete, ready for Phase 2 planning
+Stopped at: Completed 02-01-PLAN.md (pipeline core)
 Resume file: None
