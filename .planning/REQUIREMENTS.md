@@ -122,8 +122,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### UI — Quick Start & Progress
 
-- [ ] **UI-16**: Quick-start buttons below input: "Try: your name / a haiku / a recipe / a random Wikipedia paragraph"
-- [ ] **UI-17**: "Surprise me" button generates random interesting phrase client-side
+- [x] **UI-16**: Quick-start buttons below input: "Try: your name / a haiku / a recipe / a random Wikipedia paragraph"
+- [x] **UI-17**: "Surprise me" button generates random interesting phrase client-side
 - [x] **UI-18**: Staged progress bar tied to real pipeline stages (Parsing, Analyzing, Normalizing, Rendering)
 
 ### Export
