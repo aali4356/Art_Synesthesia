@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { Shell } from '@/components/layout/Shell';
-import { InputZone } from '@/components/input';
+import { InputZone, QuickStart } from '@/components/input';
 import { ResultsView } from '@/components/results';
 import { PipelineProgress } from '@/components/progress';
 import { useTextAnalysis } from '@/hooks/useTextAnalysis';
@@ -20,6 +20,15 @@ export default function Home() {
       generate(inputText);
     }
   }, [inputText, generate]);
+
+  const handleQuickStart = useCallback(
+    (text: string) => {
+      setInputText(text);
+      // Pass text directly to generate (not stale inputText state)
+      generate(text);
+    },
+    [generate]
+  );
 
   const handleRegenerate = useCallback(
     (text: string) => {
@@ -55,6 +64,14 @@ export default function Home() {
             onTogglePrivate={() => setIsPrivate(!isPrivate)}
             isGenerating={isGenerating}
           />
+
+          {/* Quick-start buttons */}
+          <div className="w-full max-w-2xl">
+            <QuickStart
+              onQuickStart={handleQuickStart}
+              disabled={isGenerating}
+            />
+          </div>
 
           {/* Pipeline progress (shown during generation on landing) */}
           {isGenerating && (
