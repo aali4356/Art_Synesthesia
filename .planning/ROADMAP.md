@@ -13,7 +13,7 @@ This roadmap delivers a deterministic input-to-art web application in 9 phases, 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Determinism Infrastructure** - Project scaffold, seeded PRNG, canonicalization, engine versioning, design system
-- [ ] **Phase 2: Parameter System & Color** - Parameter vector schema, quantile normalization, calibration harness, OKLCH palette generation
+- [x] **Phase 2: Parameter System & Color** - Parameter vector schema, quantile normalization, calibration harness, OKLCH palette generation
 - [ ] **Phase 3: Text Analysis & Input UI** - Text analyzer pipeline, input zone with tabs, quick-start buttons, progress animation
 - [ ] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
 - [ ] **Phase 5: Additional Renderers** - Organic, particle, and typographic styles with style selector previews
@@ -54,9 +54,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Quantile normalization engine, weighted-blend parameter mapping, provenance generation (Wave 1)
-- [ ] 02-02-PLAN.md — Calibration reference corpus (35+ texts), distribution quality gate, version-corpus coupling (Wave 2)
-- [ ] 02-03-PLAN.md — OKLCH palette generation with harmony, near-duplicate rejection, dual lightness profiles (Wave 1)
+- [x] 02-01-PLAN.md — Quantile normalization engine, weighted-blend parameter mapping, provenance generation (Wave 1)
+- [x] 02-02-PLAN.md — Calibration reference corpus (35+ texts), distribution quality gate, version-corpus coupling (Wave 2)
+- [x] 02-03-PLAN.md — OKLCH palette generation with harmony, near-duplicate rejection, dual lightness profiles (Wave 1)
 
 ### Phase 3: Text Analysis & Input UI
 **Goal**: Users can type or paste text and see it flow through the analysis pipeline with real-time feedback
@@ -190,7 +190,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Determinism Infrastructure | 4/4 | Complete | 2026-03-02 |
-| 2. Parameter System & Color | 0/3 | Not started | - |
+| 2. Parameter System & Color | 3/3 | Complete | 2026-03-03 |
 | 3. Text Analysis & Input UI | 0/3 | Not started | - |
 | 4. Geometric Renderer & Canvas UI | 0/3 | Not started | - |
 | 5. Additional Renderers | 0/4 | Not started | - |

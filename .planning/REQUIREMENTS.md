@@ -55,9 +55,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **PARAM-01**: All input types produce a normalized parameter vector of ~15 fixed dimensions (complexity, warmth, symmetry, rhythm, energy, density, scaleVariation, curvature, saturation, contrast, layering, directionality, paletteSize, texture, regularity)
 - [x] **PARAM-02**: All parameter values normalized to 0-1 range using quantile-based scaling against calibration dataset
-- [ ] **PARAM-03**: Calibration harness includes 30+ text, 15+ URL, and 15+ data reference inputs
+- [x] **PARAM-03**: Calibration harness includes 30+ text, 15+ URL, and 15+ data reference inputs
 - [x] **PARAM-04**: Parameter provenance tracks contributing signals with weights and plain-English explanations per parameter
-- [ ] **PARAM-05**: Calibration distributions stored as part of normalizer version; updating calibration bumps version
+- [x] **PARAM-05**: Calibration distributions stored as part of normalizer version; updating calibration bumps version
 
 ### Rendering — Geometric
 
@@ -248,9 +248,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DS-04 | Phase 1 | Pending |
 | PARAM-01 | Phase 2 | Complete |
 | PARAM-02 | Phase 2 | Complete |
-| PARAM-03 | Phase 2 | Pending |
+| PARAM-03 | Phase 2 | Complete |
 | PARAM-04 | Phase 2 | Complete |
-| PARAM-05 | Phase 2 | Pending |
+| PARAM-05 | Phase 2 | Complete |
 | COLOR-01 | Phase 2 | Complete |
 | COLOR-02 | Phase 2 | Complete |
 | COLOR-03 | Phase 2 | Complete |
