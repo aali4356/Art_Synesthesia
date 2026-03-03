@@ -11,6 +11,7 @@
 import corpusData from '@/data/calibration-corpus.json';
 import type { MappingTable } from '@/lib/pipeline/mapping';
 import type { CalibrationData } from '@/lib/pipeline/normalize';
+import { analyzeText } from '@/lib/analysis';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -35,7 +36,7 @@ export interface CorpusEntry {
  * bumped. A test enforces this coupling.
  */
 export const CORPUS_HASH =
-  'e124a16cbf05bc967cfc463395c9a379fc6a2494fe44316865dfe7f755a819c0';
+  '5d420decefb10a4e4d0419717ae86b7c5ddfcc503dd617640ba6aa679e8ed6be';
 
 // ---------------------------------------------------------------------------
 // Corpus loading
@@ -49,10 +50,13 @@ export function loadCorpus(): CorpusEntry[] {
 }
 
 // ---------------------------------------------------------------------------
-// Mock signal extraction (temporary — replaced by real analyzer in Phase 3)
+// Mock signal extraction (deprecated — replaced by real analyzer in Phase 3)
 // ---------------------------------------------------------------------------
 
 /**
+ * @deprecated Use `analyzeText` from `@/lib/analysis` instead.
+ * Kept for backward compatibility with existing tests.
+ *
  * Temporary mock signal extractor that computes basic text statistics.
  *
  * Produces enough signal variation across the diverse corpus to validate the
@@ -281,8 +285,8 @@ export function computeCalibrationDistributions(
     }
   }
 
-  // Extract signals from all corpus entries
-  const allSignals = corpus.map((entry) => extractMockSignals(entry.text));
+  // Extract signals from all corpus entries using the real analyzer
+  const allSignals = corpus.map((entry) => analyzeText(entry.text));
 
   // Build sorted arrays for each signal
   const calibration: CalibrationData = {};

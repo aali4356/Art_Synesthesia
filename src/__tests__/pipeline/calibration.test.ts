@@ -12,6 +12,7 @@ import {
 } from '@/lib/pipeline/calibration';
 import { TEXT_MAPPINGS, computeParameterVector } from '@/lib/pipeline/mapping';
 import { CURRENT_VERSION } from '@/lib/engine/version';
+import { analyzeText } from '@/lib/analysis';
 
 describe('Calibration corpus validity', () => {
   it('loadCorpus returns 35+ entries', () => {
@@ -105,7 +106,7 @@ describe('Distribution quality gate', () => {
     expect(result.percentage).toBeGreaterThan(50);
   });
 
-  it('HARD GATE: all parameters pass distribution quality against full corpus', () => {
+  it('HARD GATE: all parameters pass distribution quality against full corpus (real analyzer)', () => {
     const corpus = loadCorpus();
     const calibration = computeCalibrationDistributions(corpus, TEXT_MAPPINGS);
 
@@ -114,7 +115,7 @@ describe('Distribution quality gate', () => {
       const parameterValues: number[] = [];
 
       for (const entry of corpus) {
-        const rawSignals = extractMockSignals(entry.text);
+        const rawSignals = analyzeText(entry.text);
         const { vector } = computeParameterVector(rawSignals, calibration, TEXT_MAPPINGS);
         parameterValues.push(vector[mapping.parameter] as number);
       }
@@ -171,5 +172,42 @@ describe('computeCalibrationDistributions', () => {
         expect(calibration[signal][i]).toBeGreaterThanOrEqual(calibration[signal][i - 1]);
       }
     }
+  });
+});
+
+describe('Real text analysis (analyzeText)', () => {
+  it('produces numeric values for all signals referenced in TEXT_MAPPINGS', () => {
+    const requiredSignals = new Set<string>();
+    for (const mapping of TEXT_MAPPINGS) {
+      for (const sw of mapping.signals) {
+        requiredSignals.add(sw.signal);
+      }
+    }
+
+    const corpus = loadCorpus();
+    const testEntries = [corpus[0], corpus[7], corpus[17], corpus[24]];
+
+    for (const entry of testEntries) {
+      const signals = analyzeText(entry.text);
+      for (const signalName of requiredSignals) {
+        expect(signals[signalName]).toBeDefined();
+        expect(typeof signals[signalName]).toBe('number');
+        expect(Number.isFinite(signals[signalName])).toBe(true);
+      }
+    }
+  });
+
+  it('calibration distributions use real analyzer (not mock)', () => {
+    const corpus = loadCorpus();
+    const calibration = computeCalibrationDistributions(corpus, TEXT_MAPPINGS);
+
+    // Verify calibration was computed with real analyzer by checking
+    // that sentimentPolarity distribution contains genuine AFINN values
+    // (real analyzer produces values based on actual lexicon, not proxies)
+    const sentimentValues = calibration['sentimentPolarity'];
+    expect(sentimentValues).toBeDefined();
+    // Real sentiment should have some negative values (mock never did)
+    const hasNegative = sentimentValues.some((v) => v < 0);
+    expect(hasNegative).toBe(true);
   });
 });

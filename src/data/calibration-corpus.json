@@ -218,5 +218,50 @@
     "id": "extreme-dense-long",
     "text": "In the beginning, before the cosmic microwave background radiation had cooled sufficiently to allow the formation of neutral hydrogen atoms, the universe existed as an opaque plasma of quarks, gluons, and leptons, governed by the fundamental forces of nature: the strong nuclear force binding quarks into hadrons, the weak nuclear force mediating beta decay and neutrino interactions, the electromagnetic force coupling charged particles to photons, and gravitation curving the fabric of spacetime itself according to Einstein's field equations, which relate the stress-energy tensor of matter-energy to the Ricci curvature tensor and the metric tensor through a beautifully simple proportionality constant involving Newton's gravitational constant and the speed of light, quantities that have been measured with extraordinary precision through centuries of increasingly sophisticated experimental techniques spanning from Cavendish's torsion balance to the Laser Interferometer Gravitational-Wave Observatory.",
     "category": "technical"
+  },
+  {
+    "id": "extreme-imperative-commands",
+    "text": "Go to the store. Buy three apples. Take them home. Cut each apple in half. Remove the seeds. Place the halves on a baking sheet. Set the oven to 375 degrees. Add cinnamon and sugar. Put the sheet in the oven. Check after twenty minutes. Remove when golden. Let them cool. Serve with cream. Tell your guests to try one. Give them each a plate. Show them how to eat it properly. Help clean up afterward.",
+    "category": "recipe"
+  },
+  {
+    "id": "extreme-high-directionality-list",
+    "text": "Step-by-step setup guide:\n1. Open your terminal\n2. Run the install command\n3. Check the output for errors\n4. Find the config file\n5. Set the port number\n6. Add your API key\n7. Save the file\n8. Start the server\n9. Open your browser\n10. Go to localhost:3000\n11. Click the login button\n12. Use the default credentials\n13. Check all services are running\n14. Read the documentation\n15. Build your first project",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-zero-directionality",
+    "text": "The morning light filtered through the curtains. Shadows played across the wooden floor. Dust particles drifted in the golden beams. The room held its breath in the silence. An old clock ticked on the mantelpiece. Books lined the shelves from floor to ceiling. The air smelled of lavender and old paper. Somewhere outside a bird sang its morning song. The world existed in perfect stillness.",
+    "category": "paragraph"
+  },
+  {
+    "id": "extreme-question-heavy",
+    "text": "What is consciousness? Is it merely the firing of neurons? Can machines ever truly think? Or is awareness something beyond computation? Does a thermostat experience temperature? Where do we draw the line between reaction and perception? Is self-awareness necessary for consciousness? What about dreams? Are they conscious experiences? Can we ever know what it is like to be a bat? Why does subjective experience exist at all? How did evolution produce qualia? Is the hard problem really hard? Or are we asking the wrong questions?",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-mixed-questions-commands",
+    "text": "Have you tried restarting? Go to Settings. Find the Network section. Check your connection. Is the Wi-Fi enabled? Try toggling it off and on. Open the browser. Can you reach google.com? Clear your cache. Delete saved passwords. Run a speed test. What speeds are you getting? Call your provider. Ask about outages. Try a different device. Does that one work? Reset the router. Wait thirty seconds. Try again.",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-socratic-dialogue",
+    "text": "But what do you mean by justice? Is it merely obeying the law? Consider this: if a law is unjust, is following it just? Think about that carefully. And who decides what is just? The majority? The wise? Tell me, does might make right? Look at history. What examples come to mind? Now consider the opposite. Is there a universal standard? How would we discover it? Use reason. Apply it consistently. Where does that lead us?",
+    "category": "paragraph"
+  },
+  {
+    "id": "extreme-narrative-with-questions",
+    "text": "She walked into the room and stopped. What was that sound? The floorboards creaked under her weight. Had someone been here? She checked the window. Why was it open? The curtain billowed in the breeze. Where had the cat gone? She called its name. Nothing. Then she noticed the note on the table. Who had written it? The handwriting was unfamiliar. What did it say?",
+    "category": "paragraph"
+  },
+  {
+    "id": "extreme-instruction-manual",
+    "text": "- Remove the device from the packaging\n- Check all components against the parts list\n- Read the safety warnings carefully\n- Connect the power cable to the base unit\n- Press the power button for three seconds\n- Wait for the indicator light to turn green\n- Open the companion app on your phone\n- Select your device from the list\n- Follow the on-screen pairing instructions\n- Run the initial calibration sequence\n- Test each function individually",
+    "category": "technical"
+  },
+  {
+    "id": "extreme-debate-questions",
+    "text": "Should we ban single-use plastics? What about the economic impact on developing nations? How many jobs depend on plastic manufacturing? Can biodegradable alternatives scale? Who bears the cost of transition? Where do we draw the line between convenience and conservation? Is individual action enough? Or do we need systemic change? What role should government play? How do we balance competing interests?",
+    "category": "mixed"
   }
 ]
