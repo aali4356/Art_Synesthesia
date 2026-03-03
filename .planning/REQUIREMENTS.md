@@ -107,10 +107,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### UI — Canvas & Styles
 
-- [ ] **UI-07**: Large rendering canvas (minimum 800x800 on desktop, full-width on mobile)
-- [ ] **UI-08**: Style selector: row of real thumbnail previews (200x200) rendered from same parameters
-- [ ] **UI-09**: Canvas builds progressively (elements appear over 0.5-1 second, not instant)
-- [ ] **UI-10**: Progressive building respects prefers-reduced-motion (renders complete immediately when preferred)
+- [x] **UI-07**: Large rendering canvas (minimum 800x800 on desktop, full-width on mobile)
+- [x] **UI-08**: Style selector: row of real thumbnail previews (200x200) rendered from same parameters
+- [x] **UI-09**: Canvas builds progressively (elements appear over 0.5-1 second, not instant)
+- [x] **UI-10**: Progressive building respects prefers-reduced-motion (renders complete immediately when preferred)
 
 ### UI — Translation Panel
 
@@ -275,10 +275,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GEOM-03 | Phase 4 | Complete |
 | GEOM-04 | Phase 4 | Complete |
 | GEOM-05 | Phase 4 | Complete |
-| UI-07 | Phase 4 | Pending |
-| UI-08 | Phase 4 | Pending |
-| UI-09 | Phase 4 | Pending |
-| UI-10 | Phase 4 | Pending |
+| UI-07 | Phase 4 | Complete |
+| UI-08 | Phase 4 | Complete |
+| UI-09 | Phase 4 | Complete |
+| UI-10 | Phase 4 | Complete |
 | UI-11 | Phase 4 | Pending |
 | UI-12 | Phase 4 | Pending |
 | UI-13 | Phase 4 | Pending |
