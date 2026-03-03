@@ -230,13 +230,128 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (To be populated by roadmapper) | | |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| CORE-04 | Phase 1 | Pending |
+| CORE-05 | Phase 1 | Pending |
+| CORE-06 | Phase 1 | Pending |
+| CORE-07 | Phase 1 | Pending |
+| CANON-01 | Phase 1 | Pending |
+| CANON-02 | Phase 1 | Pending |
+| CANON-03 | Phase 1 | Pending |
+| CANON-04 | Phase 1 | Pending |
+| CANON-05 | Phase 1 | Pending |
+| DS-01 | Phase 1 | Pending |
+| DS-02 | Phase 1 | Pending |
+| DS-03 | Phase 1 | Pending |
+| DS-04 | Phase 1 | Pending |
+| PARAM-01 | Phase 2 | Pending |
+| PARAM-02 | Phase 2 | Pending |
+| PARAM-03 | Phase 2 | Pending |
+| PARAM-04 | Phase 2 | Pending |
+| PARAM-05 | Phase 2 | Pending |
+| COLOR-01 | Phase 2 | Pending |
+| COLOR-02 | Phase 2 | Pending |
+| COLOR-03 | Phase 2 | Pending |
+| COLOR-04 | Phase 2 | Pending |
+| TEXT-01 | Phase 3 | Pending |
+| TEXT-02 | Phase 3 | Pending |
+| TEXT-03 | Phase 3 | Pending |
+| TEXT-04 | Phase 3 | Pending |
+| TEXT-05 | Phase 3 | Pending |
+| TEXT-06 | Phase 3 | Pending |
+| UI-01 | Phase 3 | Pending |
+| UI-02 | Phase 3 | Pending |
+| UI-03 | Phase 3 | Pending |
+| UI-04 | Phase 3 | Pending |
+| UI-05 | Phase 3 | Pending |
+| UI-06 | Phase 3 | Pending |
+| UI-16 | Phase 3 | Pending |
+| UI-17 | Phase 3 | Pending |
+| UI-18 | Phase 3 | Pending |
+| GEOM-01 | Phase 4 | Pending |
+| GEOM-02 | Phase 4 | Pending |
+| GEOM-03 | Phase 4 | Pending |
+| GEOM-04 | Phase 4 | Pending |
+| GEOM-05 | Phase 4 | Pending |
+| UI-07 | Phase 4 | Pending |
+| UI-08 | Phase 4 | Pending |
+| UI-09 | Phase 4 | Pending |
+| UI-10 | Phase 4 | Pending |
+| UI-11 | Phase 4 | Pending |
+| UI-12 | Phase 4 | Pending |
+| UI-13 | Phase 4 | Pending |
+| UI-14 | Phase 4 | Pending |
+| UI-15 | Phase 4 | Pending |
+| ORGN-01 | Phase 5 | Pending |
+| ORGN-02 | Phase 5 | Pending |
+| ORGN-03 | Phase 5 | Pending |
+| ORGN-04 | Phase 5 | Pending |
+| PTCL-01 | Phase 5 | Pending |
+| PTCL-02 | Phase 5 | Pending |
+| PTCL-03 | Phase 5 | Pending |
+| PTCL-04 | Phase 5 | Pending |
+| PTCL-05 | Phase 5 | Pending |
+| TYPO-01 | Phase 5 | Pending |
+| TYPO-02 | Phase 5 | Pending |
+| TYPO-03 | Phase 5 | Pending |
+| TYPO-04 | Phase 5 | Pending |
+| URL-01 | Phase 6 | Pending |
+| URL-02 | Phase 6 | Pending |
+| URL-03 | Phase 6 | Pending |
+| URL-04 | Phase 6 | Pending |
+| URL-05 | Phase 6 | Pending |
+| URL-06 | Phase 6 | Pending |
+| DATA-01 | Phase 6 | Pending |
+| DATA-02 | Phase 6 | Pending |
+| DATA-03 | Phase 6 | Pending |
+| DATA-04 | Phase 6 | Pending |
+| DATA-05 | Phase 6 | Pending |
+| SEC-01 | Phase 6 | Pending |
+| SEC-02 | Phase 6 | Pending |
+| SEC-03 | Phase 6 | Pending |
+| INFRA-01 | Phase 7 | Pending |
+| INFRA-02 | Phase 7 | Pending |
+| INFRA-03 | Phase 7 | Pending |
+| INFRA-04 | Phase 7 | Pending |
+| SHARE-01 | Phase 7 | Pending |
+| SHARE-02 | Phase 7 | Pending |
+| SHARE-03 | Phase 7 | Pending |
+| PRIV-01 | Phase 7 | Pending |
+| PRIV-02 | Phase 7 | Pending |
+| PRIV-03 | Phase 7 | Pending |
+| PRIV-04 | Phase 7 | Pending |
+| SEC-04 | Phase 7 | Pending |
+| SEC-05 | Phase 7 | Pending |
+| SEC-06 | Phase 7 | Pending |
+| GAL-01 | Phase 8 | Pending |
+| GAL-02 | Phase 8 | Pending |
+| GAL-03 | Phase 8 | Pending |
+| GAL-04 | Phase 8 | Pending |
+| GAL-05 | Phase 8 | Pending |
+| GAL-06 | Phase 8 | Pending |
+| GAL-07 | Phase 8 | Pending |
+| GAL-08 | Phase 8 | Pending |
+| COMP-01 | Phase 8 | Pending |
+| COMP-02 | Phase 8 | Pending |
+| COMP-03 | Phase 8 | Pending |
+| COMP-04 | Phase 8 | Pending |
+| EXPORT-01 | Phase 9 | Pending |
+| EXPORT-02 | Phase 9 | Pending |
+| EXPORT-03 | Phase 9 | Pending |
+| EXPORT-04 | Phase 9 | Pending |
+| EXPORT-05 | Phase 9 | Pending |
+| A11Y-01 | Phase 9 | Pending |
+| A11Y-02 | Phase 9 | Pending |
+| A11Y-03 | Phase 9 | Pending |
+| A11Y-04 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 89 total
-- Mapped to phases: 0
-- Unmapped: 89
+- v1 requirements: 116 total
+- Mapped to phases: 116
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-02*
-*Last updated: 2026-03-02 after initial definition*
+*Last updated: 2026-03-02 after roadmap creation*
