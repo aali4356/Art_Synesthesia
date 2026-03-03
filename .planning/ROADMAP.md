@@ -85,12 +85,12 @@ Plans:
   3. Canvas builds progressively over 0.5-1 seconds with elements appearing incrementally (renders complete immediately when prefers-reduced-motion is set)
   4. Translation panel displays all 15 parameters as labeled bars with numeric values, grouped by source signal, with plain-English explanations and engine version
   5. Rendering completes in under 1 second at 800x800 resolution
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Geometric renderer with composition laws
-- [ ] 04-02: Canvas display and progressive building animation
-- [ ] 04-03: Translation panel UI
+- [ ] 04-01-PLAN.md — Geometric renderer engine: recursive subdivision, shape assignment, scene graph, draw functions, composition law TDD (Wave 1)
+- [ ] 04-02-PLAN.md — GeometricCanvas component with progressive animation, StyleSelector with active/locked states, ResultsView integration (Wave 2)
+- [ ] 04-03-PLAN.md — rendererVersion bump, translation panel verification, end-to-end Phase 4 MVP checkpoint (Wave 3)
 
 ### Phase 5: Additional Renderers
 **Goal**: Users can view their input in four distinct visual styles and compare them via thumbnail previews
