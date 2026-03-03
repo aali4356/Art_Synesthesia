@@ -1,0 +1,177 @@
+[
+  {
+    "id": "single-word-hello",
+    "text": "hello",
+    "category": "single-word"
+  },
+  {
+    "id": "single-word-defenestration",
+    "text": "defenestration",
+    "category": "single-word"
+  },
+  {
+    "id": "single-word-forty-two",
+    "text": "forty-two",
+    "category": "single-word"
+  },
+  {
+    "id": "name-simple",
+    "text": "Alice",
+    "category": "name"
+  },
+  {
+    "id": "name-full-middle",
+    "text": "Margaret Elizabeth Thornton",
+    "category": "name"
+  },
+  {
+    "id": "name-diacritics",
+    "text": "Ren\u00e9e-Fran\u00e7oise M\u00fcller-\u00d6sterg\u00e5rd",
+    "category": "name"
+  },
+  {
+    "id": "sentence-declarative",
+    "text": "The river flows quietly through the ancient valley, carrying leaves and memories downstream.",
+    "category": "sentence"
+  },
+  {
+    "id": "sentence-compound-complex",
+    "text": "Although the experiment failed initially, the researchers persisted because they believed their hypothesis was fundamentally sound, and after modifying the control variables, which had been overlooked in earlier iterations, they finally achieved statistically significant results that confirmed their theoretical predictions.",
+    "category": "sentence"
+  },
+  {
+    "id": "sentence-question",
+    "text": "Have you ever wondered what the stars would look like if our atmosphere were twice as thick?",
+    "category": "sentence"
+  },
+  {
+    "id": "sentence-exclamation",
+    "text": "What an absolutely magnificent performance that was! The crowd erupted! Standing ovation! Bravo!",
+    "category": "sentence"
+  },
+  {
+    "id": "paragraph-short",
+    "text": "The old lighthouse keeper wound his clock every morning at dawn. He had done this for forty-three years without missing a single day.",
+    "category": "paragraph"
+  },
+  {
+    "id": "paragraph-medium",
+    "text": "Quantum entanglement remains one of the most perplexing phenomena in modern physics. When two particles become entangled, measuring one instantly affects the other, regardless of the distance separating them. Einstein famously called this 'spooky action at a distance.' Recent experiments have confirmed entanglement across distances exceeding 1,200 kilometers.",
+    "category": "paragraph"
+  },
+  {
+    "id": "paragraph-long",
+    "text": "The city woke before the sun did. Street sweepers hummed along empty boulevards while bakers loaded their ovens with tomorrow's bread. In apartment windows, alarm clocks began their insistent chorus. A jogger traced the river path, her breath visible in the cold air. By seven, the subway platforms were packed with commuters clutching coffee cups and staring at screens. The newsstand owner arranged his papers with practiced efficiency, headlines shouting about distant conflicts and local elections. A school bus rounded the corner, its yellow paint bright against the gray morning. This was the rhythm of the city: predictable, relentless, and strangely beautiful.",
+    "category": "paragraph"
+  },
+  {
+    "id": "paragraph-dialogue",
+    "text": "\"Where did you put my keys?\" she asked, rummaging through the drawer.\n\"I haven't touched them,\" he replied without looking up from his newspaper.\n\"You always say that.\"\n\"Because it's always true.\"\nShe found them under a stack of unopened mail. Neither of them commented on the irony.",
+    "category": "paragraph"
+  },
+  {
+    "id": "poem-haiku-autumn",
+    "text": "Crimson leaves descend\nSilent pond reflects the sky\nAutumn breathes its last",
+    "category": "poem"
+  },
+  {
+    "id": "poem-rhyming-couplet",
+    "text": "The moon hung low above the frozen lake,\nIts silver light a path no one would take.\nBeneath the ice, the fish swam slow and deep,\nWhile on the shore, the willows seemed to weep.",
+    "category": "poem"
+  },
+  {
+    "id": "poem-free-verse",
+    "text": "I carry my grandmother's hands\n  wrinkled maps of a country I've never visited\n  her fingers knew bread dough and barbed wire\n  and the particular weight of a sleeping child\n\nNow my hands reach for keyboards\n  for steering wheels and phone screens\n  for things she couldn't have imagined\n  but I shape them the same way she shaped hers\n  pressing forward, pressing through",
+    "category": "poem"
+  },
+  {
+    "id": "code-javascript",
+    "text": "function fibonacci(n) {\n  if (n <= 1) return n;\n  const dp = [0, 1];\n  for (let i = 2; i <= n; i++) {\n    dp[i] = dp[i - 1] + dp[i - 2];\n  }\n  return dp[n];\n}",
+    "category": "code"
+  },
+  {
+    "id": "code-python-listcomp",
+    "text": "matrix = [[row[i] for row in zip(*sorted(data, key=lambda x: x[0]))] for i in range(len(data[0]))]\nfiltered = {k: v for k, v in scores.items() if v >= threshold and k not in excluded_set}\nresult = list(map(lambda x: (x ** 2 + 1) / (x - 0.5), filter(lambda x: x != 0.5, values)))",
+    "category": "code"
+  },
+  {
+    "id": "code-sql-query",
+    "text": "SELECT u.name, COUNT(o.id) AS order_count, SUM(o.total) AS lifetime_value\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nWHERE u.created_at >= '2024-01-01'\n  AND u.status = 'active'\nGROUP BY u.id, u.name\nHAVING COUNT(o.id) > 5\nORDER BY lifetime_value DESC\nLIMIT 100;",
+    "category": "code"
+  },
+  {
+    "id": "recipe-ingredient-list",
+    "text": "- 2 cups all-purpose flour\n- 1 tsp baking soda\n- 1/2 tsp salt\n- 3/4 cup unsalted butter, softened\n- 1 cup packed brown sugar\n- 1/2 cup granulated sugar\n- 2 large eggs\n- 2 tsp vanilla extract\n- 2 cups chocolate chips",
+    "category": "recipe"
+  },
+  {
+    "id": "recipe-full-instructions",
+    "text": "Thai Green Curry\n\nHeat coconut oil in a large wok over high heat. Add green curry paste and stir-fry for 30 seconds until fragrant. Pour in coconut milk and bring to a gentle boil. Add sliced chicken breast and cook for 5 minutes. Toss in bamboo shoots, Thai eggplant, and kaffir lime leaves. Simmer for 10 minutes. Season with fish sauce, palm sugar, and a squeeze of lime. Garnish with Thai basil and sliced red chilies. Serve immediately over jasmine rice.",
+    "category": "recipe"
+  },
+  {
+    "id": "lyrics-verse-chorus",
+    "text": "Walking down this empty road again\nShadows stretch like fingers in the rain\nEvery step I take leads back to you\nEvery word I say rings half untrue\n\nBut I keep on singing, singing through the night\nKeep on reaching for that fading light\nSinging, singing, won't you hear my song\nI've been lost but I keep moving on",
+    "category": "lyrics"
+  },
+  {
+    "id": "lyrics-rap-dense",
+    "text": "Syllable architect, metaphor manifest,\nRhyme schemes intertwine like a double helix quest,\nVocal catalyst, lyrical alchemist,\nFlipping paradigms while the beat drops, never rest.\nConsonants collide, vowels open wide,\nRiding soundwaves like a supersonic glide,\nPunchline precision, bars with no division,\nEvery verse a vision, cutting with incision.",
+    "category": "lyrics"
+  },
+  {
+    "id": "emoticon-emoji-sentence",
+    "text": "\ud83c\udf1f\ud83c\udf1f\ud83c\udf1f OMG this is literally the BEST day EVER!!! \ud83c\udf89\ud83c\udf8a\ud83d\udca5 I can't even!!! \ud83d\ude0d\ud83d\ude0d\ud83d\ude0d So happy rn \ud83e\udd73\ud83e\udd73\ud83e\udd73 #blessed #livingmybestlife \u2728\u2728\u2728",
+    "category": "emoticon"
+  },
+  {
+    "id": "emoticon-kaomoji",
+    "text": "Today was... complicated (\u256f\u00b0\u25a1\u00b0\uff09\u256f\ufe35 \u253b\u2501\u253b but then things got better \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 \u252c\u2500\u252c\u30ce( \u00ba _ \u00ba\u30ce) and now I'm just vibing (\u25e0\u203f\u25e0) drinking tea (\u256f\u00b0\u25a1\u00b0\uff09\u256f\ufe35 \ud83c\udf75 wait no that was an accident \u30fe(\u00b4\u25bd\uff40;\u0e3a\u0e3a",
+    "category": "emoticon"
+  },
+  {
+    "id": "emoticon-mixed-text",
+    "text": "Dear diary \ud83d\udcd3\u270f\ufe0f today I learned that:\n1. Coffee > sleep \u2615\ud83d\udca4\n2. My cat judges me \ud83d\udc31\ud83d\udc40\n3. Adulting is hard \ud83d\ude29\ud83d\udcb8\n4. Pizza fixes everything \ud83c\udf55\u2764\ufe0f\nOverall rating: 7/10 would Tuesday again \ud83d\udc4d\ud83d\udc4d",
+    "category": "emoticon"
+  },
+  {
+    "id": "technical-api-docs",
+    "text": "### POST /api/v2/synthesize\n\nGenerates a parameter vector from the provided input.\n\n**Request Body:**\n```json\n{\n  \"input\": \"string (required, max 10000 chars)\",\n  \"inputType\": \"text | url | data\",\n  \"options\": {\n    \"style\": \"geometric | organic | particle | typographic\",\n    \"privateMode\": \"boolean (default: true)\"\n  }\n}\n```\n\n**Response:** `200 OK` with `{ parameterVector: ParameterVector, provenance: ParameterProvenance[] }`\n\n**Errors:** `400` invalid input, `429` rate limited, `500` internal error.",
+    "category": "technical"
+  },
+  {
+    "id": "technical-math-theorem",
+    "text": "Theorem 4.2 (Spectral Gap). Let G = (V, E) be a connected d-regular graph with adjacency matrix A. Define the normalized Laplacian L = I - (1/d)A. Then the second-smallest eigenvalue lambda_2 of L satisfies lambda_2 >= 2/(n * diam(G)), where diam(G) denotes the diameter of G. Moreover, if G is an expander graph with expansion ratio h(G) >= epsilon, then lambda_2 >= epsilon^2 / (2d). The spectral gap lambda_2 controls the mixing time of the random walk on G: t_mix = O(log(n) / lambda_2).",
+    "category": "technical"
+  },
+  {
+    "id": "technical-legal-clause",
+    "text": "Section 14.3(b)(ii): Notwithstanding any provision herein to the contrary, in the event that the Indemnifying Party fails to assume the defense of any Third-Party Claim within thirty (30) calendar days of receipt of written notice thereof, the Indemnified Party shall have the right, but not the obligation, to assume such defense at the Indemnifying Party's sole cost and expense, provided that the Indemnified Party shall not settle any such claim without the prior written consent of the Indemnifying Party, which consent shall not be unreasonably withheld, conditioned, or delayed.",
+    "category": "technical"
+  },
+  {
+    "id": "foreign-spanish",
+    "text": "El viejo pescador se levantaba cada ma\u00f1ana antes del amanecer, preparaba su peque\u00f1o bote con redes y anzuelos, y se adentraba en el mar oscuro con la esperanza de que ese d\u00eda la suerte le sonriera. A veces volv\u00eda con las manos vac\u00edas, pero nunca perd\u00eda la fe.",
+    "category": "foreign-language"
+  },
+  {
+    "id": "foreign-japanese-hiragana",
+    "text": "\u6628\u65e5\u3001\u53cb\u9054\u3068\u4e00\u7dd2\u306b\u516c\u5712\u3067\u82b1\u898b\u3092\u3057\u307e\u3057\u305f\u3002\u685c\u306e\u82b1\u3073\u3089\u304c\u98a8\u306b\u821e\u3044\u3001\u3068\u3066\u3082\u7f8e\u3057\u304b\u3063\u305f\u3067\u3059\u3002\u304a\u5f01\u5f53\u3092\u98df\u3079\u306a\u304c\u3089\u3001\u6625\u306e\u8a2a\u308c\u3092\u611f\u3058\u307e\u3057\u305f\u3002",
+    "category": "foreign-language"
+  },
+  {
+    "id": "foreign-arabic",
+    "text": "\u0641\u064a \u0635\u0628\u0627\u062d \u064a\u0648\u0645 \u062c\u0645\u064a\u0644\u060c \u062e\u0631\u062c \u0627\u0644\u0637\u0641\u0644 \u0625\u0644\u0649 \u0627\u0644\u062d\u062f\u064a\u0642\u0629 \u0648\u0631\u0623\u0649 \u0639\u0635\u0641\u0648\u0631\u064b\u0627 \u0635\u063a\u064a\u0631\u064b\u0627 \u064a\u063a\u0646\u064a \u0639\u0644\u0649 \u063a\u0635\u0646 \u0634\u062c\u0631\u0629\u060c \u0641\u0627\u0628\u062a\u0633\u0645 \u0648\u0634\u0639\u0631 \u0628\u0627\u0644\u0633\u0639\u0627\u062f\u0629 \u0627\u0644\u0639\u0645\u064a\u0642\u0629.",
+    "category": "foreign-language"
+  },
+  {
+    "id": "mixed-numbered-list",
+    "text": "Top 10 Things I Learned This Year:\n1. Consistency beats intensity every single time\n2. Sleep is not optional; it is the foundation\n3. Reading 20 minutes daily compounds dramatically\n4. Most arguments are about being heard, not being right\n5. The best investment is in relationships\n6. Saying no is a complete sentence\n7. Gratitude journals actually work (surprisingly)\n8. Exercise is the cheapest antidepressant available\n9. Perfection is the enemy of progress\n10. Time is the only truly non-renewable resource",
+    "category": "mixed"
+  },
+  {
+    "id": "mixed-csv-tabular",
+    "text": "Name,Age,City,Score,Grade\nAlice,28,Portland,92.5,A\nBob,34,Seattle,78.3,B+\nCarla,22,Denver,95.1,A+\nDavid,41,Austin,61.7,C\nEva,29,Boston,88.9,B+\nFrank,36,Miami,73.2,B\nGrace,25,Chicago,97.4,A+",
+    "category": "mixed"
+  }
+]
