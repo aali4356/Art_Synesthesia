@@ -12,7 +12,7 @@ This roadmap delivers a deterministic input-to-art web application in 9 phases, 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Determinism Infrastructure** - Project scaffold, seeded PRNG, canonicalization, engine versioning, design system
+- [x] **Phase 1: Foundation & Determinism Infrastructure** - Project scaffold, seeded PRNG, canonicalization, engine versioning, design system
 - [ ] **Phase 2: Parameter System & Color** - Parameter vector schema, quantile normalization, calibration harness, OKLCH palette generation
 - [ ] **Phase 3: Text Analysis & Input UI** - Text analyzer pipeline, input zone with tabs, quick-start buttons, progress animation
 - [ ] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
@@ -37,10 +37,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: TBD
 
 Plans:
-- [ ] 01-01: Project scaffold and toolchain
-- [ ] 01-02: Determinism infrastructure (PRNG, hashing, versioning, ESLint rule)
-- [ ] 01-03: Input canonicalization suite
-- [ ] 01-04: Design system and responsive layout shell
+- [x] 01-01: Project scaffold and toolchain
+- [x] 01-02: Determinism infrastructure (PRNG, hashing, versioning, ESLint rule)
+- [x] 01-03: Input canonicalization suite
+- [x] 01-04: Design system and responsive layout shell
 
 ### Phase 2: Parameter System & Color
 **Goal**: Any analysis output can be mapped to a universal 15-dimension parameter vector with calibrated normalization and perceptually coherent color palettes
@@ -189,7 +189,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Determinism Infrastructure | 0/4 | Not started | - |
+| 1. Foundation & Determinism Infrastructure | 4/4 | Complete | 2026-03-02 |
 | 2. Parameter System & Color | 0/3 | Not started | - |
 | 3. Text Analysis & Input UI | 0/3 | Not started | - |
 | 4. Geometric Renderer & Canvas UI | 0/3 | Not started | - |
