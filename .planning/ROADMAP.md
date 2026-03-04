@@ -127,9 +127,9 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 06-01: SSRF protection and URL fetch infrastructure
-- [ ] 06-02: URL analyzer (scraping, content extraction, metadata)
-- [ ] 06-03: Data analyzer (CSV/JSON parsing, statistical features)
+- [x] 06-01: SSRF protection and URL fetch infrastructure
+- [x] 06-02: URL analyzer (scraping, content extraction, metadata)
+- [x] 06-03: Data analyzer (CSV/JSON parsing, statistical features)
 - [ ] 06-04: Calibration harness expansion (URL + data reference inputs)
 
 ### Phase 7: Database, Sharing & Privacy

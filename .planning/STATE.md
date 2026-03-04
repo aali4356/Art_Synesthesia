@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 6 Plan 01 complete (SSRF protection + safe-fetch + analyze-url route)
-last_updated: "2026-03-04T20:28:00.000Z"
-last_activity: 2026-03-04 -- 06-01 SSRF infrastructure complete (366 tests passing)
+stopped_at: Phase 6 Plan 03 complete (data analyzer, DATA_MAPPINGS, Data tab UI)
+last_updated: "2026-03-04T15:40:00.000Z"
+last_activity: 2026-03-04 -- 06-03 data analyzer complete (405 tests passing)
 progress:
   total_phases: 9
   completed_phases: 5
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 6 of 9 (URL and Data Input) -- In Progress
-Plan: 06-01 complete; SSRF protection and URL fetch infrastructure done.
-Status: Phase 6 Plan 01 complete. Plans 06-02 through 06-N remain.
-Last activity: 2026-03-04 -- 06-01 SSRF infrastructure complete (366 tests passing)
+Plan: 06-03 complete; data analyzer, DATA_MAPPINGS, and Data tab UI done.
+Status: Plans 06-01, 06-02, 06-03 complete. Plan 06-04 remains.
+Last activity: 2026-03-04 -- 06-03 data analyzer complete (405 tests passing)
 
 Progress: [#######...] 70%
 
@@ -65,6 +65,8 @@ Progress: [#######...] 70%
 | Phase 05 P06 | ~10min | 4 tasks | 6 files |
 | Phase 05 P07 | ~15min | 4 tasks | 7 files |
 | Phase 06 P01 | ~25min | 9 tasks | 9 files |
+| Phase 06 P02 | (parallel with 06-03) | url tab, useUrlAnalysis, UrlInput | 7 files |
+| Phase 06 P03 | ~30min | 10 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -151,6 +153,9 @@ Recent decisions affecting current work:
 - [06-01]: vi.resetAllMocks() clears ALL mock return values including those set in vi.mock() factory -- always re-apply in beforeEach after resetAllMocks()
 - [06-01]: AbortController timeout test: verify signal.aborted state rather than awaiting thrown error to avoid Node.js unhandled-rejection warning from fake timers + AbortController interaction
 - [06-01]: snapshot cache is in-memory Map (ephemeral, resets on server restart) -- Phase 7 migrates to PostgreSQL
+- [06-03]: computeCalibrationDistributions with DATA_MAPPINGS and text corpus returns all-zero distributions for data signals -- percentileRank returns 0.5 midpoint; vectors still differ via palette seed (SHA-256 of raw data). Proper data corpus entries deferred to Phase 7.
+- [06-03]: 10,000-row CSV analyzes in ~27ms (DATA-05 requires < 2000ms) -- well within budget
+- [06-03]: Date column detection added (ISO pattern + Date.parse), dateColumnRatio signal available
 
 ### Pending Todos
 
@@ -162,6 +167,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T20:28:00.000Z
-Stopped at: Phase 6 Plan 01 complete (SSRF protection + safe-fetch + analyze-url route)
-Resume file: .planning/phases/06-url-data-input/06-01-SUMMARY.md
+Last session: 2026-03-04T15:40:00.000Z
+Stopped at: Phase 6 Plan 03 complete (data analyzer, DATA_MAPPINGS, Data tab UI)
+Resume file: .planning/phases/06-url-data-input/06-03-SUMMARY.md
