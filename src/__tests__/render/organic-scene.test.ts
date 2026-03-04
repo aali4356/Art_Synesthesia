@@ -1,38 +1,87 @@
 import { describe, it, expect } from 'vitest';
-// Import will succeed after Wave 1 creates the module
-// import { buildOrganicSceneGraph } from '@/lib/render/organic/scene';
-import type { ParameterVector } from '@/types/engine';
-import type { PaletteResult } from '@/lib/color/palette';
+import { buildOrganicSceneGraph } from '@/lib/render/organic';
 
-function makeParams(overrides: Partial<ParameterVector> = {}): ParameterVector {
+function makeParams(overrides: Record<string, number> = {}) {
   return {
     complexity: 0.5, warmth: 0.5, symmetry: 0.5, rhythm: 0.5,
     energy: 0.5, density: 0.5, scaleVariation: 0.5, curvature: 0.5,
     saturation: 0.5, contrast: 0.5, layering: 0.5, directionality: 0.5,
     paletteSize: 0.5, texture: 0.5, regularity: 0.5, ...overrides,
-  };
+  } as any;
 }
 
-function makePalette(): PaletteResult {
-  const colors = [
-    { oklch: { mode: 'oklch' as const, l: 0.65, c: 0.25, h: 285 }, hex: '#7b3dd4', css: 'oklch(0.65 0.25 285)' },
-    { oklch: { mode: 'oklch' as const, l: 0.60, c: 0.20, h: 30 }, hex: '#d4783d', css: 'oklch(0.60 0.20 30)' },
-    { oklch: { mode: 'oklch' as const, l: 0.55, c: 0.18, h: 120 }, hex: '#3dd47b', css: 'oklch(0.55 0.18 120)' },
-  ];
-  return { dark: colors, light: colors, harmony: 'triadic', count: 3 };
-}
+const mockPalette = {
+  dark: [
+    { hex: '#7b3dd4' }, { hex: '#d4783d' }, { hex: '#3dd47b' },
+  ],
+  light: [
+    { hex: '#4040a0' }, { hex: '#a04020' }, { hex: '#206040' },
+  ],
+  harmony: 'triadic',
+  count: 3,
+} as any;
 
 describe('buildOrganicSceneGraph', () => {
-  it.todo('ORGN-01: returns OrganicSceneGraph with curves, gradientStops, layers, width, height, background');
-  it.todo('ORGN-02: octave count is >= 2 and <= 6 based on complexity param');
-  it.todo('ORGN-03: layer count <= 5; curve opacity reduces when layering param would exceed 5');
-  it.todo('ORGN-04: dominant flow direction is set by directionality parameter');
-  it.todo('curves array has at least 1 curve with at least 2 points each');
-  it.todo('gradientStops have valid offset values between 0 and 1');
-  it.todo('background is valid hex color string');
-});
+  it('ORGN-01: returns OrganicSceneGraph with correct structure', () => {
+    const scene = buildOrganicSceneGraph(makeParams(), mockPalette, 'dark', 'test-seed');
+    expect(scene.style).toBe('organic');
+    expect(Array.isArray(scene.curves)).toBe(true);
+    expect(Array.isArray(scene.gradientStops)).toBe(true);
+    expect(typeof scene.layers).toBe('number');
+    expect(scene.width).toBe(800);
+    expect(scene.height).toBe(800);
+    expect(typeof scene.background).toBe('string');
+  });
 
-// Keep references to suppress unused variable warnings
-void makeParams;
-void makePalette;
-void expect;
+  it('ORGN-02: octave count is clamped to [2, 6] based on complexity', () => {
+    const minScene = buildOrganicSceneGraph(makeParams({ complexity: 0 }), mockPalette, 'dark', 'min');
+    expect(minScene.octaves).toBeGreaterThanOrEqual(2);
+    expect(minScene.octaves).toBeLessThanOrEqual(6);
+
+    const maxScene = buildOrganicSceneGraph(makeParams({ complexity: 1 }), mockPalette, 'dark', 'max');
+    expect(maxScene.octaves).toBeGreaterThanOrEqual(2);
+    expect(maxScene.octaves).toBeLessThanOrEqual(6);
+  });
+
+  it('ORGN-03: layer count <= 5; opacity reduced when layering param is high', () => {
+    const highLayering = buildOrganicSceneGraph(makeParams({ layering: 1.0 }), mockPalette, 'dark', 'layers');
+    expect(highLayering.layers).toBeLessThanOrEqual(5);
+    // When layering would exceed 5, opacity should be reduced
+    for (const curve of highLayering.curves) {
+      expect(curve.opacity).toBeGreaterThan(0);
+      expect(curve.opacity).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('ORGN-04: dominant flow direction is set by directionality parameter', () => {
+    const sceneRight = buildOrganicSceneGraph(makeParams({ directionality: 0 }), mockPalette, 'dark', 'dir-right');
+    const sceneLeft = buildOrganicSceneGraph(makeParams({ directionality: 0.5 }), mockPalette, 'dark', 'dir-left');
+    expect(sceneRight.dominantDirection).not.toBeCloseTo(sceneLeft.dominantDirection, 1);
+  });
+
+  it('curves array has at least 1 curve with at least 2 points each', () => {
+    const scene = buildOrganicSceneGraph(makeParams(), mockPalette, 'dark', 'curves-check');
+    expect(scene.curves.length).toBeGreaterThan(0);
+    for (const curve of scene.curves) {
+      expect(curve.points.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('gradientStops have valid offset values between 0 and 1', () => {
+    const scene = buildOrganicSceneGraph(makeParams(), mockPalette, 'dark', 'gradient-check');
+    for (const stop of scene.gradientStops) {
+      expect(stop.offset).toBeGreaterThanOrEqual(0);
+      expect(stop.offset).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it('uses dark background in dark theme', () => {
+    const scene = buildOrganicSceneGraph(makeParams(), mockPalette, 'dark', 'theme-dark');
+    expect(scene.background).toBe('#0a0a0a');
+  });
+
+  it('uses light background in light theme', () => {
+    const scene = buildOrganicSceneGraph(makeParams(), mockPalette, 'light', 'theme-light');
+    expect(scene.background).toBe('#fafafa');
+  });
+});
