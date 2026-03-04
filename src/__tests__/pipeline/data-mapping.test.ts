@@ -124,9 +124,11 @@ describe('computeParameterVector with DATA_MAPPINGS', () => {
     );
 
     // Count dimensions that differ by more than 0.1
-    const keys = Object.keys(numericVector) as Array<keyof typeof numericVector>;
+    const numericRaw = numericVector as unknown as Record<string, number>;
+    const stringRaw = stringVector as unknown as Record<string, number>;
+    const keys = Object.keys(numericRaw);
     const significantDiffs = keys.filter(
-      (k) => Math.abs(numericVector[k] - stringVector[k]) > 0.1
+      (k) => Math.abs((numericRaw[k] ?? 0) - (stringRaw[k] ?? 0)) > 0.1
     );
 
     expect(significantDiffs.length).toBeGreaterThanOrEqual(2);

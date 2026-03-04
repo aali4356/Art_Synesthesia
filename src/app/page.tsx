@@ -6,20 +6,93 @@ import { InputZone, QuickStart } from '@/components/input';
 import { ResultsView } from '@/components/results';
 import { PipelineProgress } from '@/components/progress';
 import { useTextAnalysis } from '@/hooks/useTextAnalysis';
+import { useUrlAnalysis } from '@/hooks/useUrlAnalysis';
+import { useDataAnalysis } from '@/hooks/useDataAnalysis';
+import type { UrlPipelineResult } from '@/hooks/useUrlAnalysis';
+import type { DataPipelineResult } from '@/hooks/useDataAnalysis';
+import type { PipelineResult } from '@/hooks/useTextAnalysis';
+
+/** Adapt a UrlPipelineResult to the PipelineResult shape for ResultsView. */
+function adaptUrlResult(urlResult: UrlPipelineResult): PipelineResult {
+  return {
+    vector: urlResult.vector,
+    provenance: urlResult.provenance,
+    palette: urlResult.palette,
+    summaries: urlResult.summaries,
+    canonical: urlResult.canonical,
+    changes: [],
+  };
+}
+
+/** Adapt a DataPipelineResult to the PipelineResult shape for ResultsView. */
+function adaptDataResult(dataResult: DataPipelineResult): PipelineResult {
+  return {
+    vector: dataResult.vector,
+    provenance: dataResult.provenance,
+    palette: dataResult.palette,
+    summaries: dataResult.summaries,
+    canonical: dataResult.canonical,
+    changes: [],
+  };
+}
 
 export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isPrivate, setIsPrivate] = useState(true);
-  const { stage, result, generate, reset } = useTextAnalysis();
+  const [urlInput, setUrlInput] = useState('');
+  const [dataInput, setDataInput] = useState('');
+  const [dataFormatHint, setDataFormatHint] = useState<'csv' | 'json' | 'auto'>('auto');
 
-  const hasResult = result !== null;
+  const { stage, result, generate, reset } = useTextAnalysis();
+  const {
+    stage: urlStage,
+    result: urlResult,
+    error: urlError,
+    remainingQuota,
+    generate: generateUrl,
+    reset: resetUrl,
+  } = useUrlAnalysis();
+  const {
+    stage: dataStage,
+    result: dataResult,
+    error: dataError,
+    generate: generateData,
+    reset: resetData,
+  } = useDataAnalysis();
+
+  const hasResult = result !== null || urlResult !== null || dataResult !== null;
   const isGenerating = stage !== 'idle' && stage !== 'complete';
+  const isAnalyzingUrl = urlStage !== 'idle' && urlStage !== 'complete';
+  const isAnalyzingData = dataStage !== 'idle' && dataStage !== 'complete';
 
   const handleGenerate = useCallback(() => {
     if (inputText.trim().length > 0) {
       generate(inputText);
     }
   }, [inputText, generate]);
+
+  const handleAnalyzeUrl = useCallback(
+    (mode: 'snapshot' | 'live') => {
+      if (urlInput.trim().length > 0) {
+        generateUrl(urlInput, mode);
+      }
+    },
+    [urlInput, generateUrl]
+  );
+
+  const handleDataChange = useCallback(
+    (data: string, hint: 'csv' | 'json' | 'auto') => {
+      setDataInput(data);
+      setDataFormatHint(hint);
+    },
+    []
+  );
+
+  const handleAnalyzeData = useCallback(() => {
+    if (dataInput.trim().length > 0) {
+      generateData(dataInput, dataFormatHint);
+    }
+  }, [dataInput, dataFormatHint, generateData]);
 
   const handleQuickStart = useCallback(
     (text: string) => {
@@ -40,7 +113,30 @@ export default function Home() {
 
   const handleBack = useCallback(() => {
     reset();
-  }, [reset]);
+    resetUrl();
+    resetData();
+  }, [reset, resetUrl, resetData]);
+
+  // Determine the active result and stage for display
+  const activeResult =
+    result ??
+    (urlResult ? adaptUrlResult(urlResult) : null) ??
+    (dataResult ? adaptDataResult(dataResult) : null);
+  const activeStage =
+    dataResult && !result && !urlResult
+      ? dataStage
+      : urlResult && !result
+        ? urlStage
+        : stage;
+  const activeInputType =
+    dataResult && !result && !urlResult ? 'data' : urlResult && !result ? 'url' : 'text';
+  // For the CollapsedInput display: show canonical or input text
+  const activeInputText =
+    dataResult && !result && !urlResult
+      ? `${dataResult.format.toUpperCase()} data (${dataResult.rowCount} rows × ${dataResult.columnCount} columns)`
+      : urlResult && !result
+        ? urlResult.canonical
+        : inputText;
 
   return (
     <Shell>
@@ -63,20 +159,32 @@ export default function Home() {
             isPrivate={isPrivate}
             onTogglePrivate={() => setIsPrivate(!isPrivate)}
             isGenerating={isGenerating}
+            url={urlInput}
+            onUrlChange={setUrlInput}
+            onAnalyzeUrl={handleAnalyzeUrl}
+            isAnalyzingUrl={isAnalyzingUrl}
+            urlError={urlError}
+            urlRemainingQuota={remainingQuota}
+            data={dataInput}
+            onDataChange={handleDataChange}
+            onAnalyzeData={handleAnalyzeData}
+            isAnalyzingData={isAnalyzingData}
+            dataError={dataError}
+            dataFormatHint={dataFormatHint}
           />
 
-          {/* Quick-start buttons */}
+          {/* Quick-start buttons (text tab only) */}
           <div className="w-full max-w-2xl">
             <QuickStart
               onQuickStart={handleQuickStart}
-              disabled={isGenerating}
+              disabled={isGenerating || isAnalyzingUrl || isAnalyzingData}
             />
           </div>
 
           {/* Pipeline progress (shown during generation on landing) */}
-          {isGenerating && (
+          {(isGenerating || isAnalyzingUrl || isAnalyzingData) && (
             <div className="w-full max-w-2xl">
-              <PipelineProgress currentStage={stage} />
+              <PipelineProgress currentStage={activeStage} />
             </div>
           )}
         </div>
@@ -104,12 +212,15 @@ export default function Home() {
             </svg>
             New input
           </button>
-          <ResultsView
-            result={result}
-            inputText={inputText}
-            onRegenerate={handleRegenerate}
-            stage={stage}
-          />
+          {activeResult && (
+            <ResultsView
+              result={activeResult}
+              inputText={activeInputText}
+              onRegenerate={handleRegenerate}
+              stage={activeStage}
+              inputType={activeInputType}
+            />
+          )}
         </div>
       )}
     </Shell>
