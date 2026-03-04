@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 5 Plan 03 complete
-last_updated: "2026-03-04T13:28:00.000Z"
-last_activity: 2026-03-04 -- Phase 5 Plan 03 complete (particle data layer)
+stopped_at: Phase 5 Plan 05 complete
+last_updated: "2026-03-04T13:32:00.000Z"
+last_activity: 2026-03-04 -- Phase 5 Plan 05 complete (typographic data layer)
 progress:
   total_phases: 9
   completed_phases: 4
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 5 of 9 (Additional Renderers) -- In progress
-Plan: 05-03 complete; 05-04 (particle draw) is next
-Status: Plans 05-01, 05-03, 05-05 complete (data layers), 05-02 and 05-04 draw modules pending
-Last activity: 2026-03-04 -- 05-03 particle data layer complete
+Plan: 05-05 complete; 05-06 (typographic draw) and 05-02/05-04 (organic/particle draw) are next
+Status: Plans 05-01, 05-03, 05-05 complete (all data layers), draw modules 05-02, 05-04, 05-06 pending
+Last activity: 2026-03-04 -- 05-05 typographic data layer complete
 
 Progress: [#####.....] 55%
 
@@ -57,9 +57,9 @@ Progress: [#####.....] 55%
 | Phase 04 P02 | 4min | 2 tasks | 5 files |
 | Phase 04 P03 | 1min | 2 tasks | 2 files |
 | Phase 04 P04 | 3min | 2 tasks | 4 files |
-| Phase 05 P01 | ~8min | 2 tasks | 3 files |
+| Phase 05 P01 | ~8min | 5 tasks | 9 files |
 | Phase 05 P03 | ~8min | 4 tasks | 6 files |
-| Phase 05 P05 | ~8min | 2 tasks | 4 files |
+| Phase 05 P05 | ~8min | 4 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -121,6 +121,13 @@ Recent decisions affecting current work:
 - [05-03]: negativeSpaceRatio = 0.05 when density > 0.85, else 0.15 (satisfies PTCL-04)
 - [05-03]: Cluster radius computed from per-cluster area budget (sqrt(maxCoveredArea/count/PI)) for canvas-size-invariant layout
 - [05-03]: buildClusters force-places remaining clusters after retry exhaustion to always return exactly clusterCount clusters
+- [05-05]: measureFn defaults to approximateMeasure (width = text.length * fontSize * 0.55) for SSR/test safety — no Canvas API in pure scene builder
+- [05-05]: Web-safe fonts only: Georgia, serif for prominent words; system-ui, sans-serif for smaller — avoids font loading race condition
+- [05-05]: Reduced-opacity fallback for collision-exhausted words: opacity 0.1..0.35 (always < 0.4 threshold, TYPO-04)
+- [05-05]: ParameterVector imported from '@/types/engine' (canonical) not '@/lib/pipeline/types'
+- [05-01]: Separate PRNG instances (seed+'-noise' vs seed+'-scene') prevent fBm state corruption
+- [05-01]: Flow spread = 1.0 - directionality * 0.8 (high dir = tight focused curves, low = chaotic scatter)
+- [05-01]: types.ts already had Particle/Typographic types from other sessions; organic types inserted before them
 
 ### Pending Todos
 
@@ -132,6 +139,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T13:28:00.000Z
-Stopped at: Phase 5 Plan 03 complete (particle data layer)
-Resume file: .planning/phases/05-additional-renderers/05-03-SUMMARY.md
+Last session: 2026-03-04T13:32:00.000Z
+Stopped at: Phase 5 Plan 05 complete (typographic data layer)
+Resume file: .planning/phases/05-additional-renderers/05-05-SUMMARY.md

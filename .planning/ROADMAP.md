@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation & Determinism Infrastructure** - Project scaffold, seeded PRNG, canonicalization, engine versioning, design system
 - [x] **Phase 2: Parameter System & Color** - Parameter vector schema, quantile normalization, calibration harness, OKLCH palette generation
 - [x] **Phase 3: Text Analysis & Input UI** - Text analyzer pipeline, input zone with tabs, quick-start buttons, progress animation
-- [ ] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
+- [x] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
 - [ ] **Phase 5: Additional Renderers** - Organic, particle, and typographic styles with style selector previews
 - [ ] **Phase 6: URL & Data Input** - URL analyzer with SSRF protection, data analyzer for CSV/JSON, rate limiting
 - [ ] **Phase 7: Database, Sharing & Privacy** - PostgreSQL schema, share links, caching infrastructure, privacy model
@@ -106,10 +106,13 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 05-01: Organic renderer (Perlin noise, flow fields)
-- [ ] 05-02: Particle renderer (force-directed, mobile caps)
-- [ ] 05-03: Typographic renderer (text as visual medium)
-- [ ] 05-04: Style selector with live mini-preview thumbnails
+- [x] 05-01: Organic renderer — data layer (types, noise, flowfield, scene)
+- [ ] 05-02: Organic renderer — draw module (OrganicCanvas component, animation)
+- [x] 05-03: Particle renderer — data layer (types, clusters, placement, scene)
+- [ ] 05-04: Particle renderer — draw module (ParticleCanvas component, idle animation)
+- [x] 05-05: Typographic renderer — data layer (types, words, layout, scene)
+- [ ] 05-06: Typographic renderer — draw module (TypographicCanvas component, fade-in)
+- [ ] 05-07: Style selector integration (live thumbnails, typographic gating for data input)
 
 ### Phase 6: URL & Data Input
 **Goal**: Users can analyze URLs and structured data (CSV/JSON) as input to the art pipeline, with security protections in place
@@ -193,8 +196,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 1. Foundation & Determinism Infrastructure | 4/4 | Complete | 2026-03-02 |
 | 2. Parameter System & Color | 3/3 | Complete | 2026-03-03 |
 | 3. Text Analysis & Input UI | 3/3 | Complete | 2026-03-03 |
-| 4. Geometric Renderer & Canvas UI | 0/3 | Not started | - |
-| 5. Additional Renderers | 0/4 | Not started | - |
+| 4. Geometric Renderer & Canvas UI | 4/4 | Complete | 2026-03-04 |
+| 5. Additional Renderers | 3/7 | In progress (data layers done, draw modules pending) | - |
 | 6. URL & Data Input | 0/4 | Not started | - |
 | 7. Database, Sharing & Privacy | 0/4 | Not started | - |
 | 8. Gallery & Compare | 0/4 | Not started | - |
