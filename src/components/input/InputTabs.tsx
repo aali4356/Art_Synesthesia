@@ -1,18 +1,19 @@
 'use client';
 
-type TabKey = 'text' | 'url' | 'data';
+export type TabKey = 'text' | 'url' | 'data';
 
 const TABS: { key: TabKey; label: string; disabled: boolean }[] = [
   { key: 'text', label: 'Text', disabled: false },
-  { key: 'url', label: 'URL', disabled: true },
+  { key: 'url', label: 'URL', disabled: false },
   { key: 'data', label: 'Data', disabled: true },
 ];
 
 interface InputTabsProps {
   activeTab: TabKey;
+  onTabChange: (tab: TabKey) => void;
 }
 
-export function InputTabs({ activeTab }: InputTabsProps) {
+export function InputTabs({ activeTab, onTabChange }: InputTabsProps) {
   return (
     <div className="flex gap-6 border-b border-[var(--border)]" role="tablist">
       {TABS.map((tab) => {
@@ -24,6 +25,7 @@ export function InputTabs({ activeTab }: InputTabsProps) {
             aria-selected={isActive}
             aria-disabled={tab.disabled}
             disabled={tab.disabled}
+            onClick={tab.disabled ? undefined : () => onTabChange(tab.key)}
             className={`
               relative pb-2 text-sm font-sans transition-colors duration-150
               ${isActive
