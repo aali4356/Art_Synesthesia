@@ -117,6 +117,65 @@ export interface RenderConfig {
 }
 
 /**
+ * A single particle in the particle scene.
+ * Large particles (radius >= 6) have glowRadius > 0 and represent "stars".
+ * Small particles (radius < 6) have glowRadius = 0 and stay crisp.
+ */
+export interface Particle {
+  x: number;
+  y: number;
+  /** Radius in CSS pixels, range 1-12 */
+  radius: number;
+  color: string;
+  /** Glow radius for pre-rendered sprite. 0 means no glow (crisp small particle). */
+  glowRadius: number;
+  opacity: number;
+  /** Index of the cluster this particle belongs to */
+  clusterId: number;
+  /** For idle animation: distance from cluster center */
+  orbitRadius: number;
+  /** For idle animation: initial angle in radians */
+  orbitAngle: number;
+  /** For idle animation: angular speed in radians/second (slow) */
+  orbitSpeed: number;
+}
+
+/**
+ * A faint line connecting two nearby particles (constellation effect).
+ */
+export interface ParticleConnection {
+  /** Index into ParticleSceneGraph.particles */
+  from: number;
+  /** Index into ParticleSceneGraph.particles */
+  to: number;
+  opacity: number;
+}
+
+/**
+ * A cluster center with bounding radius used for layout and animation.
+ */
+export interface ParticleCluster {
+  cx: number;
+  cy: number;
+  /** Radius of the cluster's particle distribution */
+  radius: number;
+}
+
+/**
+ * Complete scene graph for the particle (cosmic starfield) renderer.
+ * buildParticleSceneGraph() produces this; drawParticleScene() consumes it.
+ */
+export interface ParticleSceneGraph {
+  style: 'particle';
+  width: number;
+  height: number;
+  background: string;
+  particles: Particle[];
+  connections: ParticleConnection[];
+  clusters: ParticleCluster[];
+}
+
+/**
  * Create a RenderConfig from a ParameterVector and canvas size.
  *
  * @param params - The parameter vector to derive config from
