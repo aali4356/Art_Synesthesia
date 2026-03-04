@@ -30,7 +30,7 @@ function createMockContext(): CanvasRenderingContext2D {
 
 // Patch HTMLCanvasElement.getContext
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
-let mockCtx: CanvasRenderingContext2D;
+let mockCtx: CanvasRenderingContext2D = createMockContext();
 
 beforeEach(() => {
   mockCtx = createMockContext();
