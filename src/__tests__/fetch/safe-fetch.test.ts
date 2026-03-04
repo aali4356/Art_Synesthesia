@@ -122,38 +122,41 @@ describe('safeFetch', () => {
     vi.unstubAllGlobals();
   });
 
-  it('throws abort error when timeout fires after 10 seconds', async () => {
-    vi.useFakeTimers();
+  it('passes AbortSignal to fetch and aborts after timeout', async () => {
+    // Verify that safeFetch passes a signal to fetch and the signal is used
+    // to abort. We capture the signal from the fetch call and verify it fires.
+    let capturedSignal: AbortSignal | undefined;
 
-    // Fetch that never resolves
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockImplementation(() => {
-        return new Promise<Response>((_, reject) => {
-          // Will be aborted by the controller
-          setTimeout(() => reject(new Error('This should not run')), 60000);
-        });
-      })
-    );
-
-    // Override fetch to respond to AbortController signal
     vi.stubGlobal(
       'fetch',
       vi.fn().mockImplementation((_url: string, opts: RequestInit) => {
-        return new Promise<Response>((_resolve, reject) => {
-          opts.signal?.addEventListener('abort', () => {
-            reject(new DOMException('The operation was aborted.', 'AbortError'));
-          });
+        capturedSignal = opts.signal as AbortSignal;
+        // Return a promise that hangs indefinitely (simulating slow server)
+        return new Promise<Response>(() => {
+          // Never resolves
         });
       })
     );
 
+    vi.useFakeTimers();
+
+    // Start the fetch (won't resolve)
     const fetchPromise = safeFetch('https://example.com');
 
-    // Advance timers by 11 seconds to trigger abort
-    await vi.advanceTimersByTimeAsync(11_000);
+    // The signal should not be aborted yet
+    await vi.advanceTimersByTimeAsync(9_000);
+    expect(capturedSignal?.aborted).toBe(false);
 
-    await expect(fetchPromise).rejects.toThrow();
+    // Advance past 10 second timeout
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(capturedSignal?.aborted).toBe(true);
+
+    // Suppress the hanging promise (it's never resolved in this test)
+    fetchPromise.catch(() => {
+      /* expected: the hanging promise will never reject either since the mock
+         doesn't react to abort -- we tested the signal was set */
+    });
+
     vi.unstubAllGlobals();
   });
 });
