@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 5 Plan 05 complete
-last_updated: "2026-03-04T13:32:00.000Z"
-last_activity: 2026-03-04 -- Phase 5 Plan 05 complete (typographic data layer)
+stopped_at: Phase 5 Plan 02 complete
+last_updated: "2026-03-04T13:36:00.000Z"
+last_activity: 2026-03-04 -- Phase 5 Plan 02 complete (organic draw layer + OrganicCanvas component)
 progress:
   total_phases: 9
   completed_phases: 4
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 5 of 9 (Additional Renderers) -- In progress
-Plan: 05-05 complete; 05-06 (typographic draw) and 05-02/05-04 (organic/particle draw) are next
-Status: Plans 05-01, 05-03, 05-05 complete (all data layers), draw modules 05-02, 05-04, 05-06 pending
-Last activity: 2026-03-04 -- 05-05 typographic data layer complete
+Plan: 05-02 complete; 05-04 (particle draw) and 05-06 (typographic draw) remain
+Status: Plans 05-01, 05-02, 05-03, 05-05 complete; organic renderer fully done; particle/typographic draw pending
+Last activity: 2026-03-04 -- 05-02 organic draw layer + OrganicCanvas component complete
 
 Progress: [#####.....] 55%
 
@@ -58,6 +58,7 @@ Progress: [#####.....] 55%
 | Phase 04 P03 | 1min | 2 tasks | 2 files |
 | Phase 04 P04 | 3min | 2 tasks | 4 files |
 | Phase 05 P01 | ~8min | 5 tasks | 9 files |
+| Phase 05 P02 | ~8min | 4 tasks | 6 files |
 | Phase 05 P03 | ~8min | 4 tasks | 6 files |
 | Phase 05 P05 | ~8min | 4 tasks | 7 files |
 
@@ -128,6 +129,10 @@ Recent decisions affecting current work:
 - [05-01]: Separate PRNG instances (seed+'-noise' vs seed+'-scene') prevent fBm state corruption
 - [05-01]: Flow spread = 1.0 - directionality * 0.8 (high dir = tight focused curves, low = chaotic scatter)
 - [05-01]: types.ts already had Particle/Typographic types from other sessions; organic types inserted before them
+- [05-02]: drawBackground applies solid fill first, then optional linear gradient wash (only when gradientStops.length >= 2)
+- [05-02]: Color interpolation: first half of segments uses startColor, second half uses endColor (simple midpoint split)
+- [05-02]: Empty curves path in animated mode bypasses rAF, fills background only, fires onRenderComplete immediately
+- [05-02]: Animation: staggerDelay = 900ms / curveCount; fadeInDuration = 80ms per curve fade-in
 
 ### Pending Todos
 
@@ -139,6 +144,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T13:32:00.000Z
-Stopped at: Phase 5 Plan 05 complete (typographic data layer)
-Resume file: .planning/phases/05-additional-renderers/05-05-SUMMARY.md
+Last session: 2026-03-04T13:36:00.000Z
+Stopped at: Phase 5 Plan 02 complete (organic draw layer + OrganicCanvas component)
+Resume file: .planning/phases/05-additional-renderers/05-02-SUMMARY.md
