@@ -5,7 +5,7 @@ export type TabKey = 'text' | 'url' | 'data';
 const TABS: { key: TabKey; label: string; disabled: boolean }[] = [
   { key: 'text', label: 'Text', disabled: false },
   { key: 'url', label: 'URL', disabled: false },
-  { key: 'data', label: 'Data', disabled: true },
+  { key: 'data', label: 'Data', disabled: false },
 ];
 
 interface InputTabsProps {

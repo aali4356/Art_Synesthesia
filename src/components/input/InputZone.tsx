@@ -5,6 +5,7 @@ import { InputTabs } from './InputTabs';
 import type { TabKey } from './InputTabs';
 import { TextInput } from './TextInput';
 import { UrlInput } from './UrlInput';
+import { DataInput } from './DataInput';
 import { GenerateButton } from './GenerateButton';
 
 interface InputZoneProps {
@@ -22,6 +23,13 @@ interface InputZoneProps {
   isAnalyzingUrl: boolean;
   urlError: string | null;
   urlRemainingQuota: number | null;
+  // Data tab props
+  data: string;
+  onDataChange: (data: string, hint: 'csv' | 'json' | 'auto') => void;
+  onAnalyzeData: () => void;
+  isAnalyzingData: boolean;
+  dataError: string | null;
+  dataFormatHint: 'csv' | 'json' | 'auto';
 }
 
 export function InputZone({
@@ -37,6 +45,12 @@ export function InputZone({
   isAnalyzingUrl,
   urlError,
   urlRemainingQuota,
+  data,
+  onDataChange,
+  onAnalyzeData,
+  isAnalyzingData,
+  dataError,
+  dataFormatHint,
 }: InputZoneProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('text');
 
@@ -73,6 +87,17 @@ export function InputZone({
           disabled={isAnalyzingUrl}
           remainingQuota={urlRemainingQuota}
           error={urlError}
+        />
+      )}
+
+      {activeTab === 'data' && (
+        <DataInput
+          data={data}
+          onDataChange={onDataChange}
+          onAnalyze={onAnalyzeData}
+          disabled={isAnalyzingData}
+          error={dataError}
+          formatHint={dataFormatHint}
         />
       )}
     </div>
