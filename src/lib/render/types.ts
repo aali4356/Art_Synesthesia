@@ -176,6 +176,47 @@ export interface ParticleSceneGraph {
 }
 
 /**
+ * A single word placement in the typographic scene.
+ * The top 3 prominent words (isProminent=true) are subject to
+ * stricter composition laws (rotation <= 15 deg, fontSize >= 16px).
+ */
+export interface TypographicWord {
+  text: string;
+  /** X coordinate of the word's left edge baseline anchor */
+  x: number;
+  /** Y coordinate of the word's baseline */
+  y: number;
+  /** Font size in CSS pixels */
+  fontSize: number;
+  /** CSS font-family string — web-safe only */
+  fontFamily: string;
+  /** CSS font-weight string, e.g. 'bold' | 'normal' | '300' */
+  fontWeight: string;
+  /** Hex color string */
+  color: string;
+  /** Rotation in degrees, positive = clockwise */
+  rotation: number;
+  /** Opacity 0-1. Full-opacity words never overlap (TYPO-04). */
+  opacity: number;
+  /** Whether this is one of the top 3 prominent words (TYPO-02) */
+  isProminent: boolean;
+  /** Axis-aligned bounding box (after rotation expansion) for collision detection */
+  boundingBox: { x: number; y: number; width: number; height: number };
+}
+
+/**
+ * Complete scene graph for the typographic (layered poster) renderer.
+ * buildTypographicSceneGraph() produces this; drawTypographicScene() consumes it.
+ */
+export interface TypographicSceneGraph {
+  style: 'typographic';
+  width: number;
+  height: number;
+  background: string;
+  words: TypographicWord[];
+}
+
+/**
  * Create a RenderConfig from a ParameterVector and canvas size.
  *
  * @param params - The parameter vector to derive config from
