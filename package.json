@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "afinn-165": "^2.0.2",
+    "cheerio": "^1.2.0",
     "culori": "^4.0.2",
     "geist": "^1.7.0",
     "next": "16.1.6",
@@ -20,6 +21,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "seedrandom": "^3.0.5",
+    "simple-statistics": "^7.8.8",
     "simplex-noise": "^4.0.3",
     "syllable": "^5.0.1"
   },
