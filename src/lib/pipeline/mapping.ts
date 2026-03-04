@@ -164,6 +164,135 @@ export const TEXT_MAPPINGS: MappingTable = [
 ];
 
 /**
+ * URL-specific signal-to-parameter mapping table.
+ *
+ * Maps URL structural signals (from analyzeUrlContent) to all 15 ParameterVector
+ * dimensions. Signal names must exactly match what analyzeUrlContent produces.
+ * Weights per parameter sum to 1.0.
+ */
+export const URL_MAPPINGS: MappingTable = [
+  {
+    parameter: 'complexity',
+    signals: [
+      { signal: 'contentToHtmlRatio', weight: 0.3, explanation: 'How much content vs markup structure' },
+      { signal: 'textVocabRichness', weight: 0.4, explanation: 'Vocabulary diversity of page text' },
+      { signal: 'linkDensity', weight: 0.3, explanation: 'Density of hyperlinks on the page' },
+    ],
+  },
+  {
+    parameter: 'warmth',
+    signals: [
+      { signal: 'textSentimentPolarity', weight: 0.5, explanation: 'Positive or negative tone of page text' },
+      { signal: 'colorCount', weight: 0.3, explanation: 'Number of distinct colors used' },
+      { signal: 'imageCount', weight: 0.2, explanation: 'Visual richness from images' },
+    ],
+  },
+  {
+    parameter: 'symmetry',
+    signals: [
+      { signal: 'contentToHtmlRatio', weight: 0.5, explanation: 'Balance between content and structure' },
+      { signal: 'listCount', weight: 0.5, explanation: 'Structured lists suggest organized, symmetric layout' },
+    ],
+  },
+  {
+    parameter: 'rhythm',
+    signals: [
+      { signal: 'textAvgSentenceLength', weight: 0.4, explanation: 'Average sentence length sets reading tempo' },
+      { signal: 'textPunctuationDensity', weight: 0.3, explanation: 'Punctuation frequency creates cadence' },
+      { signal: 'headingCount', weight: 0.3, explanation: 'Headings break content into rhythmic sections' },
+    ],
+  },
+  {
+    parameter: 'energy',
+    signals: [
+      { signal: 'textSentimentMagnitude', weight: 0.4, explanation: 'Emotional intensity of page text' },
+      { signal: 'mediaRichness', weight: 0.3, explanation: 'Media-to-text ratio suggests energetic visual pages' },
+      { signal: 'linkDensity', weight: 0.3, explanation: 'Dense links suggest high information energy' },
+    ],
+  },
+  {
+    parameter: 'density',
+    signals: [
+      { signal: 'textWordCount', weight: 0.4, explanation: 'Total word count of page content' },
+      { signal: 'linkCount', weight: 0.3, explanation: 'Number of links contributing to information density' },
+      { signal: 'contentToHtmlRatio', weight: 0.3, explanation: 'How packed with content the page is' },
+    ],
+  },
+  {
+    parameter: 'scaleVariation',
+    signals: [
+      { signal: 'headingCount', weight: 0.4, explanation: 'Headings create typographic scale hierarchy' },
+      { signal: 'imageCount', weight: 0.3, explanation: 'Images introduce size variation' },
+      { signal: 'tableCount', weight: 0.3, explanation: 'Tables create structured scale contrast' },
+    ],
+  },
+  {
+    parameter: 'curvature',
+    signals: [
+      { signal: 'textComplexity', weight: 0.4, explanation: 'Clause depth suggests flowing, curved narrative' },
+      { signal: 'formCount', weight: 0.3, explanation: 'Forms suggest interactive, rounded interface elements' },
+      { signal: 'mediaRichness', weight: 0.3, explanation: 'Media-rich pages tend toward organic visual flow' },
+    ],
+  },
+  {
+    parameter: 'saturation',
+    signals: [
+      { signal: 'textSentimentMagnitude', weight: 0.4, explanation: 'Emotional intensity maps to color saturation' },
+      { signal: 'colorCount', weight: 0.4, explanation: 'Number of distinct colors used' },
+      { signal: 'imageCount', weight: 0.2, explanation: 'Images bring color saturation' },
+    ],
+  },
+  {
+    parameter: 'contrast',
+    signals: [
+      { signal: 'linkDensity', weight: 0.4, explanation: 'High link density creates foreground/background contrast' },
+      { signal: 'headingCount', weight: 0.3, explanation: 'Headings create typographic contrast' },
+      { signal: 'textCharEntropy', weight: 0.3, explanation: 'Character diversity signals textual contrast' },
+    ],
+  },
+  {
+    parameter: 'layering',
+    signals: [
+      { signal: 'textComplexity', weight: 0.4, explanation: 'Clause depth indicates layered content structure' },
+      { signal: 'listCount', weight: 0.3, explanation: 'Lists create layered hierarchies' },
+      { signal: 'tableCount', weight: 0.3, explanation: 'Tables layer structured data' },
+    ],
+  },
+  {
+    parameter: 'directionality',
+    signals: [
+      { signal: 'linkDensity', weight: 0.4, explanation: 'Links direct the reader to other content' },
+      { signal: 'formCount', weight: 0.3, explanation: 'Forms provide explicit user direction' },
+      { signal: 'listCount', weight: 0.3, explanation: 'Lists impose ordered directional reading' },
+    ],
+  },
+  {
+    parameter: 'paletteSize',
+    signals: [
+      { signal: 'colorCount', weight: 0.5, explanation: 'Distinct colors extracted from page styles' },
+      { signal: 'imageCount', weight: 0.3, explanation: 'Images contribute additional palette variety' },
+      { signal: 'textVocabRichness', weight: 0.2, explanation: 'Vocabulary diversity mirrors palette diversity' },
+    ],
+  },
+  {
+    parameter: 'texture',
+    signals: [
+      { signal: 'textVocabRichness', weight: 0.4, explanation: 'Rich vocabulary creates textural density' },
+      { signal: 'linkDensity', weight: 0.3, explanation: 'Dense links create visual texture' },
+      { signal: 'mediaRichness', weight: 0.3, explanation: 'Media elements add textural variety' },
+    ],
+  },
+  {
+    parameter: 'regularity',
+    signals: [
+      { signal: 'listCount', weight: 0.4, explanation: 'Lists indicate regular, repeating structure' },
+      { signal: 'tableCount', weight: 0.3, explanation: 'Tables impose regular grid structure' },
+      { signal: 'headingCount', weight: 0.3, explanation: 'Headings create regular content sections' },
+    ],
+  },
+];
+
+/**
  * Compute the full parameter vector and provenance from raw analysis signals.
  *
  * For each mapping entry:
