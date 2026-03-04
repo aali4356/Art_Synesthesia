@@ -12,29 +12,32 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Deterministic input-to-art pipeline: same input always produces same visual output given same engine version — Phase 1-4
+- ✓ Text input analysis: NLP pipeline extracting character frequency, sentiment, syllable patterns, entropy, etc. — Phase 3
+- ✓ Normalized parameter vector (~15 dimensions, 0-1 range) as universal intermediate representation — Phase 2
+- ✓ Quantile-based normalization with calibration harness (30+ text, 15+ URL, 15+ data reference inputs) — Phase 2
+- ✓ Parameter provenance tracking: per-parameter signal breakdown with weights and plain-English explanations — Phase 2
+- ✓ Geometric rendering style with composition laws (grid-based, Mondrian-meets-data-viz) — Phase 4
+- ✓ Seeded PRNG (xoshiro256** or Mulberry32), never Math.random() in rendering — Phase 1
+- ✓ Engine versioning: engineVersion, analyzerVersion, normalizerVersion, rendererVersion — Phase 1
+- ✓ Input canonicalization per type (NFC text, stable JSON key ordering, CSV normalization, URL normalization) — Phase 1
+- ✓ Translation panel showing parameter bars, provenance, and plain-English explanations — Phase 4
+- ✓ Palette generation in perceptual color space (OKLCH) with coherence function — Phase 2
+- ✓ Dark mode default with light mode toggle, respecting system preference — Phase 1
+- ✓ Progressive canvas building animation (respects prefers-reduced-motion) — Phase 4
+- ✓ Quick-start buttons ("Try: your name / a haiku / a recipe") and "Surprise me" — Phase 3
+- ✓ Staged progress animation (Parsing, Analyzing, Normalizing, Rendering) — Phase 3
+- ✓ Reduced motion support (prefers-reduced-motion) — Phase 4
+- ✓ Responsive design: mobile-first with bottom sheet translation panel — Phase 4
 
 ### Active
 
-- [ ] Deterministic input-to-art pipeline: same input always produces same visual output given same engine version
-- [ ] Text input analysis: NLP pipeline extracting character frequency, sentiment, syllable patterns, entropy, etc.
 - [ ] URL input analysis: fetch, scrape, extract text + page metadata, run through text pipeline with SSRF protection
 - [ ] CSV/JSON data input analysis: statistical analysis (distributions, correlations, cardinality, null ratios)
-- [ ] Normalized parameter vector (~15 dimensions, 0-1 range) as universal intermediate representation
-- [ ] Quantile-based normalization with calibration harness (30+ text, 15+ URL, 15+ data reference inputs)
-- [ ] Parameter provenance tracking: per-parameter signal breakdown with weights and plain-English explanations
-- [ ] Geometric rendering style with composition laws (grid-based, Mondrian-meets-data-viz)
 - [ ] Organic rendering style with composition laws (Perlin noise, flow fields, gradient blending)
 - [ ] Particle rendering style with composition laws (force-directed, mobile particle cap)
 - [ ] Typographic rendering style with composition laws (text as visual medium, legibility constraints)
-- [ ] Seeded PRNG (xoshiro256** or Mulberry32), never Math.random() in rendering
-- [ ] Engine versioning: engineVersion, analyzerVersion, normalizerVersion, rendererVersion
-- [ ] Input canonicalization per type (NFC text, stable JSON key ordering, CSV normalization, URL normalization)
 - [ ] Style selector with real mini-preview thumbnails rendered from same parameters
-- [ ] Translation panel showing parameter bars, provenance, and plain-English explanations
-- [ ] Palette generation in perceptual color space (OKLCH) with coherence function
-- [ ] Dark mode default with light mode toggle, respecting system preference
-- [ ] Progressive canvas building animation (respects prefers-reduced-motion)
 - [ ] Share links with random IDs storing only parameters (no raw input)
 - [ ] Gallery: save (opt-in), browse, filter by style, sort, report
 - [ ] Compare mode: side-by-side with parameter diff and auto-generated summary
@@ -42,14 +45,10 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 - [ ] Private-by-default generation model
 - [ ] High-res PNG export (server-side re-render at 4096x4096)
 - [ ] SVG export for vector styles (Geometric, Typographic)
-- [ ] Quick-start buttons ("Try: your name / a haiku / a recipe") and "Surprise me"
-- [ ] Staged progress animation (Parsing, Analyzing, Normalizing, Rendering)
 - [ ] Auto-generated alt text from parameters for accessibility
 - [ ] Full keyboard navigation
-- [ ] Reduced motion support (prefers-reduced-motion)
 - [ ] Rate limiting and abuse prevention (URL: 10/IP/hour, gallery: 10 saves/IP/day)
 - [ ] Profanity filter on titles and input previews
-- [ ] Responsive design: mobile-first with bottom sheet translation panel
 - [ ] Frame option for exports (subtle border/matte)
 - [ ] Database (PostgreSQL + Drizzle ORM) for gallery, cached analyses, version tracking
 - [ ] Caching strategy: analysis cache, render cache, URL snapshot cache
@@ -90,12 +89,15 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Fixed parameter schema (~15 core params) vs dynamic keys | Reliable panel rendering, stable caching, predictable versioning | — Pending |
-| Quantile-based scaling vs min/max normalization | Min/max breaks with outliers, quantile produces more expressive distributions | — Pending |
+| Fixed parameter schema (~15 core params) vs dynamic keys | Reliable panel rendering, stable caching, predictable versioning | Validated — Phase 2 |
+| Quantile-based scaling vs min/max normalization | Min/max breaks with outliers, quantile produces more expressive distributions | Validated — Phase 2 |
 | Parameters-only share links (no raw input stored) | Privacy protection — users will paste sensitive text | — Pending |
-| Dark mode default | Dark backgrounds make generated colors pop, artwork is the hero | — Pending |
-| Hybrid stack (Next.js + Python microservice) vs all-Node | Python has stronger NLP/stats libraries, but adds deployment complexity | — Pending |
-| Perceptual color space (OKLCH) for palette generation | Prevents muddy/harsh color combinations, better visual quality | — Pending |
+| Dark mode default | Dark backgrounds make generated colors pop, artwork is the hero | Validated — Phase 1 |
+| Hybrid stack (Next.js + Python microservice) vs all-Node | Python has stronger NLP/stats libraries, but adds deployment complexity | All-Node chosen — Phase 3 |
+| Perceptual color space (OKLCH) for palette generation | Prevents muddy/harsh color combinations, better visual quality | Validated — Phase 2 |
+| Alea PRNG algorithm | Fast, good distribution, deterministic, small footprint | Validated — Phase 1 |
+| Proxy-based canvas mock for testing | Lightweight alternative to vitest-canvas-mock, no native dependencies | Validated — Phase 4 |
+| hidden md:block CSS pattern for responsive collapse | SSR safe, avoids hydration mismatch, Tailwind-native | Established — Phase 4 |
 
 ---
-*Last updated: 2026-03-02 after initialization*
+*Last updated: 2026-03-04 after Phase 4*
