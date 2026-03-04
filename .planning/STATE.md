@@ -2,13 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-last_updated: "2026-03-04T04:35:00Z"
+status: completed
+stopped_at: Phase 5 Plan 03 complete
+last_updated: "2026-03-04T13:28:00.000Z"
+last_activity: 2026-03-04 -- Phase 5 Plan 03 complete (particle data layer)
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 14
-  completed_plans: 14
+  total_plans: 17
+  completed_plans: 17
+  percent: 55
 ---
 
 # Project State
@@ -22,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 5 of 9 (Additional Renderers) -- Ready to plan
-Plan: Not started
-Status: Phases 1-4 complete (end-to-end MVP), 266 tests passing, 17 requirements validated
-Last activity: 2026-03-04 -- Phase 4 transition complete
+Phase: 5 of 9 (Additional Renderers) -- In progress
+Plan: 05-03 complete; 05-04 (particle draw) is next
+Status: Plans 05-01, 05-03, 05-05 complete (data layers), 05-02 and 05-04 draw modules pending
+Last activity: 2026-03-04 -- 05-03 particle data layer complete
 
-Progress: [#####.....] 50%
+Progress: [#####.....] 55%
 
 ## Performance Metrics
 
@@ -54,6 +57,9 @@ Progress: [#####.....] 50%
 | Phase 04 P02 | 4min | 2 tasks | 5 files |
 | Phase 04 P03 | 1min | 2 tasks | 2 files |
 | Phase 04 P04 | 3min | 2 tasks | 4 files |
+| Phase 05 P01 | ~8min | 2 tasks | 3 files |
+| Phase 05 P03 | ~8min | 4 tasks | 6 files |
+| Phase 05 P05 | ~8min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -111,6 +117,10 @@ Recent decisions affecting current work:
 - [04-04]: Separate panelExpanded state from showDetails state to keep provenance toggle independent
 - [04-04]: Chevron toggle button visible only on mobile (md:hidden) for clean desktop experience
 - [04-04]: Thumbnail size changed from 80x80 to 200x200 per UI-08 requirement spec
+- [05-03]: Three separate PRNGs (seed+'-clusters', seed+'-placement', seed+'-connections') for particle renderer determinism
+- [05-03]: negativeSpaceRatio = 0.05 when density > 0.85, else 0.15 (satisfies PTCL-04)
+- [05-03]: Cluster radius computed from per-cluster area budget (sqrt(maxCoveredArea/count/PI)) for canvas-size-invariant layout
+- [05-03]: buildClusters force-places remaining clusters after retry exhaustion to always return exactly clusterCount clusters
 
 ### Pending Todos
 
@@ -122,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Phase 4 complete, ready to plan Phase 5
-Resume file: None
+Last session: 2026-03-04T13:28:00.000Z
+Stopped at: Phase 5 Plan 03 complete (particle data layer)
+Resume file: .planning/phases/05-additional-renderers/05-03-SUMMARY.md
