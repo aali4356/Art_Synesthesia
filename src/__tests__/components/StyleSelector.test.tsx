@@ -124,6 +124,15 @@ describe('StyleSelector', () => {
     expect(canvas).toBeDefined();
   });
 
+  it('Geometric thumbnail canvas renders at 200x200', () => {
+    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
+    const geometricCard = screen.getByText('Geometric').closest('[data-style]');
+    const canvas = geometricCard?.querySelector('canvas');
+    expect(canvas).toBeDefined();
+    expect(canvas?.style.width).toBe('200px');
+    expect(canvas?.style.height).toBe('200px');
+  });
+
   it('active style name displayed prominently', () => {
     render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
 

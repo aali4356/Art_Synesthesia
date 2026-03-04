@@ -62,7 +62,7 @@ function StyleThumbnail({ scene }: { scene: SceneGraph }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const thumbSize = 80;
+    const thumbSize = 200;
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
     canvas.width = thumbSize * dpr;
     canvas.height = thumbSize * dpr;
@@ -78,7 +78,7 @@ function StyleThumbnail({ scene }: { scene: SceneGraph }) {
     <canvas
       ref={canvasRef}
       className="w-full h-full rounded"
-      style={{ width: 80, height: 80 }}
+      style={{ width: 200, height: 200 }}
     />
   );
 }
@@ -107,7 +107,7 @@ export function StyleSelector({
             `}
           >
             {/* Thumbnail area */}
-            <div className="w-20 h-20 rounded overflow-hidden flex-shrink-0">
+            <div className="w-[200px] h-[200px] rounded overflow-hidden flex-shrink-0">
               {isActive && scene ? (
                 <StyleThumbnail scene={scene} />
               ) : (
