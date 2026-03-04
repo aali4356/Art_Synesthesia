@@ -1,11 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { StyleSelector } from '@/components/results/StyleSelector';
-import type { SceneGraph } from '@/lib/render/types';
+import type { StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
 
 // ---------------------------------------------------------------------------
-// Mocks
+// Mocks — prevent real canvas draw calls in jsdom
 // ---------------------------------------------------------------------------
+
+vi.mock('@/lib/render/geometric', () => ({ drawSceneComplete: vi.fn() }));
+vi.mock('@/lib/render/organic', () => ({ drawOrganicSceneComplete: vi.fn() }));
+vi.mock('@/lib/render/particle', () => ({ drawParticleSceneComplete: vi.fn() }));
+vi.mock('@/lib/render/typographic', () => ({ drawTypographicSceneComplete: vi.fn() }));
 
 // Mock canvas getContext
 function createMockContext(): CanvasRenderingContext2D {
@@ -40,7 +45,15 @@ afterEach(() => {
 // Fixtures
 // ---------------------------------------------------------------------------
 
-const mockScene: SceneGraph = {
+const nullScenes: Record<StyleName, null> = {
+  geometric: null,
+  organic: null,
+  particle: null,
+  typographic: null,
+};
+
+const mockGeoScene: SceneGraph = {
+  style: 'geometric',
   elements: [
     {
       type: 'rect',
@@ -59,86 +72,255 @@ const mockScene: SceneGraph = {
   background: '#0a0a0a',
 };
 
+const mockOrgScene: OrganicSceneGraph = {
+  style: 'organic',
+  width: 800,
+  height: 800,
+  background: '#0a0a0a',
+  gradientStops: [{ offset: 0, color: '#ff0000' }],
+  curves: [],
+  layers: 1,
+  octaves: 2,
+  dominantDirection: 0,
+};
+
+const mockPtclScene: ParticleSceneGraph = {
+  style: 'particle',
+  width: 800,
+  height: 800,
+  background: '#0a0a0a',
+  particles: [],
+  connections: [],
+  clusters: [],
+};
+
+const mockTypoScene: TypographicSceneGraph = {
+  style: 'typographic',
+  width: 800,
+  height: 800,
+  background: '#0a0a0a',
+  words: [],
+};
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
 describe('StyleSelector', () => {
   it('renders 4 style entries: Geometric, Organic, Particle, Typographic', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
     expect(screen.getByText('Geometric')).toBeDefined();
     expect(screen.getByText('Organic')).toBeDefined();
     expect(screen.getByText('Particle')).toBeDefined();
     expect(screen.getByText('Typographic')).toBeDefined();
   });
 
-  it('Geometric shows as active/selected state with visual indicator', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
-    const geometricText = screen.getByText('Geometric');
-    // The parent card should have an active indicator (ring styling)
-    const card = geometricText.closest('[data-style]');
-    expect(card).toBeDefined();
-    expect(card?.getAttribute('data-active')).toBe('true');
+  it('active style has data-active="true"', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="organic"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const organicCard = screen.getByText('Organic').closest('[data-style]');
+    expect(organicCard?.getAttribute('data-active')).toBe('true');
+
+    const geoCard = screen.getByText('Geometric').closest('[data-style]');
+    expect(geoCard?.getAttribute('data-active')).toBeNull();
   });
 
-  it('Organic, Particle, Typographic show locked state with lock icon', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
+  it('clicking a non-active style calls onStyleChange with style id', () => {
+    const onStyleChange = vi.fn();
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={onStyleChange}
+      />,
+    );
+    const organicCard = screen.getByText('Organic').closest('[data-style]') as HTMLElement;
+    fireEvent.click(organicCard);
+    expect(onStyleChange).toHaveBeenCalledWith('organic');
+  });
 
-    // Each locked style should have a lock indicator
-    const organicCard = screen.getByText('Organic').closest('[data-style]');
-    const particleCard = screen.getByText('Particle').closest('[data-style]');
+  it('clicking active style still calls onStyleChange', () => {
+    const onStyleChange = vi.fn();
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={onStyleChange}
+      />,
+    );
+    const geoCard = screen.getByText('Geometric').closest('[data-style]') as HTMLElement;
+    fireEvent.click(geoCard);
+    expect(onStyleChange).toHaveBeenCalledWith('geometric');
+  });
+
+  it('typographic is not clickable (no onStyleChange call) when inputType="data"', () => {
+    const onStyleChange = vi.fn();
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={onStyleChange}
+        inputType="data"
+      />,
+    );
+    const typoCard = screen.getByText('Typographic').closest('[data-style]') as HTMLElement;
+    fireEvent.click(typoCard);
+    expect(onStyleChange).not.toHaveBeenCalled();
+  });
+
+  it('typographic has title="Text or URL input required" when inputType="data"', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+        inputType="data"
+      />,
+    );
     const typoCard = screen.getByText('Typographic').closest('[data-style]');
-
-    expect(organicCard?.getAttribute('data-locked')).toBe('true');
-    expect(particleCard?.getAttribute('data-locked')).toBe('true');
-    expect(typoCard?.getAttribute('data-locked')).toBe('true');
+    expect(typoCard?.getAttribute('title')).toBe('Text or URL input required');
   });
 
-  it('locked styles show generic gray placeholder (not fake art)', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
+  it('typographic has data-disabled="true" when inputType="data"', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+        inputType="data"
+      />,
+    );
+    const typoCard = screen.getByText('Typographic').closest('[data-style]');
+    expect(typoCard?.getAttribute('data-disabled')).toBe('true');
+  });
 
-    // Locked cards should have a placeholder area (bg-muted) not a canvas
-    const organicCard = screen.getByText('Organic').closest('[data-style]');
-    expect(organicCard).toBeDefined();
-    // The locked placeholder div should exist within
-    const placeholder = organicCard?.querySelector('[data-placeholder]');
+  it('typographic is NOT disabled when inputType="text"', () => {
+    const onStyleChange = vi.fn();
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={onStyleChange}
+        inputType="text"
+      />,
+    );
+    const typoCard = screen.getByText('Typographic').closest('[data-style]') as HTMLElement;
+    fireEvent.click(typoCard);
+    expect(onStyleChange).toHaveBeenCalledWith('typographic');
+  });
+
+  it('shows placeholder when scene is null for a style', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const geoCard = screen.getByText('Geometric').closest('[data-style]');
+    const placeholder = geoCard?.querySelector('[data-placeholder]');
     expect(placeholder).toBeDefined();
   });
 
-  it('locked styles are visually distinct (dimmed) from active style', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
-
-    const organicCard = screen.getByText('Organic').closest('[data-style]');
-    expect(organicCard).toBeDefined();
-    // Locked cards should have reduced opacity
-    expect(organicCard?.className).toMatch(/opacity/);
-  });
-
-  it('Geometric thumbnail canvas is present (rendered from real parameters)', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
-
-    const geometricCard = screen.getByText('Geometric').closest('[data-style]');
-    expect(geometricCard).toBeDefined();
-    // Active style should contain a canvas element for thumbnail
-    const canvas = geometricCard?.querySelector('canvas');
+  it('shows canvas when geometric scene is provided', () => {
+    render(
+      <StyleSelector
+        scenes={{ ...nullScenes, geometric: mockGeoScene }}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const geoCard = screen.getByText('Geometric').closest('[data-style]');
+    const canvas = geoCard?.querySelector('canvas');
     expect(canvas).toBeDefined();
   });
 
-  it('Geometric thumbnail canvas renders at 200x200', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
-    const geometricCard = screen.getByText('Geometric').closest('[data-style]');
-    const canvas = geometricCard?.querySelector('canvas');
+  it('thumbnail canvas renders at 200x200', () => {
+    render(
+      <StyleSelector
+        scenes={{ ...nullScenes, geometric: mockGeoScene }}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const geoCard = screen.getByText('Geometric').closest('[data-style]');
+    const canvas = geoCard?.querySelector('canvas');
     expect(canvas).toBeDefined();
     expect(canvas?.style.width).toBe('200px');
     expect(canvas?.style.height).toBe('200px');
   });
 
-  it('active style name displayed prominently', () => {
-    render(<StyleSelector scene={mockScene} activeStyle="geometric" />);
+  it('shows canvas for organic scene when provided', () => {
+    render(
+      <StyleSelector
+        scenes={{ ...nullScenes, organic: mockOrgScene }}
+        activeStyle="organic"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const orgCard = screen.getByText('Organic').closest('[data-style]');
+    const canvas = orgCard?.querySelector('canvas');
+    expect(canvas).toBeDefined();
+  });
 
-    const geometricText = screen.getByText('Geometric');
-    expect(geometricText).toBeDefined();
-    // Should have prominent styling (font-medium or font-semibold)
-    expect(geometricText.className).toMatch(/font-(medium|semibold|bold)/);
+  it('shows canvas for particle scene when provided', () => {
+    render(
+      <StyleSelector
+        scenes={{ ...nullScenes, particle: mockPtclScene }}
+        activeStyle="particle"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const ptclCard = screen.getByText('Particle').closest('[data-style]');
+    const canvas = ptclCard?.querySelector('canvas');
+    expect(canvas).toBeDefined();
+  });
+
+  it('shows canvas for typographic scene when provided', () => {
+    render(
+      <StyleSelector
+        scenes={{ ...nullScenes, typographic: mockTypoScene }}
+        activeStyle="typographic"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const typoCard = screen.getByText('Typographic').closest('[data-style]');
+    const canvas = typoCard?.querySelector('canvas');
+    expect(canvas).toBeDefined();
+  });
+
+  it('active style name displays prominently', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const geoText = screen.getByText('Geometric');
+    expect(geoText.className).toMatch(/font-(medium|semibold|bold)/);
+  });
+
+  it('overflow-x scroll container present for mobile', () => {
+    const { container } = render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={vi.fn()}
+      />,
+    );
+    const wrapper = container.firstChild as HTMLElement;
+    expect(wrapper.className).toContain('overflow-x-auto');
   });
 });

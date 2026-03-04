@@ -17,8 +17,8 @@ describe('Engine versioning', () => {
     expect(CURRENT_VERSION.rendererVersion).toMatch(semverRegex);
   });
 
-  it('rendererVersion reflects geometric renderer (0.2.0)', () => {
-    expect(CURRENT_VERSION.rendererVersion).toBe('0.2.0');
+  it('rendererVersion reflects multi-style renderer integration (0.3.0)', () => {
+    expect(CURRENT_VERSION.rendererVersion).toBe('0.3.0');
   });
 
   it('getVersionString returns formatted version string', () => {
