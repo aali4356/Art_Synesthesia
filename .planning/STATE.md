@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in_progress
-stopped_at: Phase 5 Plan 06 complete
-last_updated: "2026-03-04T13:48:00.000Z"
-last_activity: 2026-03-04 -- Phase 5 Plan 06 complete (typographic draw + TypographicCanvas + tests, 319 passing)
+status: completed
+stopped_at: Phase 5 Plan 07 complete (style selector integration + multi-style ResultsView)
+last_updated: "2026-03-04T19:04:25.757Z"
+last_activity: 2026-03-04 -- 05-07 style selector integration complete (327 tests passing)
 progress:
   total_phases: 9
-  completed_phases: 4
-  total_plans: 17
-  completed_plans: 19
-  percent: 65
+  completed_phases: 5
+  total_plans: 21
+  completed_plans: 21
+  percent: 70
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 5 of 9 (Additional Renderers) -- In progress
-Plan: 05-06 complete; all draw modules done (organic, particle, typographic). Phase 5 complete.
-Status: Plans 05-01 through 05-06 all complete; all three additional renderers (organic, particle, typographic) fully implemented
-Last activity: 2026-03-04 -- 05-06 typographic draw + TypographicCanvas + full tests complete (319 tests passing)
+Phase: 5 of 9 (Additional Renderers) -- Complete
+Plan: 05-07 complete; all 7 plans done. Phase 5 fully complete.
+Status: Plans 05-01 through 05-07 all complete; all renderers implemented and integrated with multi-style switching UI
+Last activity: 2026-03-04 -- 05-07 style selector integration complete (327 tests passing)
 
-Progress: [######....] 65%
+Progress: [#######...] 70%
 
 ## Performance Metrics
 
@@ -63,6 +63,7 @@ Progress: [######....] 65%
 | Phase 05 P04 | ~12min | 4 tasks | 7 files |
 | Phase 05 P05 | ~8min | 4 tasks | 7 files |
 | Phase 05 P06 | ~10min | 4 tasks | 6 files |
+| Phase 05 P07 | ~15min | 4 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,10 @@ Recent decisions affecting current work:
 - [05-04]: startIdleAnimation uses `aborted` flag + cancelAnimationFrame for double-safe rAF cleanup (PTCL-05)
 - [05-06]: Rotation budget uses Math.floor(targetCount * 0.3) to enforce strict integer cap on >10deg words (TYPO-03)
 - [05-06]: TypographicCanvas fade-in duration 600ms, entire scene fades in as a unit (simpler than per-word animation)
+- [05-07]: SceneGraph gains `style: 'geometric'` discriminant to enable AnySceneGraph union dispatch in StyleThumbnail
+- [05-07]: ResultsView derives all 4 seeds with Promise.all then builds scenes synchronously; avoids race conditions
+- [05-07]: animationKey counter incremented on handleStyleChange forces canvas re-mount for clean animation start
+- [05-07]: Typographic scene set to null (not skipped) when inputType='data' — null propagates through StyleSelector placeholder
 
 ### Pending Todos
 
@@ -151,6 +156,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T13:48:00.000Z
-Stopped at: Phase 5 Plan 06 complete (typographic draw + TypographicCanvas + tests)
-Resume file: .planning/phases/05-additional-renderers/05-06-SUMMARY.md
+Last session: 2026-03-04T13:55:00.000Z
+Stopped at: Phase 5 Plan 07 complete (style selector integration + multi-style ResultsView)
+Resume file: .planning/phases/05-additional-renderers/05-07-SUMMARY.md
