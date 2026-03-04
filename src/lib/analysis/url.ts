@@ -10,6 +10,7 @@
  */
 
 import * as cheerio from 'cheerio';
+import type { AnyNode } from 'domhandler';
 import { analyzeText } from '@/lib/analysis/text';
 
 export interface UrlAnalysisResult {
@@ -47,7 +48,7 @@ export function analyzeUrlContent(html: string, _url: string): UrlAnalysisResult
   const linkCount = links.length;
   const totalTextLength = mainText.length || 1;
   const linkTextLength = links
-    .map((_: number, el: cheerio.Element) => $(el).text().length)
+    .map((_: number, el: AnyNode) => $(el).text().length)
     .get()
     .reduce((a: number, b: number) => a + b, 0);
   const linkDensity = linkTextLength / totalTextLength;
@@ -61,11 +62,11 @@ export function analyzeUrlContent(html: string, _url: string): UrlAnalysisResult
 
   // Dominant colors from theme-color meta and inline styles
   const colors: string[] = [];
-  $('meta[name="theme-color"]').each((_: number, el: cheerio.Element) => {
+  $('meta[name="theme-color"]').each((_: number, el: AnyNode) => {
     const c = $(el).attr('content');
     if (c) colors.push(c);
   });
-  $('[style]').each((_: number, el: cheerio.Element) => {
+  $('[style]').each((_: number, el: AnyNode) => {
     const style = $(el).attr('style') || '';
     const colorMatches = style.match(/#[0-9a-fA-F]{3,8}|rgb\([^)]+\)/g);
     if (colorMatches) colors.push(...colorMatches.slice(0, 5));
