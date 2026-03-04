@@ -103,7 +103,8 @@ export function placeWords(
     const color = colors[index % colors.length];
 
     let rotation: number;
-    const rotationBudgetLeft = (targetCount * 0.3) - rotatedCount;
+    const maxRotated = Math.floor(targetCount * 0.3);
+    const rotationBudgetLeft = maxRotated - rotatedCount;
     const remainingWords = targetCount - totalWords;
     const canRotate = rotationBudgetLeft > 0 && remainingWords > 0;
 
