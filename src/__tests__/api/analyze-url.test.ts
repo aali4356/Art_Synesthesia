@@ -15,9 +15,18 @@ vi.mock('@/lib/analysis/url', () => ({
 }));
 
 import { safeFetch } from '@/lib/fetch/safe-fetch';
+import { analyzeUrlContent } from '@/lib/analysis/url';
 import { POST } from '@/app/api/analyze-url/route';
 
 const mockSafeFetch = vi.mocked(safeFetch);
+const mockAnalyzeUrlContent = vi.mocked(analyzeUrlContent);
+
+const DEFAULT_ANALYZE_RESULT = {
+  signals: { linkDensity: 0.1, contentToHtmlRatio: 0.5 },
+  extractedText: 'Test page content',
+  title: 'Test',
+  metadata: { linkCount: 2, imageCount: 0, dominantColors: [] },
+};
 
 // Helper to create a minimal NextRequest-like object
 function makeRequest(
@@ -38,6 +47,7 @@ describe('POST /api/analyze-url', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockSafeFetch.mockResolvedValue('<html><title>Test</title></html>');
+    mockAnalyzeUrlContent.mockReturnValue(DEFAULT_ANALYZE_RESULT);
   });
 
   describe('rate limiting (SEC-03)', () => {
