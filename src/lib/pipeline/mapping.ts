@@ -293,6 +293,134 @@ export const URL_MAPPINGS: MappingTable = [
 ];
 
 /**
+ * Data-specific signal-to-parameter mapping table.
+ *
+ * Maps data analysis signals (from analyzeData) to all 15 ParameterVector
+ * dimensions. Signal names must exactly match what analyzeData() produces.
+ * Weights per parameter sum to 1.0.
+ */
+export const DATA_MAPPINGS: MappingTable = [
+  {
+    parameter: 'complexity',
+    signals: [
+      { signal: 'columnCount', weight: 0.3, explanation: 'Number of data dimensions (columns)' },
+      { signal: 'avgSkewness', weight: 0.3, explanation: 'Asymmetry in numeric distributions' },
+      { signal: 'numericColumnRatio', weight: 0.4, explanation: 'Proportion of numeric data columns' },
+    ],
+  },
+  {
+    parameter: 'warmth',
+    signals: [
+      { signal: 'avgMean', weight: 0.5, explanation: 'Average magnitude of numeric values' },
+      { signal: 'numericColumnRatio', weight: 0.3, explanation: 'Numeric-heavy datasets feel structured and warm' },
+      { signal: 'dataUniformity', weight: 0.2, explanation: 'Uniform data has a calm, warm regularity' },
+    ],
+  },
+  {
+    parameter: 'symmetry',
+    signals: [
+      { signal: 'avgSkewness', weight: 0.5, explanation: 'Low skewness means symmetric distributions' },
+      { signal: 'dataUniformity', weight: 0.5, explanation: 'Uniform categorical data suggests symmetry' },
+    ],
+  },
+  {
+    parameter: 'rhythm',
+    signals: [
+      { signal: 'rowCount', weight: 0.4, explanation: 'Number of rows sets data repetition rhythm' },
+      { signal: 'columnCount', weight: 0.3, explanation: 'Column count creates repeating structural beats' },
+      { signal: 'nullRatio', weight: 0.3, explanation: 'Missing values disrupt data rhythm' },
+    ],
+  },
+  {
+    parameter: 'energy',
+    signals: [
+      { signal: 'avgVariance', weight: 0.4, explanation: 'High variance signals energetic, spread-out data' },
+      { signal: 'avgKurtosis', weight: 0.3, explanation: 'Heavy tails indicate extreme value energy' },
+      { signal: 'maxCorrelation', weight: 0.3, explanation: 'Strong correlations indicate organized energy' },
+    ],
+  },
+  {
+    parameter: 'density',
+    signals: [
+      { signal: 'rowCount', weight: 0.4, explanation: 'More rows means denser dataset' },
+      { signal: 'columnCount', weight: 0.3, explanation: 'More columns means wider information density' },
+      { signal: 'nullRatio', weight: 0.3, explanation: 'Low null ratio means dense, complete data (inverted)' },
+    ],
+  },
+  {
+    parameter: 'scaleVariation',
+    signals: [
+      { signal: 'varianceSpread', weight: 0.5, explanation: 'Spread of variances across columns' },
+      { signal: 'avgKurtosis', weight: 0.3, explanation: 'Kurtosis reflects scale extremes' },
+      { signal: 'columnCount', weight: 0.2, explanation: 'More columns create more scale variety' },
+    ],
+  },
+  {
+    parameter: 'curvature',
+    signals: [
+      { signal: 'avgSkewness', weight: 0.5, explanation: 'Skewed distributions curve away from center' },
+      { signal: 'avgKurtosis', weight: 0.5, explanation: 'High kurtosis means peaked, curved distributions' },
+    ],
+  },
+  {
+    parameter: 'saturation',
+    signals: [
+      { signal: 'avgVariance', weight: 0.4, explanation: 'High variance data feels richly saturated' },
+      { signal: 'maxCorrelation', weight: 0.3, explanation: 'Strong correlations saturate the relationship signal' },
+      { signal: 'numericColumnRatio', weight: 0.3, explanation: 'Numeric-heavy data saturates with quantitative richness' },
+    ],
+  },
+  {
+    parameter: 'contrast',
+    signals: [
+      { signal: 'varianceSpread', weight: 0.5, explanation: 'Different variances across columns create contrast' },
+      { signal: 'nullRatio', weight: 0.3, explanation: 'Missing values create contrast with present values' },
+      { signal: 'avgSkewness', weight: 0.2, explanation: 'Skewed distributions contrast against symmetric baseline' },
+    ],
+  },
+  {
+    parameter: 'layering',
+    signals: [
+      { signal: 'columnCount', weight: 0.4, explanation: 'Many columns create layered data structure' },
+      { signal: 'avgCorrelation', weight: 0.3, explanation: 'Correlated columns form layered relationship structures' },
+      { signal: 'numericColumnRatio', weight: 0.3, explanation: 'Numeric layers over string layers' },
+    ],
+  },
+  {
+    parameter: 'directionality',
+    signals: [
+      { signal: 'maxCorrelation', weight: 0.5, explanation: 'Strong correlation shows directed relationship' },
+      { signal: 'avgCorrelation', weight: 0.3, explanation: 'Average correlation indicates overall directionality' },
+      { signal: 'avgSkewness', weight: 0.2, explanation: 'Skewness indicates a directional pull in distribution' },
+    ],
+  },
+  {
+    parameter: 'paletteSize',
+    signals: [
+      { signal: 'avgCardinality', weight: 0.5, explanation: 'High cardinality in categorical columns means many distinct values' },
+      { signal: 'columnCount', weight: 0.3, explanation: 'More columns provide more palette dimensions' },
+      { signal: 'stringColumnRatio', weight: 0.2, explanation: 'String columns offer categorical color variety' },
+    ],
+  },
+  {
+    parameter: 'texture',
+    signals: [
+      { signal: 'nullRatio', weight: 0.4, explanation: 'Missing values create textural gaps' },
+      { signal: 'varianceSpread', weight: 0.3, explanation: 'Variance differences create textural roughness' },
+      { signal: 'avgCardinality', weight: 0.3, explanation: 'High cardinality creates fine-grained texture' },
+    ],
+  },
+  {
+    parameter: 'regularity',
+    signals: [
+      { signal: 'dataUniformity', weight: 0.5, explanation: 'Uniform category distribution signals regular patterns' },
+      { signal: 'nullRatio', weight: 0.3, explanation: 'Low null ratio signals regular, complete data' },
+      { signal: 'avgSkewness', weight: 0.2, explanation: 'Low skewness signals regular, symmetric distributions' },
+    ],
+  },
+];
+
+/**
  * Compute the full parameter vector and provenance from raw analysis signals.
  *
  * For each mapping entry:
