@@ -116,6 +116,68 @@ export interface RenderConfig {
   strokeVisible: boolean;
 }
 
+// ---------------------------------------------------------------------------
+// Polymorphic scene graph types for Phase 5 additional renderers
+// ---------------------------------------------------------------------------
+
+/** Common base for all scene graph types */
+export interface BaseSceneGraph {
+  /** Canvas width in pixels */
+  width: number;
+  /** Canvas height in pixels */
+  height: number;
+  /** Background fill color as hex string */
+  background: string;
+  /** Discriminant for type narrowing */
+  style: 'geometric' | 'organic' | 'particle' | 'typographic';
+}
+
+/** A single point in a flow curve */
+export interface CurvePoint {
+  x: number;
+  y: number;
+}
+
+/** A single flow curve traced through the noise field */
+export interface FlowCurve {
+  /** Ordered points along the curve path */
+  points: CurvePoint[];
+  /** Color at the start of the curve (hex string) */
+  startColor: string;
+  /** Color at the end of the curve (hex string) */
+  endColor: string;
+  /** Stroke width in pixels */
+  width: number;
+  /** Curve opacity (0-1) */
+  opacity: number;
+}
+
+/** Gradient stop for the background wash */
+export interface GradientStop {
+  /** Position along gradient (0-1) */
+  offset: number;
+  /** Color as hex string */
+  color: string;
+}
+
+/**
+ * Organic scene graph: flowing curves over a gradient background wash.
+ * Produced by buildOrganicSceneGraph().
+ */
+export interface OrganicSceneGraph extends BaseSceneGraph {
+  style: 'organic';
+  /** Background gradient stops (linear, top-to-bottom) */
+  gradientStops: GradientStop[];
+  /** Flow curves traced through simplex noise field */
+  curves: FlowCurve[];
+  /** Number of curve layers rendered (1-5, enforces ORGN-03) */
+  layers: number;
+  /** Noise octave count used (2-6, enforces ORGN-02) */
+  octaves: number;
+  /** Dominant flow direction in radians (derived from directionality param) */
+  dominantDirection: number;
+}
+
 /**
  * A single particle in the particle scene.
  * Large particles (radius >= 6) have glowRadius > 0 and represent "stars".
