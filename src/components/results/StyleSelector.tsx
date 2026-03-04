@@ -1,39 +1,83 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
-import type { SceneGraph } from '@/lib/render/types';
+import type { AnySceneGraph, StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
 import { drawSceneComplete } from '@/lib/render/geometric';
-
-/**
- * StyleSelector displays a row of art style entries.
- * Currently only Geometric is active; Organic, Particle, and
- * Typographic are shown as locked placeholders for future phases.
- */
+import { drawOrganicSceneComplete } from '@/lib/render/organic';
+import { drawParticleSceneComplete } from '@/lib/render/particle';
+import { drawTypographicSceneComplete } from '@/lib/render/typographic';
 
 interface StyleEntry {
-  id: string;
+  id: StyleName;
   name: string;
-  locked: boolean;
 }
 
 const STYLES: StyleEntry[] = [
-  { id: 'geometric', name: 'Geometric', locked: false },
-  { id: 'organic', name: 'Organic', locked: true },
-  { id: 'particle', name: 'Particle', locked: true },
-  { id: 'typographic', name: 'Typographic', locked: true },
+  { id: 'geometric', name: 'Geometric' },
+  { id: 'organic', name: 'Organic' },
+  { id: 'particle', name: 'Particle' },
+  { id: 'typographic', name: 'Typographic' },
 ];
 
 interface StyleSelectorProps {
-  /** Scene graph for generating the active thumbnail */
-  scene: SceneGraph | null;
-  /** Currently active style ID */
-  activeStyle: string;
+  /** Scene graphs for all styles (null while building) */
+  scenes: Record<StyleName, AnySceneGraph | null>;
+  /** Currently active style */
+  activeStyle: StyleName;
+  /** Callback when user selects a different style */
+  onStyleChange: (style: StyleName) => void;
+  /** Input type — typographic is disabled for 'data' inputs */
+  inputType?: 'text' | 'url' | 'data';
   /** Additional CSS classes */
   className?: string;
 }
 
-/** Lock icon SVG for locked styles */
-function LockIcon() {
+/** Renders any scene type into a 200x200 thumbnail canvas */
+function StyleThumbnail({ scene }: { scene: AnySceneGraph }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const thumbSize = 200;
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    canvas.width = thumbSize * dpr;
+    canvas.height = thumbSize * dpr;
+
+    const scaleFactor = (thumbSize * dpr) / scene.width;
+    ctx.scale(scaleFactor, scaleFactor);
+
+    // Dispatch to correct draw function based on style discriminant
+    switch (scene.style) {
+      case 'geometric':
+        drawSceneComplete(ctx, scene as SceneGraph);
+        break;
+      case 'organic':
+        drawOrganicSceneComplete(ctx, scene as OrganicSceneGraph);
+        break;
+      case 'particle':
+        drawParticleSceneComplete(ctx, scene as ParticleSceneGraph, dpr);
+        break;
+      case 'typographic':
+        drawTypographicSceneComplete(ctx, scene as TypographicSceneGraph);
+        break;
+    }
+  }, [scene]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full rounded"
+      style={{ width: 200, height: 200 }}
+    />
+  );
+}
+
+function DisabledIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -51,76 +95,56 @@ function LockIcon() {
   );
 }
 
-/** Thumbnail canvas that renders a scaled-down version of the scene graph */
-function StyleThumbnail({ scene }: { scene: SceneGraph }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !scene) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const thumbSize = 200;
-    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
-    canvas.width = thumbSize * dpr;
-    canvas.height = thumbSize * dpr;
-
-    // Scale to fit scene into thumbnail
-    const scaleFactor = (thumbSize * dpr) / scene.width;
-    ctx.scale(scaleFactor, scaleFactor);
-
-    drawSceneComplete(ctx, scene);
-  }, [scene]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full rounded"
-      style={{ width: 200, height: 200 }}
-    />
-  );
-}
-
 export function StyleSelector({
-  scene,
+  scenes,
   activeStyle,
+  onStyleChange,
+  inputType = 'text',
   className = '',
 }: StyleSelectorProps) {
   return (
-    <div className={`flex flex-row gap-3 items-center justify-center ${className}`}>
+    <div
+      className={`flex flex-row gap-3 items-center overflow-x-auto pb-2 ${className}`}
+      role="tablist"
+      aria-label="Rendering styles"
+    >
       {STYLES.map((style) => {
         const isActive = style.id === activeStyle;
-        const isLocked = style.locked;
+        const isTypographicDisabled = style.id === 'typographic' && inputType === 'data';
+        const scene = scenes[style.id];
 
         return (
           <div
             key={style.id}
             data-style={style.id}
             data-active={isActive ? 'true' : undefined}
-            data-locked={isLocked ? 'true' : undefined}
+            data-disabled={isTypographicDisabled ? 'true' : undefined}
+            role="tab"
+            aria-selected={isActive}
+            aria-disabled={isTypographicDisabled}
+            title={isTypographicDisabled ? 'Text or URL input required' : undefined}
+            onClick={() => {
+              if (!isTypographicDisabled) onStyleChange(style.id);
+            }}
             className={`
-              flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all
+              flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all flex-shrink-0
               ${isActive ? 'ring-2 ring-[var(--color-accent)]' : ''}
-              ${isLocked ? 'opacity-50 cursor-default' : 'cursor-pointer'}
+              ${isTypographicDisabled ? 'opacity-50 cursor-default' : 'cursor-pointer hover:bg-[var(--muted)]'}
             `}
           >
-            {/* Thumbnail area */}
             <div className="w-[200px] h-[200px] rounded overflow-hidden flex-shrink-0">
-              {isActive && scene ? (
+              {scene ? (
                 <StyleThumbnail scene={scene} />
               ) : (
                 <div
                   data-placeholder="true"
                   className="w-full h-full bg-[var(--muted)] rounded flex items-center justify-center"
                 >
-                  {isLocked && <LockIcon />}
+                  {isTypographicDisabled && <DisabledIcon />}
                 </div>
               )}
             </div>
 
-            {/* Style name */}
             <span
               className={`
                 text-xs
