@@ -60,6 +60,7 @@ Progress: [######....] 65%
 | Phase 05 P01 | ~8min | 5 tasks | 9 files |
 | Phase 05 P02 | ~8min | 4 tasks | 6 files |
 | Phase 05 P03 | ~8min | 4 tasks | 6 files |
+| Phase 05 P04 | ~12min | 4 tasks | 7 files |
 | Phase 05 P05 | ~8min | 4 tasks | 7 files |
 | Phase 05 P06 | ~10min | 4 tasks | 6 files |
 
@@ -134,6 +135,9 @@ Recent decisions affecting current work:
 - [05-02]: Color interpolation: first half of segments uses startColor, second half uses endColor (simple midpoint split)
 - [05-02]: Empty curves path in animated mode bypasses rAF, fills background only, fires onRenderComplete immediately
 - [05-02]: Animation: staggerDelay = 900ms / curveCount; fadeInDuration = 80ms per curve fade-in
+- [05-04]: Glow sprite cache keyed by "radius-color" string to avoid repeated OffscreenCanvas allocations at 10k particles
+- [05-04]: Particles sorted by radius ascending before draw so larger particles render on top
+- [05-04]: startIdleAnimation uses `aborted` flag + cancelAnimationFrame for double-safe rAF cleanup (PTCL-05)
 - [05-06]: Rotation budget uses Math.floor(targetCount * 0.3) to enforce strict integer cap on >10deg words (TYPO-03)
 - [05-06]: TypographicCanvas fade-in duration 600ms, entire scene fades in as a unit (simpler than per-word animation)
 
