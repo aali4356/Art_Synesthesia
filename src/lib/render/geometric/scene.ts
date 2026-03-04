@@ -79,6 +79,7 @@ export function buildSceneGraph(
 
   // 9. Return complete scene graph
   return {
+    style: 'geometric',
     elements,
     width: canvasSize,
     height: canvasSize,

@@ -69,6 +69,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 const mockScene: SceneGraph = {
+  style: 'geometric',
   elements: [
     {
       type: 'rect',

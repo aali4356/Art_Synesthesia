@@ -60,6 +60,8 @@ export interface SceneElement {
  * Elements are sorted by area descending (largest first) for progressive animation.
  */
 export interface SceneGraph {
+  /** Style discriminant for polymorphic dispatch */
+  style: 'geometric';
   /** Drawing instructions, sorted by area descending */
   elements: SceneElement[];
   /** Canvas width in pixels */
@@ -277,6 +279,21 @@ export interface TypographicSceneGraph {
   background: string;
   words: TypographicWord[];
 }
+
+/**
+ * Union type covering all scene graph variants.
+ * Used by ResultsView to hold all four style scenes in one Record.
+ */
+export type AnySceneGraph =
+  | SceneGraph
+  | OrganicSceneGraph
+  | ParticleSceneGraph
+  | TypographicSceneGraph;
+
+/**
+ * All supported style names.
+ */
+export type StyleName = 'geometric' | 'organic' | 'particle' | 'typographic';
 
 /**
  * Create a RenderConfig from a ParameterVector and canvas size.
