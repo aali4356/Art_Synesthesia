@@ -1,10 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { isPrivateIpV4, isPrivateIpV6, resolveAndValidate } from '@/lib/fetch/ssrf';
 
-vi.mock('node:dns/promises', () => ({
-  resolve4: vi.fn(),
-  resolve6: vi.fn(),
-}));
+// Mock node:dns/promises -- provide all named exports that ssrf.ts imports.
+// Do not use importOriginal: jsdom cannot resolve node: built-in modules.
+vi.mock('node:dns/promises', () => {
+  return {
+    __esModule: true,
+    default: {},
+    resolve4: vi.fn(),
+    resolve6: vi.fn(),
+  };
+});
 
 import * as dns from 'node:dns/promises';
 
@@ -89,7 +95,11 @@ describe('resolveAndValidate', () => {
   const mockResolve6 = vi.mocked(dns.resolve6);
 
   beforeEach(() => {
-    vi.resetAllMocks();
+    // clearAllMocks resets call history without removing mock implementations
+    vi.clearAllMocks();
+    // Default: both DNS methods throw ENODATA (no records)
+    mockResolve4.mockRejectedValue(new Error('ENODATA'));
+    mockResolve6.mockRejectedValue(new Error('ENODATA'));
   });
 
   it('throws when hostname is localhost', async () => {
