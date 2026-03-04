@@ -20,8 +20,10 @@ import { analyzeText } from '@/lib/analysis';
 /** A single entry in the calibration corpus */
 export interface CorpusEntry {
   id: string;
-  text: string;
+  text?: string;           // Optional: text entries have this
+  signals?: Record<string, number>; // Optional: pre-computed signal entries have this
   category: string;
+  type?: 'text' | 'url-signals' | 'data-signals'; // Default: 'text' when absent
 }
 
 // ---------------------------------------------------------------------------
@@ -36,7 +38,7 @@ export interface CorpusEntry {
  * bumped. A test enforces this coupling.
  */
 export const CORPUS_HASH =
-  '5d420decefb10a4e4d0419717ae86b7c5ddfcc503dd617640ba6aa679e8ed6be';
+  '0ece831c05105b72049664c4e89b9fa3437d2b1b1cd1129919e88b442613356b';
 
 // ---------------------------------------------------------------------------
 // Corpus loading
@@ -286,7 +288,14 @@ export function computeCalibrationDistributions(
   }
 
   // Extract signals from all corpus entries using the real analyzer
-  const allSignals = corpus.map((entry) => analyzeText(entry.text));
+  const allSignals = corpus.map((entry) => {
+    if (entry.signals) {
+      // Pre-computed signals -- used for URL and data corpus entries
+      return entry.signals;
+    }
+    // Text entries -- analyze using text analyzer
+    return analyzeText(entry.text ?? '');
+  });
 
   // Build sorted arrays for each signal
   const calibration: CalibrationData = {};

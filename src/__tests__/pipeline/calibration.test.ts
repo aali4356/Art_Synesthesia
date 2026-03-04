@@ -20,20 +20,26 @@ describe('Calibration corpus validity', () => {
     expect(corpus.length).toBeGreaterThanOrEqual(35);
   });
 
-  it('every entry has id, text, and category fields', () => {
+  it('every entry has id and category fields; text entries also have text; signal entries have signals', () => {
     const corpus = loadCorpus();
     for (const entry of corpus) {
       expect(entry.id).toBeDefined();
       expect(typeof entry.id).toBe('string');
       expect(entry.id.length).toBeGreaterThan(0);
 
-      expect(entry.text).toBeDefined();
-      expect(typeof entry.text).toBe('string');
-      expect(entry.text.length).toBeGreaterThan(0);
-
       expect(entry.category).toBeDefined();
       expect(typeof entry.category).toBe('string');
       expect(entry.category.length).toBeGreaterThan(0);
+
+      // Text entries must have text; signal entries must have signals
+      if (entry.type === 'url-signals' || entry.type === 'data-signals') {
+        expect(entry.signals).toBeDefined();
+        expect(typeof entry.signals).toBe('object');
+      } else {
+        expect(entry.text).toBeDefined();
+        expect(typeof entry.text).toBe('string');
+        expect((entry.text ?? '').length).toBeGreaterThan(0);
+      }
     }
   });
 
@@ -58,7 +64,7 @@ describe('Mock signal extraction', () => {
     const testEntries = [corpus[0], corpus[7], corpus[17], corpus[24]];
 
     for (const entry of testEntries) {
-      const signals = extractMockSignals(entry.text);
+      const signals = extractMockSignals(entry.text ?? '');
       for (const signalName of requiredSignals) {
         expect(signals[signalName]).toBeDefined();
         expect(typeof signals[signalName]).toBe('number');
@@ -73,9 +79,9 @@ describe('Mock signal extraction', () => {
     const paragraph = corpus.find((e) => e.category === 'paragraph')!;
     const code = corpus.find((e) => e.category === 'code')!;
 
-    const swSignals = extractMockSignals(singleWord.text);
-    const pSignals = extractMockSignals(paragraph.text);
-    const cSignals = extractMockSignals(code.text);
+    const swSignals = extractMockSignals(singleWord.text ?? '');
+    const pSignals = extractMockSignals(paragraph.text ?? '');
+    const cSignals = extractMockSignals(code.text ?? '');
 
     // Single word should have lower wordCount than paragraph
     expect(swSignals.wordCount).toBeLessThan(pSignals.wordCount);
@@ -108,14 +114,16 @@ describe('Distribution quality gate', () => {
 
   it('HARD GATE: all parameters pass distribution quality against full corpus (real analyzer)', () => {
     const corpus = loadCorpus();
-    const calibration = computeCalibrationDistributions(corpus, TEXT_MAPPINGS);
+    // Only use text entries for TEXT_MAPPINGS calibration and distribution quality check
+    const textCorpus = corpus.filter((e) => !e.type || e.type === 'text');
+    const calibration = computeCalibrationDistributions(textCorpus, TEXT_MAPPINGS);
 
-    // For each of the 15 parameters, normalize all corpus entries and check distribution
+    // For each of the 15 parameters, normalize all text corpus entries and check distribution
     for (const mapping of TEXT_MAPPINGS) {
       const parameterValues: number[] = [];
 
-      for (const entry of corpus) {
-        const rawSignals = analyzeText(entry.text);
+      for (const entry of textCorpus) {
+        const rawSignals = analyzeText(entry.text ?? '');
         const { vector } = computeParameterVector(rawSignals, calibration, TEXT_MAPPINGS);
         parameterValues.push(vector[mapping.parameter] as number);
       }
@@ -185,10 +193,12 @@ describe('Real text analysis (analyzeText)', () => {
     }
 
     const corpus = loadCorpus();
-    const testEntries = [corpus[0], corpus[7], corpus[17], corpus[24]];
+    // Use only text entries for text analysis tests
+    const textCorpus = corpus.filter((e) => !e.type || e.type === 'text');
+    const testEntries = [textCorpus[0], textCorpus[7], textCorpus[17], textCorpus[24]];
 
     for (const entry of testEntries) {
-      const signals = analyzeText(entry.text);
+      const signals = analyzeText(entry.text ?? '');
       for (const signalName of requiredSignals) {
         expect(signals[signalName]).toBeDefined();
         expect(typeof signals[signalName]).toBe('number');
