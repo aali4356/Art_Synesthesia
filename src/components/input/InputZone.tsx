@@ -76,6 +76,28 @@ export function InputZone({
             onTogglePrivate={onTogglePrivate}
             disabled={isGenerating || text.trim().length === 0}
           />
+          {activeTab === 'text' && (
+            <span
+              className="flex items-center gap-1 text-xs text-muted-foreground mt-2"
+              title="Local analysis — your text never leaves your browser"
+              aria-label="Local analysis mode: your text never leaves your browser"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="w-3 h-3"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1zm2 5V4.5a2 2 0 1 0-4 0V6h4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Local only
+            </span>
+          )}
         </>
       )}
 
