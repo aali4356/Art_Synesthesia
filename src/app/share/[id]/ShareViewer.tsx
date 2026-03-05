@@ -1,6 +1,24 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
+import type {
+  AnySceneGraph,
+  SceneGraph,
+  OrganicSceneGraph,
+  ParticleSceneGraph,
+  TypographicSceneGraph,
+} from '@/lib/render/types';
+import { buildSceneGraph } from '@/lib/render/geometric';
+import { buildOrganicSceneGraph } from '@/lib/render/organic';
+import { buildParticleSceneGraph } from '@/lib/render/particle';
+import { buildTypographicSceneGraph } from '@/lib/render/typographic';
+import { generatePalette } from '@/lib/color/palette';
+import { GeometricCanvas } from '@/components/results/GeometricCanvas';
+import { OrganicCanvas } from '@/components/results/OrganicCanvas';
+import { ParticleCanvas } from '@/components/results/ParticleCanvas';
+import { TypographicCanvas } from '@/components/results/TypographicCanvas';
 
 interface ShareViewerProps {
   parameterVector: ParameterVector;
@@ -16,6 +34,11 @@ interface ShareViewerProps {
  * - Receives ONLY parameterVector, versionInfo, styleName, createdAt
  * - No raw input text is ever passed to this component
  * - The original input is NOT shown (it was never stored on the server)
+ *
+ * The scene is rebuilt from the stored parameter vector using a placeholder
+ * seed. The rendered artwork authentically represents the stored parameters
+ * but may not be pixel-identical to the creator's original view (the original
+ * PRNG seed is not stored).
  */
 export function ShareViewer({
   parameterVector,
@@ -23,6 +46,72 @@ export function ShareViewer({
   styleName,
   createdAt,
 }: ShareViewerProps) {
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme ?? 'dark';
+  const [scene, setScene] = useState<AnySceneGraph | null>(null);
+
+  useEffect(() => {
+    const seed = 'share-' + styleName + versionInfo.engineVersion;
+    const palette = generatePalette(parameterVector, seed);
+
+    let built: AnySceneGraph;
+    switch (styleName) {
+      case 'organic':
+        built = buildOrganicSceneGraph(parameterVector, palette, theme, seed);
+        break;
+      case 'particle':
+        built = buildParticleSceneGraph(parameterVector, palette, theme, seed, 800, 10000);
+        break;
+      case 'typographic':
+        built = buildTypographicSceneGraph(parameterVector, palette, theme, seed, '');
+        break;
+      case 'geometric':
+      default:
+        built = buildSceneGraph(parameterVector, palette, theme, seed);
+        break;
+    }
+
+    setScene(built);
+  }, [parameterVector, styleName, versionInfo.engineVersion, theme]);
+
+  function renderCanvas(s: AnySceneGraph, style: string) {
+    switch (style) {
+      case 'organic':
+        return (
+          <OrganicCanvas
+            scene={s as OrganicSceneGraph}
+            animated={false}
+            className="w-full max-w-2xl mx-auto block"
+          />
+        );
+      case 'particle':
+        return (
+          <ParticleCanvas
+            scene={s as ParticleSceneGraph}
+            animated={false}
+            className="w-full max-w-2xl mx-auto block"
+          />
+        );
+      case 'typographic':
+        return (
+          <TypographicCanvas
+            scene={s as TypographicSceneGraph}
+            animated={false}
+            className="w-full max-w-2xl mx-auto block"
+          />
+        );
+      case 'geometric':
+      default:
+        return (
+          <GeometricCanvas
+            scene={s as SceneGraph}
+            animated={false}
+            className="w-full max-w-2xl mx-auto block"
+          />
+        );
+    }
+  }
+
   const createdDate = new Date(createdAt).toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'long',
@@ -44,7 +133,12 @@ export function ShareViewer({
           </p>
         </header>
 
-        {/* Parameter summary -- shows what was used, not the original input */}
+        {/* Canvas section -- renders the artwork */}
+        <section className="mb-6">
+          {scene ? renderCanvas(scene, styleName) : <div>Loading artwork...</div>}
+        </section>
+
+        {/* Parameter section -- keeps existing parameter grid */}
         <section className="mb-6 p-4 rounded-lg border border-border">
           <h2 className="text-sm font-medium mb-3 uppercase tracking-wide text-muted-foreground">
             Parameter Vector

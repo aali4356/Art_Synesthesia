@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'fs/promises';
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Resolve project root from this file's location.
-// thisFile: <project>/src/__tests__/share/viewer.test.ts
-// 4 levels up: share/ -> __tests__/ -> src/ -> <project>/
-const thisFile = fileURLToPath(import.meta.url);
-const projectRoot = resolve(thisFile, '../../../..');
+// __dirname: <project>/src/__tests__/share
+// 3 levels up: share/ -> __tests__/ -> src/ -> <project>/
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = resolve(__dirname, '../../..');
 
 /**
  * Integration test for share viewer -- verifies privacy contract at the
@@ -62,5 +63,35 @@ describe('ShareViewer — SHARE-02, SHARE-03', () => {
     expect(source).toContain("import { ShareButton }");
     expect(source).toContain('<ShareButton');
     expect(source).toContain('parameterVector={result.vector}');
+  });
+
+  it('ShareViewer imports a canvas renderer component (SHARE-02)', async () => {
+    const source = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/ShareViewer.tsx'),
+      'utf-8'
+    );
+
+    // Must import at least one canvas renderer
+    const hasCanvasImport =
+      source.includes('GeometricCanvas') ||
+      source.includes('OrganicCanvas') ||
+      source.includes('ParticleCanvas') ||
+      source.includes('TypographicCanvas');
+
+    expect(hasCanvasImport).toBe(true);
+  });
+
+  it('ShareViewer dispatches canvas render on styleName (SHARE-02)', async () => {
+    const source = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/ShareViewer.tsx'),
+      'utf-8'
+    );
+
+    // Must contain a switch or conditional that references styleName for canvas dispatch
+    const hasStyleDispatch =
+      source.includes("styleName") &&
+      (source.includes('switch') || source.includes('styleName ===') || source.includes("case 'geometric'") || source.includes("case 'organic'"));
+
+    expect(hasStyleDispatch).toBe(true);
   });
 });
