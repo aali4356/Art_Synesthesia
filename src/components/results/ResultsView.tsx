@@ -18,6 +18,7 @@ import { TypographicCanvas } from './TypographicCanvas';
 import { StyleSelector } from './StyleSelector';
 import { ParameterPanel } from './ParameterPanel';
 import { PipelineProgress } from '@/components/progress';
+import { ShareButton } from './ShareButton';
 
 interface ResultsViewProps {
   result: PipelineResult;
@@ -223,6 +224,13 @@ export function ResultsView({
             summaries={result.summaries}
             version={CURRENT_VERSION}
           />
+          <div className="mt-4">
+            <ShareButton
+              parameterVector={result.vector}
+              versionInfo={CURRENT_VERSION}
+              styleName={activeStyle}
+            />
+          </div>
         </div>
       </div>
     </div>
