@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 7 Plan 02 complete -- four Drizzle schemas defined, 19 db tests passing
-last_updated: "2026-03-04T23:15:00.000Z"
-last_activity: 2026-03-04 -- 07-02 share_links, analysis_cache, render_cache, url_snapshots schemas + tests
+stopped_at: Phase 7 Plan 03 complete -- DB-backed cache helpers, analyze-url migrated to PostgreSQL, cron cleanup route
+last_updated: "2026-03-04T23:25:00.000Z"
+last_activity: 2026-03-04 -- 07-03 db-cache.ts, /api/cache, /api/cron/cleanup, vercel.json
 progress:
   total_phases: 9
   completed_phases: 6
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 7 of 9 (Database Sharing & Privacy) -- In Progress
-Plan: 07-02 complete; four Drizzle ORM schemas created; 19 schema tests passing.
-Status: Plan 07-02 done. Next: Plan 07-03 (share link generation and resolution).
-Last activity: 2026-03-04 -- 07-02 share_links, analysis_cache, render_cache, url_snapshots schemas + tests
+Plan: 07-03 complete; DB-backed cache helpers created; analyze-url migrated to PostgreSQL; /api/cache and /api/cron/cleanup routes added.
+Status: Plan 07-03 done. Next: Plan 07-04 (share link generation and resolution).
+Last activity: 2026-03-04 -- 07-03 db-cache.ts, /api/cache, /api/cron/cleanup, vercel.json
 
 Progress: [########..] 78%
 
@@ -70,6 +70,7 @@ Progress: [########..] 78%
 | Phase 06 P04 | ~20min | 7 tasks | 4 files |
 | Phase 07 P01 | ~8min | 5 tasks | 9 files |
 | Phase 07 P02 | ~7min | 4 tasks | 10 files |
+| Phase 07 P03 | ~15min | 4 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -168,6 +169,10 @@ Recent decisions affecting current work:
 - [07-02]: url_snapshots deliberately has no expires_at column -- snapshots are permanent until explicitly re-fetched (INFRA-04)
 - [07-02]: Analysis cache expiresAt semantics: 7d for anonymous, far-future (year 9999) date for permanent gallery-linked entries at app layer
 - [07-02]: getColumnNames helper uses 'name' property on Drizzle column objects for schema shape tests without database connection
+- [07-03]: db-cache.ts is the sole importer of @/db in the cache layer -- all route tests mock @/lib/cache/db-cache, not @/db directly
+- [07-03]: analysisTtl()=7d, renderTtl(res)=24h for res<=200 else 7d; permanent entries use new Date('9999-12-31T23:59:59Z')
+- [07-03]: analyze-url tests use vi.mock('@/lib/cache/db-cache') with getUrlSnapshot/setUrlSnapshot mocks re-applied in beforeEach after vi.resetAllMocks()
+- [07-03]: Cron cleanup route requires CRON_SECRET env var; returns 401 if unset or mismatched
 
 ### Pending Todos
 
@@ -179,6 +184,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T23:15:00.000Z
-Stopped at: Phase 7 Plan 02 complete -- four Drizzle schemas + 19 passing db tests
-Resume file: .planning/phases/07-database-sharing-privacy/07-02-SUMMARY.md
+Last session: 2026-03-04T23:25:00.000Z
+Stopped at: Phase 7 Plan 03 complete -- caching infrastructure, analyze-url migrated to PostgreSQL
+Resume file: .planning/phases/07-database-sharing-privacy/07-03-SUMMARY.md

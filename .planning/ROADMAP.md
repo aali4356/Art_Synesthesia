@@ -147,8 +147,9 @@ Plans:
 Plans:
 - [x] 07-01: Drizzle ORM dependencies and infrastructure foundation
 - [x] 07-02: PostgreSQL schema definitions and test layer (INFRA-01 through INFRA-04, PRIV-02/03)
-- [ ] 07-03: Share link generation and resolution
-- [ ] 07-04: Privacy model and local-only mode
+- [x] 07-03: Caching infrastructure (DB-backed analysis, render, and URL snapshot caches; /api/cache; /api/cron/cleanup; vercel.json)
+- [ ] 07-04: Share link generation and resolution
+- [ ] 07-05: Privacy model and local-only mode
 
 ### Phase 8: Gallery & Compare
 **Goal**: Users can browse, save, and compare artwork in a public gallery with moderation controls
@@ -199,6 +200,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 4. Geometric Renderer & Canvas UI | 4/4 | Complete | 2026-03-04 |
 | 5. Additional Renderers | 7/7 | Complete | 2026-03-04 |
 | 6. URL & Data Input | 4/4 | Complete | 2026-03-04 |
-| 7. Database, Sharing & Privacy | 1/4 | In Progress | - |
+| 7. Database, Sharing & Privacy | 3/7 | In Progress | - |
 | 8. Gallery & Compare | 0/4 | Not started | - |
 | 9. Export & Accessibility | 0/4 | Not started | - |
