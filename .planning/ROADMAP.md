@@ -16,8 +16,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Parameter System & Color** - Parameter vector schema, quantile normalization, calibration harness, OKLCH palette generation
 - [x] **Phase 3: Text Analysis & Input UI** - Text analyzer pipeline, input zone with tabs, quick-start buttons, progress animation
 - [x] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
-- [ ] **Phase 5: Additional Renderers** - Organic, particle, and typographic styles with style selector previews
-- [ ] **Phase 6: URL & Data Input** - URL analyzer with SSRF protection, data analyzer for CSV/JSON, rate limiting
+- [x] **Phase 5: Additional Renderers** - Organic, particle, and typographic styles with style selector previews
+- [x] **Phase 6: URL & Data Input** - URL analyzer with SSRF protection, data analyzer for CSV/JSON, rate limiting
 - [ ] **Phase 7: Database, Sharing & Privacy** - PostgreSQL schema, share links, caching infrastructure, privacy model
 - [ ] **Phase 8: Gallery & Compare** - Gallery browse/save/filter, compare mode with parameter diff, moderation
 - [ ] **Phase 9: Export & Accessibility** - High-res PNG export, SVG export, frame option, keyboard navigation, alt text
@@ -107,12 +107,12 @@ Plans:
 
 Plans:
 - [x] 05-01: Organic renderer — data layer (types, noise, flowfield, scene)
-- [ ] 05-02: Organic renderer — draw module (OrganicCanvas component, animation)
+- [x] 05-02: Organic renderer — draw module (OrganicCanvas component, animation)
 - [x] 05-03: Particle renderer — data layer (types, clusters, placement, scene)
-- [ ] 05-04: Particle renderer — draw module (ParticleCanvas component, idle animation)
+- [x] 05-04: Particle renderer — draw module (ParticleCanvas component, idle animation)
 - [x] 05-05: Typographic renderer — data layer (types, words, layout, scene)
-- [ ] 05-06: Typographic renderer — draw module (TypographicCanvas component, fade-in)
-- [ ] 05-07: Style selector integration (live thumbnails, typographic gating for data input)
+- [x] 05-06: Typographic renderer — draw module (TypographicCanvas component, fade-in)
+- [x] 05-07: Style selector integration (live thumbnails, typographic gating for data input)
 
 ### Phase 6: URL & Data Input
 **Goal**: Users can analyze URLs and structured data (CSV/JSON) as input to the art pipeline, with security protections in place
@@ -130,7 +130,7 @@ Plans:
 - [x] 06-01: SSRF protection and URL fetch infrastructure
 - [x] 06-02: URL analyzer (scraping, content extraction, metadata)
 - [x] 06-03: Data analyzer (CSV/JSON parsing, statistical features)
-- [ ] 06-04: Calibration harness expansion (URL + data reference inputs)
+- [x] 06-04: Calibration harness expansion (URL + data reference inputs)
 
 ### Phase 7: Database, Sharing & Privacy
 **Goal**: Users can share their artwork via permanent links and the system enforces privacy-by-default with no raw input ever stored server-side

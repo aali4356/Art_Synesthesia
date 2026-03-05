@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in_progress
-stopped_at: Phase 6 Plan 03 complete (data analyzer, DATA_MAPPINGS, Data tab UI)
-last_updated: "2026-03-04T15:40:00.000Z"
-last_activity: 2026-03-04 -- 06-03 data analyzer complete (405 tests passing)
+status: completed
+stopped_at: Phase 6 Plan 04 complete -- Phase 6 fully complete
+last_updated: "2026-03-05T03:02:36.019Z"
+last_activity: 2026-03-04 -- 06-04 calibration corpus 53->85 entries; normalizerVersion 0.4.0
 progress:
   total_phases: 9
-  completed_phases: 5
-  total_plans: 22
-  completed_plans: 22
-  percent: 72
+  completed_phases: 6
+  total_plans: 25
+  completed_plans: 25
+  percent: 78
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 6 of 9 (URL and Data Input) -- In Progress
-Plan: 06-03 complete; data analyzer, DATA_MAPPINGS, and Data tab UI done.
-Status: Plans 06-01, 06-02, 06-03 complete. Plan 06-04 remains.
-Last activity: 2026-03-04 -- 06-03 data analyzer complete (405 tests passing)
+Phase: 6 of 9 (URL and Data Input) -- Complete
+Plan: 06-04 complete; calibration corpus expanded with URL and data reference signals.
+Status: All plans complete (06-01 through 06-04). Phase 6 done.
+Last activity: 2026-03-04 -- 06-04 calibration corpus 53->85 entries; normalizerVersion 0.4.0
 
-Progress: [#######...] 70%
+Progress: [########..] 78%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [#######...] 70%
 | Phase 06 P01 | ~25min | 9 tasks | 9 files |
 | Phase 06 P02 | (parallel with 06-03) | url tab, useUrlAnalysis, UrlInput | 7 files |
 | Phase 06 P03 | ~30min | 10 tasks | 9 files |
+| Phase 06 P04 | ~20min | 7 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -156,6 +157,9 @@ Recent decisions affecting current work:
 - [06-03]: computeCalibrationDistributions with DATA_MAPPINGS and text corpus returns all-zero distributions for data signals -- percentileRank returns 0.5 midpoint; vectors still differ via palette seed (SHA-256 of raw data). Proper data corpus entries deferred to Phase 7.
 - [06-03]: 10,000-row CSV analyzes in ~27ms (DATA-05 requires < 2000ms) -- well within budget
 - [06-03]: Date column detection added (ISO pattern + Date.parse), dateColumnRatio signal available
+- [06-04]: TEXT_MAPPINGS calibration distributions computed from text-only corpus slice; url/data entries (all-zero text signals) would skew percentile rankings upward if mixed in
+- [06-04]: CorpusEntry.text made optional; pre-computed signal entries use signals field instead; computeCalibrationDistributions bypasses analyzeText when entry.signals is present
+- [06-04]: normalizerVersion bumped to 0.4.0; CORPUS_HASH updated to 0ece831c... (corpus expanded from 53 to 85 entries)
 
 ### Pending Todos
 
@@ -167,6 +171,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T15:40:00.000Z
-Stopped at: Phase 6 Plan 03 complete (data analyzer, DATA_MAPPINGS, Data tab UI)
-Resume file: .planning/phases/06-url-data-input/06-03-SUMMARY.md
+Last session: 2026-03-04T16:00:00.000Z
+Stopped at: Phase 6 Plan 04 complete -- Phase 6 fully complete
+Resume file: .planning/phases/06-url-data-input/06-04-SUMMARY.md
