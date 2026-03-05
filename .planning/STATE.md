@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 7 Plan 05 complete -- ShareButton component, ResultsView wiring, share link and viewer tests
-last_updated: "2026-03-04T23:30:00.000Z"
-last_activity: 2026-03-04 -- 07-05 ShareButton, ResultsView wiring, share API tests, ShareViewer privacy tests
+stopped_at: Phase 7 Plan 06 complete -- profanity filter, gallery rate limiting, report and admin routes
+last_updated: "2026-03-04T23:35:00.000Z"
+last_activity: 2026-03-04 -- 07-06 profanity.ts, POST /api/gallery, POST /api/moderation/report, GET/DELETE /api/admin/review
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 26
-  completed_plans: 27
-  percent: 82
+  completed_plans: 28
+  percent: 83
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 7 of 9 (Database Sharing & Privacy) -- In Progress
-Plan: 07-05 complete; ShareButton component created with privacy-safe POST; ResultsView wired; share API tests + ShareViewer privacy tests passing.
-Status: Plan 07-05 done. Next: Plan 07-06.
-Last activity: 2026-03-04 -- 07-05 ShareButton, ResultsView wiring, share API tests, ShareViewer privacy tests
+Plan: 07-06 complete; profanity filter singleton, gallery save endpoint with rate limiting and privacy gate, report flagging endpoint, admin review route with ADMIN_SECRET auth.
+Status: Plan 07-06 done. Next: Plan 07-07.
+Last activity: 2026-03-04 -- 07-06 profanity.ts, POST /api/gallery, POST /api/moderation/report, GET/DELETE /api/admin/review
 
-Progress: [########..] 80%
+Progress: [########..] 83%
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Progress: [########..] 80%
 | Phase 07 P03 | ~15min | 4 tasks | 6 files |
 | Phase 07 P04 | ~15min | 4 tasks | 4 files |
 | Phase 07 P05 | ~12min | 5 tasks | 4 files |
+| Phase 07 P06 | ~5min | 4 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -134,8 +135,8 @@ Recent decisions affecting current work:
 - [05-03]: negativeSpaceRatio = 0.05 when density > 0.85, else 0.15 (satisfies PTCL-04)
 - [05-03]: Cluster radius computed from per-cluster area budget (sqrt(maxCoveredArea/count/PI)) for canvas-size-invariant layout
 - [05-03]: buildClusters force-places remaining clusters after retry exhaustion to always return exactly clusterCount clusters
-- [05-05]: measureFn defaults to approximateMeasure (width = text.length * fontSize * 0.55) for SSR/test safety — no Canvas API in pure scene builder
-- [05-05]: Web-safe fonts only: Georgia, serif for prominent words; system-ui, sans-serif for smaller — avoids font loading race condition
+- [05-05]: measureFn defaults to approximateMeasure (width = text.length * fontSize * 0.55) for SSR/test safety -- no Canvas API in pure scene builder
+- [05-05]: Web-safe fonts only: Georgia, serif for prominent words; system-ui, sans-serif for smaller -- avoids font loading race condition
 - [05-05]: Reduced-opacity fallback for collision-exhausted words: opacity 0.1..0.35 (always < 0.4 threshold, TYPO-04)
 - [05-05]: ParameterVector imported from '@/types/engine' (canonical) not '@/lib/pipeline/types'
 - [05-01]: Separate PRNG instances (seed+'-noise' vs seed+'-scene') prevent fBm state corruption
@@ -153,7 +154,7 @@ Recent decisions affecting current work:
 - [05-07]: SceneGraph gains `style: 'geometric'` discriminant to enable AnySceneGraph union dispatch in StyleThumbnail
 - [05-07]: ResultsView derives all 4 seeds with Promise.all then builds scenes synchronously; avoids race conditions
 - [05-07]: animationKey counter incremented on handleStyleChange forces canvas re-mount for clean animation start
-- [05-07]: Typographic scene set to null (not skipped) when inputType='data' — null propagates through StyleSelector placeholder
+- [05-07]: Typographic scene set to null (not skipped) when inputType='data' -- null propagates through StyleSelector placeholder
 - [06-01]: Use namespace import `import * as dnsPromises` instead of destructured import for Node.js built-in mocking -- Vitest replaces namespace exports but not captured local bindings
 - [06-01]: vi.mock() factory for node: modules needs `{ __esModule: true, default: {} }` in jsdom -- importOriginal() cannot load Node.js built-ins through vite pipeline
 - [06-01]: vi.resetAllMocks() clears ALL mock return values including those set in vi.mock() factory -- always re-apply in beforeEach after resetAllMocks()
@@ -181,6 +182,9 @@ Recent decisions affecting current work:
 - [07-04]: /share/[id] page is a Server Component; ShareButton wiring deferred to plan 07-05
 - [07-05]: viewer.test.ts uses fileURLToPath(import.meta.url) + resolve('../../../..') -- NOT new URL(relative, import.meta.url).pathname -- jsdom strips the drive prefix from URL.pathname on macOS paths with CloudStorage
 - [07-05]: ShareButton sends only { vector, version, style } to POST /api/share; privacy gate verified by API test rejecting rawInput/inputText fields
+- [07-06]: Admin review route imports reportCounts from moderation/report route via relative path (../../moderation/report/route) to avoid circular Next.js route import issues
+- [07-06]: Gallery rate limit uses in-memory Map with sliding 24h window; gallerySaveMap module-level singleton persists across requests in a single server process (Phase 8 migrates to Redis/DB)
+- [07-06]: REPORT_FLAG_THRESHOLD=3 in-memory (Phase 7 stub); exported for admin route consumption and test assertions
 
 ### Pending Todos
 
@@ -192,6 +196,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T23:30:00.000Z
-Stopped at: Phase 7 Plan 05 complete -- ShareButton, ResultsView wiring, share tests
-Resume file: .planning/phases/07-database-sharing-privacy/07-05-SUMMARY.md
+Last session: 2026-03-04T23:35:00.000Z
+Stopped at: Phase 7 Plan 06 complete -- profanity filter, gallery rate limiting, report and admin routes
+Resume file: .planning/phases/07-database-sharing-privacy/07-06-SUMMARY.md
