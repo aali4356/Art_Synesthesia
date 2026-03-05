@@ -152,7 +152,8 @@ Plans:
 - [x] 07-05: ShareButton component, ResultsView wiring, share link API tests, ShareViewer privacy tests
 - [x] 07-06: Profanity filter (obscenity), gallery rate limiting (10/IP/day), report + admin review routes (SEC-04, SEC-05, SEC-06)
 - [x] 07-07: Lock icon in InputZone (PRIV-04), privacy tests (PRIV-01/02/03/04), rate-limit/moderation tests (SEC-04/05/06)
-- [x] 07-08: ShareViewer canvas rendering (SHARE-02 gap closure), InputZone redundant check cleanup (ISSUE-4) — Phase 7 complete
+- [x] 07-08: ShareViewer canvas rendering (SHARE-02 gap closure), InputZone redundant check cleanup (ISSUE-4)
+- [x] 07-09: gallery_items schema stub (INFRA-01 gap closure), REQUIREMENTS.md traceability update — Phase 7 fully closed
 
 ### Phase 8: Gallery & Compare
 **Goal**: Users can browse, save, and compare artwork in a public gallery with moderation controls
