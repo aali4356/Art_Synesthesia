@@ -1,4 +1,13 @@
 import { describe, it, expect } from 'vitest';
+import { readFile } from 'fs/promises';
+import { resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+// Resolve project root from this file's location.
+// thisFile: <project>/src/__tests__/share/viewer.test.ts
+// 4 levels up: share/ -> __tests__/ -> src/ -> <project>/
+const thisFile = fileURLToPath(import.meta.url);
+const projectRoot = resolve(thisFile, '../../../..');
 
 /**
  * Integration test for share viewer -- verifies privacy contract at the
@@ -6,12 +15,8 @@ import { describe, it, expect } from 'vitest';
  */
 describe('ShareViewer — SHARE-02, SHARE-03', () => {
   it('ShareViewer props interface contains no raw input fields', async () => {
-    const fs = await import('fs/promises');
-    const source = await fs.readFile(
-      new URL(
-        '../../../src/app/share/[id]/ShareViewer.tsx',
-        import.meta.url
-      ).pathname,
+    const source = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/ShareViewer.tsx'),
       'utf-8'
     );
 
@@ -23,12 +28,8 @@ describe('ShareViewer — SHARE-02, SHARE-03', () => {
   });
 
   it('ShareViewer props interface contains the required non-sensitive fields', async () => {
-    const fs = await import('fs/promises');
-    const source = await fs.readFile(
-      new URL(
-        '../../../src/app/share/[id]/ShareViewer.tsx',
-        import.meta.url
-      ).pathname,
+    const source = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/ShareViewer.tsx'),
       'utf-8'
     );
 
@@ -39,12 +40,8 @@ describe('ShareViewer — SHARE-02, SHARE-03', () => {
   });
 
   it('share page fetches only non-sensitive data from DB', async () => {
-    const fs = await import('fs/promises');
-    const source = await fs.readFile(
-      new URL(
-        '../../../src/app/share/[id]/page.tsx',
-        import.meta.url
-      ).pathname,
+    const source = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/page.tsx'),
       'utf-8'
     );
 
@@ -57,12 +54,8 @@ describe('ShareViewer — SHARE-02, SHARE-03', () => {
   });
 
   it('ResultsView imports and renders ShareButton (SHARE-01 wired)', async () => {
-    const fs = await import('fs/promises');
-    const source = await fs.readFile(
-      new URL(
-        '../../../src/components/results/ResultsView.tsx',
-        import.meta.url
-      ).pathname,
+    const source = await readFile(
+      resolve(projectRoot, 'src/components/results/ResultsView.tsx'),
       'utf-8'
     );
 
