@@ -3,6 +3,7 @@ import { shareLinks } from '@/db/schema/share-links';
 import { analysisCache } from '@/db/schema/analysis-cache';
 import { renderCache } from '@/db/schema/render-cache';
 import { urlSnapshots } from '@/db/schema/url-snapshots';
+import { galleryItems } from '@/db/schema/gallery-items';
 
 // Helper: extract column names from a Drizzle table object
 function getColumnNames(table: Record<string, unknown>): string[] {
@@ -85,6 +86,32 @@ describe('Database schema — INFRA-01', () => {
 
     it('does not contain raw input columns (PRIV-03)', () => {
       const cols = getColumnNames(urlSnapshots as unknown as Record<string, unknown>);
+      for (const banned of BANNED_COLUMNS) {
+        expect(cols).not.toContain(banned);
+      }
+    });
+  });
+
+  describe('gallery_items table', () => {
+    it('has required columns (INFRA-01)', () => {
+      const cols = getColumnNames(galleryItems as unknown as Record<string, unknown>);
+      expect(cols).toContain('id');
+      expect(cols).toContain('parameter_vector');
+      expect(cols).toContain('version_info');
+      expect(cols).toContain('style_name');
+      expect(cols).toContain('created_at');
+      expect(cols).toContain('report_count');
+      expect(cols).toContain('flagged');
+    });
+
+    it('has moderation columns for SEC-06', () => {
+      const cols = getColumnNames(galleryItems as unknown as Record<string, unknown>);
+      expect(cols).toContain('report_count');
+      expect(cols).toContain('flagged');
+    });
+
+    it('does not contain raw input columns (PRIV-03)', () => {
+      const cols = getColumnNames(galleryItems as unknown as Record<string, unknown>);
       for (const banned of BANNED_COLUMNS) {
         expect(cols).not.toContain(banned);
       }

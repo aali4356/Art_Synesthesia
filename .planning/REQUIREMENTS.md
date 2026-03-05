@@ -136,9 +136,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Sharing
 
-- [ ] **SHARE-01**: User can generate share link with random UUID; link stores only parameter vector, version info, and style
-- [ ] **SHARE-02**: Share link recipient sees artwork, parameter panel, and metadata but NOT original input text
-- [ ] **SHARE-03**: Original input only shown to creator if they have the generation in their session
+- [x] **SHARE-01**: User can generate share link with random UUID; link stores only parameter vector, version info, and style
+- [x] **SHARE-02**: Share link recipient sees artwork, parameter panel, and metadata but NOT original input text
+- [x] **SHARE-03**: Original input only shown to creator if they have the generation in their session
 
 ### Gallery
 
@@ -160,16 +160,16 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Privacy & Security
 
-- [ ] **PRIV-01**: Generating art does not publish anything; it is local and ephemeral
-- [ ] **PRIV-02**: Raw input text never logged server-side beyond duration of analysis request
-- [ ] **PRIV-03**: Gallery entries store parameters, metadata, version info, thumbnail, optional title — NOT raw input
-- [ ] **PRIV-04**: Local-only mode for text: analysis runs client-side, no server requests except initial page load, lock icon indicator
+- [x] **PRIV-01**: Generating art does not publish anything; it is local and ephemeral
+- [x] **PRIV-02**: Raw input text never logged server-side beyond duration of analysis request
+- [x] **PRIV-03**: Gallery entries store parameters, metadata, version info, thumbnail, optional title — NOT raw input
+- [x] **PRIV-04**: Local-only mode for text: analysis runs client-side, no server requests except initial page load, lock icon indicator
 - [ ] **SEC-01**: SSRF protection: block private IP ranges, internal hostnames, restrict to http/https, resolve DNS before connecting
 - [ ] **SEC-02**: URL fetch limits: 10-second timeout, 5MB max response, max 3 redirects, strip cookies/auth headers
 - [ ] **SEC-03**: Rate limiting: max 10 URL analyses per IP per hour with remaining quota shown in UI
-- [ ] **SEC-04**: Gallery rate limiting: max 10 saves per IP per day
-- [ ] **SEC-05**: Profanity/abuse filter on gallery titles and visible input previews
-- [ ] **SEC-06**: Gallery items flagged for review after 3 reports; admin route to review and remove
+- [x] **SEC-04**: Gallery rate limiting: max 10 saves per IP per day
+- [x] **SEC-05**: Profanity/abuse filter on gallery titles and visible input previews
+- [x] **SEC-06**: Gallery items flagged for review after 3 reports; admin route to review and remove
 
 ### Accessibility
 
@@ -187,10 +187,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: PostgreSQL database via Drizzle ORM for gallery, cached analyses, version tracking
-- [ ] **INFRA-02**: Analysis cache keyed by inputHash + versions with 7-day TTL for anonymous, permanent for gallery
-- [ ] **INFRA-03**: Render cache keyed by full version + style + resolution with 24h TTL for thumbnails, 7 days for full renders
-- [ ] **INFRA-04**: URL snapshot cache keyed by canonicalizedUrl + timestamp, permanent until re-fetch
+- [x] **INFRA-01**: PostgreSQL database via Drizzle ORM for gallery, cached analyses, version tracking
+- [x] **INFRA-02**: Analysis cache keyed by inputHash + versions with 7-day TTL for anonymous, permanent for gallery
+- [x] **INFRA-03**: Render cache keyed by full version + style + resolution with 24h TTL for thumbnails, 7 days for full renders
+- [x] **INFRA-04**: URL snapshot cache keyed by canonicalizedUrl + timestamp, permanent until re-fetch
 
 ## v2 Requirements
 
@@ -311,20 +311,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-01 | Phase 6 | Pending |
 | SEC-02 | Phase 6 | Pending |
 | SEC-03 | Phase 6 | Pending |
-| INFRA-01 | Phase 7 | Pending |
-| INFRA-02 | Phase 7 | Pending |
-| INFRA-03 | Phase 7 | Pending |
-| INFRA-04 | Phase 7 | Pending |
-| SHARE-01 | Phase 7 | Pending |
-| SHARE-02 | Phase 7 | Pending |
-| SHARE-03 | Phase 7 | Pending |
-| PRIV-01 | Phase 7 | Pending |
-| PRIV-02 | Phase 7 | Pending |
-| PRIV-03 | Phase 7 | Pending |
-| PRIV-04 | Phase 7 | Pending |
-| SEC-04 | Phase 7 | Pending |
-| SEC-05 | Phase 7 | Pending |
-| SEC-06 | Phase 7 | Pending |
+| INFRA-01 | Phase 7 | Complete |
+| INFRA-02 | Phase 7 | Complete |
+| INFRA-03 | Phase 7 | Complete |
+| INFRA-04 | Phase 7 | Complete |
+| SHARE-01 | Phase 7 | Complete |
+| SHARE-02 | Phase 7 | Complete |
+| SHARE-03 | Phase 7 | Complete |
+| PRIV-01 | Phase 7 | Complete |
+| PRIV-02 | Phase 7 | Complete |
+| PRIV-03 | Phase 7 | Complete |
+| PRIV-04 | Phase 7 | Complete |
+| SEC-04 | Phase 7 | Complete |
+| SEC-05 | Phase 7 | Complete |
+| SEC-06 | Phase 7 | Complete |
 | GAL-01 | Phase 8 | Pending |
 | GAL-02 | Phase 8 | Pending |
 | GAL-03 | Phase 8 | Pending |

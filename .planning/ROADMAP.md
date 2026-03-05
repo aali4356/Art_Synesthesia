@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Geometric Renderer & Canvas UI** - First rendering style, canvas display, translation panel with provenance
 - [x] **Phase 5: Additional Renderers** - Organic, particle, and typographic styles with style selector previews
 - [x] **Phase 6: URL & Data Input** - URL analyzer with SSRF protection, data analyzer for CSV/JSON, rate limiting
-- [ ] **Phase 7: Database, Sharing & Privacy** - PostgreSQL schema, share links, caching infrastructure, privacy model
+- [x] **Phase 7: Database, Sharing & Privacy** - PostgreSQL schema, share links, caching infrastructure, privacy model
 - [ ] **Phase 8: Gallery & Compare** - Gallery browse/save/filter, compare mode with parameter diff, moderation
 - [ ] **Phase 9: Export & Accessibility** - High-res PNG export, SVG export, frame option, keyboard navigation, alt text
 
@@ -151,7 +151,8 @@ Plans:
 - [x] 07-04: Share link generation and resolution (POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer)
 - [x] 07-05: ShareButton component, ResultsView wiring, share link API tests, ShareViewer privacy tests
 - [x] 07-06: Profanity filter (obscenity), gallery rate limiting (10/IP/day), report + admin review routes (SEC-04, SEC-05, SEC-06)
-- [x] 07-07: Lock icon in InputZone (PRIV-04), privacy tests (PRIV-01/02/03/04), rate-limit/moderation tests (SEC-04/05/06) — Phase 7 complete
+- [x] 07-07: Lock icon in InputZone (PRIV-04), privacy tests (PRIV-01/02/03/04), rate-limit/moderation tests (SEC-04/05/06)
+- [x] 07-08: ShareViewer canvas rendering (SHARE-02 gap closure), InputZone redundant check cleanup (ISSUE-4) — Phase 7 complete
 
 ### Phase 8: Gallery & Compare
 **Goal**: Users can browse, save, and compare artwork in a public gallery with moderation controls
