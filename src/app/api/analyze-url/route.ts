@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { safeFetch } from '@/lib/fetch/safe-fetch';
 import { analyzeUrlContent } from '@/lib/analysis/url';
 import { canonicalizeUrl } from '@/lib/canonicalize/url';
+import { getUrlSnapshot, setUrlSnapshot } from '@/lib/cache/db-cache';
 
 // ---------------------------------------------------------------------------
 // Rate limiting (SEC-03): 10 requests per IP per hour, sliding window
@@ -24,19 +25,6 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number } {
   entry.count++;
   return { allowed: true, remaining: MAX_REQUESTS - entry.count };
 }
-
-// ---------------------------------------------------------------------------
-// Snapshot cache (URL-03): in-memory, ephemeral until Phase 7 adds DB
-// ---------------------------------------------------------------------------
-
-interface CachedResult {
-  signals: Record<string, number>;
-  title: string;
-  metadata: { linkCount: number; imageCount: number; dominantColors: string[] };
-  timestamp: number;
-}
-
-const snapshotCache = new Map<string, CachedResult>();
 
 // ---------------------------------------------------------------------------
 // POST /api/analyze-url
@@ -94,12 +82,12 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Snapshot cache check (skip if mode === 'live' or refetch === true)
+  // DB snapshot cache check (skip if mode === 'live' or refetch === true)
   const isLive = mode === 'live';
   const shouldRefetch = refetch === true;
 
   if (!isLive && !shouldRefetch) {
-    const cached = snapshotCache.get(canonical);
+    const cached = await getUrlSnapshot(canonical);
     if (cached) {
       return NextResponse.json(
         {
@@ -128,14 +116,12 @@ export async function POST(request: Request): Promise<Response> {
   // Analyze content
   const result = analyzeUrlContent(html, canonical);
 
-  // Store in snapshot cache
-  const cachedResult: CachedResult = {
+  // Store in DB snapshot cache
+  await setUrlSnapshot(canonical, {
     signals: result.signals,
     title: result.title,
     metadata: result.metadata,
-    timestamp: Date.now(),
-  };
-  snapshotCache.set(canonical, cachedResult);
+  });
 
   return NextResponse.json(
     {

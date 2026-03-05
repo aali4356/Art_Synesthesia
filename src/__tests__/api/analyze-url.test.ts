@@ -14,16 +14,31 @@ vi.mock('@/lib/analysis/url', () => ({
   }),
 }));
 
+// Mock DB cache -- replaces the in-memory snapshotCache Map (Phase 7 migration)
+vi.mock('@/lib/cache/db-cache', () => ({
+  getUrlSnapshot: vi.fn().mockResolvedValue(null),
+  setUrlSnapshot: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { safeFetch } from '@/lib/fetch/safe-fetch';
 import { analyzeUrlContent } from '@/lib/analysis/url';
+import { getUrlSnapshot, setUrlSnapshot } from '@/lib/cache/db-cache';
 import { POST } from '@/app/api/analyze-url/route';
 
 const mockSafeFetch = vi.mocked(safeFetch);
 const mockAnalyzeUrlContent = vi.mocked(analyzeUrlContent);
+const mockGetUrlSnapshot = vi.mocked(getUrlSnapshot);
+const mockSetUrlSnapshot = vi.mocked(setUrlSnapshot);
 
 const DEFAULT_ANALYZE_RESULT = {
   signals: { linkDensity: 0.1, contentToHtmlRatio: 0.5 },
   extractedText: 'Test page content',
+  title: 'Test',
+  metadata: { linkCount: 2, imageCount: 0, dominantColors: [] },
+};
+
+const DEFAULT_SNAPSHOT_PAYLOAD = {
+  signals: { linkDensity: 0.1, contentToHtmlRatio: 0.5 },
   title: 'Test',
   metadata: { linkCount: 2, imageCount: 0, dominantColors: [] },
 };
@@ -48,6 +63,8 @@ describe('POST /api/analyze-url', () => {
     vi.resetAllMocks();
     mockSafeFetch.mockResolvedValue('<html><title>Test</title></html>');
     mockAnalyzeUrlContent.mockReturnValue(DEFAULT_ANALYZE_RESULT);
+    mockGetUrlSnapshot.mockResolvedValue(null);
+    mockSetUrlSnapshot.mockResolvedValue(undefined);
   });
 
   describe('rate limiting (SEC-03)', () => {
@@ -117,14 +134,39 @@ describe('POST /api/analyze-url', () => {
       const ip = '20.0.0.1';
       const url = 'https://snapshot-test.example.com';
 
+      // First call: no cache, fetch and store
+      mockGetUrlSnapshot.mockResolvedValueOnce(null);
       const res1 = await POST(makeRequest({ url }, ip) as never);
       expect(res1.status).toBe(200);
 
+      // Second call: cache hit returns stored snapshot
+      mockGetUrlSnapshot.mockResolvedValueOnce(DEFAULT_SNAPSHOT_PAYLOAD);
       const res2 = await POST(makeRequest({ url }, ip) as never);
       expect(res2.status).toBe(200);
 
-      // safeFetch should have been called only once (snapshot cached)
+      // safeFetch should have been called only once (snapshot cached on second call)
       expect(mockSafeFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns cached: true when snapshot hit', async () => {
+      const ip = '20.0.0.4';
+      const url = 'https://cached-flag-test.example.com';
+
+      mockGetUrlSnapshot.mockResolvedValueOnce(DEFAULT_SNAPSHOT_PAYLOAD);
+      const res = await POST(makeRequest({ url }, ip) as never);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.cached).toBe(true);
+    });
+
+    it('calls setUrlSnapshot after fetching new URL', async () => {
+      const ip = '20.0.0.5';
+      const url = 'https://store-snapshot-test.example.com';
+
+      mockGetUrlSnapshot.mockResolvedValueOnce(null);
+      await POST(makeRequest({ url }, ip) as never);
+
+      expect(mockSetUrlSnapshot).toHaveBeenCalledTimes(1);
     });
   });
 
