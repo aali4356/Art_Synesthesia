@@ -145,7 +145,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 07-01: PostgreSQL schema and Drizzle ORM setup
+- [x] 07-01: Drizzle ORM dependencies and infrastructure foundation
 - [ ] 07-02: Caching infrastructure (analysis, render, URL snapshot caches)
 - [ ] 07-03: Share link generation and resolution
 - [ ] 07-04: Privacy model and local-only mode
@@ -197,8 +197,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 2. Parameter System & Color | 3/3 | Complete | 2026-03-03 |
 | 3. Text Analysis & Input UI | 3/3 | Complete | 2026-03-03 |
 | 4. Geometric Renderer & Canvas UI | 4/4 | Complete | 2026-03-04 |
-| 5. Additional Renderers | 3/7 | In progress (data layers done, draw modules pending) | - |
-| 6. URL & Data Input | 0/4 | Not started | - |
-| 7. Database, Sharing & Privacy | 0/4 | Not started | - |
+| 5. Additional Renderers | 7/7 | Complete | 2026-03-04 |
+| 6. URL & Data Input | 4/4 | Complete | 2026-03-04 |
+| 7. Database, Sharing & Privacy | 1/4 | In Progress | - |
 | 8. Gallery & Compare | 0/4 | Not started | - |
 | 9. Export & Accessibility | 0/4 | Not started | - |
