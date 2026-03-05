@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 7 Plan 03 complete -- DB-backed cache helpers, analyze-url migrated to PostgreSQL, cron cleanup route
-last_updated: "2026-03-04T23:25:00.000Z"
-last_activity: 2026-03-04 -- 07-03 db-cache.ts, /api/cache, /api/cron/cleanup, vercel.json
+stopped_at: Phase 7 Plan 04 complete -- share link API routes, share page, and ShareViewer
+last_updated: "2026-03-04T23:55:00.000Z"
+last_activity: 2026-03-04 -- 07-04 POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer
 progress:
   total_phases: 9
   completed_phases: 6
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** Any input deterministically produces beautiful, unique artwork with fully transparent translation rules
-**Current focus:** Phase 6 -- URL and Data Input
+**Current focus:** Phase 7 -- Database Sharing & Privacy
 
 ## Current Position
 
 Phase: 7 of 9 (Database Sharing & Privacy) -- In Progress
-Plan: 07-03 complete; DB-backed cache helpers created; analyze-url migrated to PostgreSQL; /api/cache and /api/cron/cleanup routes added.
-Status: Plan 07-03 done. Next: Plan 07-04 (share link generation and resolution).
-Last activity: 2026-03-04 -- 07-03 db-cache.ts, /api/cache, /api/cron/cleanup, vercel.json
+Plan: 07-04 complete; POST /api/share and GET /api/share/[id] API routes created; /share/[id] Server Component page added; ShareViewer client component has no raw input in props.
+Status: Plan 07-04 done. Next: Plan 07-05 (ShareButton wiring into ResultsView).
+Last activity: 2026-03-04 -- 07-04 POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer
 
-Progress: [########..] 78%
+Progress: [########..] 80%
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Progress: [########..] 78%
 | Phase 07 P01 | ~8min | 5 tasks | 9 files |
 | Phase 07 P02 | ~7min | 4 tasks | 10 files |
 | Phase 07 P03 | ~15min | 4 tasks | 6 files |
+| Phase 07 P04 | ~15min | 4 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -173,6 +174,10 @@ Recent decisions affecting current work:
 - [07-03]: analysisTtl()=7d, renderTtl(res)=24h for res<=200 else 7d; permanent entries use new Date('9999-12-31T23:59:59Z')
 - [07-03]: analyze-url tests use vi.mock('@/lib/cache/db-cache') with getUrlSnapshot/setUrlSnapshot mocks re-applied in beforeEach after vi.resetAllMocks()
 - [07-03]: Cron cleanup route requires CRON_SECRET env var; returns 401 if unset or mismatched
+- [07-04]: POST /api/share privacy gate checks 'rawInput' | 'inputText' | 'raw_input' in body -- rejects with 400 if found (SHARE-01)
+- [07-04]: GET /api/share/[id] returns only parameterVector, versionInfo, styleName, createdAt -- no raw input ever stored (SHARE-02)
+- [07-04]: ShareViewer props interface: parameterVector, versionInfo, styleName, createdAt only -- no raw input text (SHARE-03)
+- [07-04]: /share/[id] page is a Server Component; ShareButton wiring deferred to plan 07-05
 
 ### Pending Todos
 
@@ -184,6 +189,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T23:25:00.000Z
-Stopped at: Phase 7 Plan 03 complete -- caching infrastructure, analyze-url migrated to PostgreSQL
-Resume file: .planning/phases/07-database-sharing-privacy/07-03-SUMMARY.md
+Last session: 2026-03-04T23:55:00.000Z
+Stopped at: Phase 7 Plan 04 complete -- share link API routes, /share/[id] page, ShareViewer
+Resume file: .planning/phases/07-database-sharing-privacy/07-04-SUMMARY.md
