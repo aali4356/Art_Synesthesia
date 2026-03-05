@@ -146,7 +146,7 @@ Plans:
 
 Plans:
 - [x] 07-01: Drizzle ORM dependencies and infrastructure foundation
-- [ ] 07-02: Caching infrastructure (analysis, render, URL snapshot caches)
+- [x] 07-02: PostgreSQL schema definitions and test layer (INFRA-01 through INFRA-04, PRIV-02/03)
 - [ ] 07-03: Share link generation and resolution
 - [ ] 07-04: Privacy model and local-only mode
 
