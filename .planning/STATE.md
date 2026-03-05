@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 7 Plan 06 complete -- profanity filter, gallery rate limiting, report and admin routes
-last_updated: "2026-03-04T23:35:00.000Z"
-last_activity: 2026-03-04 -- 07-06 profanity.ts, POST /api/gallery, POST /api/moderation/report, GET/DELETE /api/admin/review
+stopped_at: Phase 7 complete — all 7 plans done, 458 tests passing
+last_updated: "2026-03-04T23:45:00.000Z"
+last_activity: 2026-03-04 -- 07-07 lock icon, privacy tests, moderation tests, Phase 7 complete
 progress:
   total_phases: 9
-  completed_phases: 6
-  total_plans: 26
-  completed_plans: 28
-  percent: 83
+  completed_phases: 7
+  total_plans: 29
+  completed_plans: 29
+  percent: 89
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** Any input deterministically produces beautiful, unique artwork with fully transparent translation rules
-**Current focus:** Phase 7 -- Database Sharing & Privacy
+**Current focus:** Phase 8 -- Gallery & Compare
 
 ## Current Position
 
-Phase: 7 of 9 (Database Sharing & Privacy) -- In Progress
-Plan: 07-06 complete; profanity filter singleton, gallery save endpoint with rate limiting and privacy gate, report flagging endpoint, admin review route with ADMIN_SECRET auth.
-Status: Plan 07-06 done. Next: Plan 07-07.
-Last activity: 2026-03-04 -- 07-06 profanity.ts, POST /api/gallery, POST /api/moderation/report, GET/DELETE /api/admin/review
+Phase: 7 of 9 (Database Sharing & Privacy) -- Complete
+All 7 plans executed. 458 tests passing. All 14 Phase 7 requirements covered.
+Next: Phase 8 -- Gallery & Compare (plans 08-01 through 08-04)
+Last activity: 2026-03-04 -- 07-07 InputZone lock icon, privacy tests (PRIV-01/02/03/04), rate-limit/moderation tests (SEC-04/05/06)
 
-Progress: [########..] 83%
+Progress: [##########] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 29
 - Average duration: ~10 min
-- Total execution time: ~145 min
+- Total execution time: ~160 min
 
 **By Phase:**
 
@@ -74,6 +74,7 @@ Progress: [########..] 83%
 | Phase 07 P04 | ~15min | 4 tasks | 4 files |
 | Phase 07 P05 | ~12min | 5 tasks | 4 files |
 | Phase 07 P06 | ~5min | 4 tasks | 4 files |
+| Phase 07 P07 | ~15min | 4 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -180,11 +181,14 @@ Recent decisions affecting current work:
 - [07-04]: GET /api/share/[id] returns only parameterVector, versionInfo, styleName, createdAt -- no raw input ever stored (SHARE-02)
 - [07-04]: ShareViewer props interface: parameterVector, versionInfo, styleName, createdAt only -- no raw input text (SHARE-03)
 - [07-04]: /share/[id] page is a Server Component; ShareButton wiring deferred to plan 07-05
-- [07-05]: viewer.test.ts uses fileURLToPath(import.meta.url) + resolve('../../../..') -- NOT new URL(relative, import.meta.url).pathname -- jsdom strips the drive prefix from URL.pathname on macOS paths with CloudStorage
+- [07-05]: viewer.test.ts uses dirname(fileURLToPath(import.meta.url)) + resolve(__dirname, '../../..') -- NOT resolve(thisFile, '../../../..') which goes one level too many from the file path
 - [07-05]: ShareButton sends only { vector, version, style } to POST /api/share; privacy gate verified by API test rejecting rawInput/inputText fields
 - [07-06]: Admin review route imports reportCounts from moderation/report route via relative path (../../moderation/report/route) to avoid circular Next.js route import issues
 - [07-06]: Gallery rate limit uses in-memory Map with sliding 24h window; gallerySaveMap module-level singleton persists across requests in a single server process (Phase 8 migrates to Redis/DB)
 - [07-06]: REPORT_FLAG_THRESHOLD=3 in-memory (Phase 7 stub); exported for admin route consumption and test assertions
+- [07-07]: Lock icon in InputZone conditionally rendered inside the `activeTab === 'text'` block; SVG padlock with aria-label for accessibility
+- [07-07]: Privacy tests use synchronous fs.readFileSync with __dirname (not import.meta.url) -- more reliable in vitest jsdom environment
+- [07-07]: Rate-limit test uses dynamic import inside test to import the gallery route fresh per test file isolation
 
 ### Pending Todos
 
@@ -196,6 +200,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T23:35:00.000Z
-Stopped at: Phase 7 Plan 06 complete -- profanity filter, gallery rate limiting, report and admin routes
-Resume file: .planning/phases/07-database-sharing-privacy/07-06-SUMMARY.md
+Last session: 2026-03-04T23:45:00.000Z
+Stopped at: Phase 7 complete -- lock icon, privacy tests, moderation tests, 458 tests passing
+Resume file: .planning/phases/07-database-sharing-privacy/07-07-SUMMARY.md

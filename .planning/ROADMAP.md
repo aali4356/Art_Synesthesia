@@ -150,6 +150,8 @@ Plans:
 - [x] 07-03: Caching infrastructure (DB-backed analysis, render, and URL snapshot caches; /api/cache; /api/cron/cleanup; vercel.json)
 - [x] 07-04: Share link generation and resolution (POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer)
 - [x] 07-05: ShareButton component, ResultsView wiring, share link API tests, ShareViewer privacy tests
+- [x] 07-06: Profanity filter (obscenity), gallery rate limiting (10/IP/day), report + admin review routes (SEC-04, SEC-05, SEC-06)
+- [x] 07-07: Lock icon in InputZone (PRIV-04), privacy tests (PRIV-01/02/03/04), rate-limit/moderation tests (SEC-04/05/06) — Phase 7 complete
 
 ### Phase 8: Gallery & Compare
 **Goal**: Users can browse, save, and compare artwork in a public gallery with moderation controls
@@ -200,6 +202,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 4. Geometric Renderer & Canvas UI | 4/4 | Complete | 2026-03-04 |
 | 5. Additional Renderers | 7/7 | Complete | 2026-03-04 |
 | 6. URL & Data Input | 4/4 | Complete | 2026-03-04 |
-| 7. Database, Sharing & Privacy | 5/7 | In Progress | - |
+| 7. Database, Sharing & Privacy | 7/7 | Complete | 2026-03-04 |
 | 8. Gallery & Compare | 0/4 | Not started | - |
 | 9. Export & Accessibility | 0/4 | Not started | - |
