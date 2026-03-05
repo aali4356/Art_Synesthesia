@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 7 Plan 04 complete -- share link API routes, share page, and ShareViewer
-last_updated: "2026-03-04T23:55:00.000Z"
-last_activity: 2026-03-04 -- 07-04 POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer
+stopped_at: Phase 7 Plan 05 complete -- ShareButton component, ResultsView wiring, share link and viewer tests
+last_updated: "2026-03-04T23:30:00.000Z"
+last_activity: 2026-03-04 -- 07-05 ShareButton, ResultsView wiring, share API tests, ShareViewer privacy tests
 progress:
   total_phases: 9
   completed_phases: 6
   total_plans: 26
-  completed_plans: 26
-  percent: 80
+  completed_plans: 27
+  percent: 82
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: 7 of 9 (Database Sharing & Privacy) -- In Progress
-Plan: 07-04 complete; POST /api/share and GET /api/share/[id] API routes created; /share/[id] Server Component page added; ShareViewer client component has no raw input in props.
-Status: Plan 07-04 done. Next: Plan 07-05 (ShareButton wiring into ResultsView).
-Last activity: 2026-03-04 -- 07-04 POST /api/share, GET /api/share/[id], /share/[id] page, ShareViewer
+Plan: 07-05 complete; ShareButton component created with privacy-safe POST; ResultsView wired; share API tests + ShareViewer privacy tests passing.
+Status: Plan 07-05 done. Next: Plan 07-06.
+Last activity: 2026-03-04 -- 07-05 ShareButton, ResultsView wiring, share API tests, ShareViewer privacy tests
 
 Progress: [########..] 80%
 
@@ -72,6 +72,7 @@ Progress: [########..] 80%
 | Phase 07 P02 | ~7min | 4 tasks | 10 files |
 | Phase 07 P03 | ~15min | 4 tasks | 6 files |
 | Phase 07 P04 | ~15min | 4 tasks | 4 files |
+| Phase 07 P05 | ~12min | 5 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -178,6 +179,8 @@ Recent decisions affecting current work:
 - [07-04]: GET /api/share/[id] returns only parameterVector, versionInfo, styleName, createdAt -- no raw input ever stored (SHARE-02)
 - [07-04]: ShareViewer props interface: parameterVector, versionInfo, styleName, createdAt only -- no raw input text (SHARE-03)
 - [07-04]: /share/[id] page is a Server Component; ShareButton wiring deferred to plan 07-05
+- [07-05]: viewer.test.ts uses fileURLToPath(import.meta.url) + resolve('../../../..') -- NOT new URL(relative, import.meta.url).pathname -- jsdom strips the drive prefix from URL.pathname on macOS paths with CloudStorage
+- [07-05]: ShareButton sends only { vector, version, style } to POST /api/share; privacy gate verified by API test rejecting rawInput/inputText fields
 
 ### Pending Todos
 
@@ -189,6 +192,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04T23:55:00.000Z
-Stopped at: Phase 7 Plan 04 complete -- share link API routes, /share/[id] page, ShareViewer
-Resume file: .planning/phases/07-database-sharing-privacy/07-04-SUMMARY.md
+Last session: 2026-03-04T23:30:00.000Z
+Stopped at: Phase 7 Plan 05 complete -- ShareButton, ResultsView wiring, share tests
+Resume file: .planning/phases/07-database-sharing-privacy/07-05-SUMMARY.md
