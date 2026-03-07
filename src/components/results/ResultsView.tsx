@@ -19,6 +19,7 @@ import { StyleSelector } from './StyleSelector';
 import { ParameterPanel } from './ParameterPanel';
 import { PipelineProgress } from '@/components/progress';
 import { ShareButton } from './ShareButton';
+import { GallerySaveModal } from '@/components/gallery/GallerySaveModal';
 
 interface ResultsViewProps {
   result: PipelineResult;
@@ -50,6 +51,9 @@ export function ResultsView({
   const [activeStyle, setActiveStyle] = useState<StyleName>('geometric');
   const [animationKey, setAnimationKey] = useState(0);
   const [shouldAnimate, setShouldAnimate] = useState(true);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [savedGalleryId, setSavedGalleryId] = useState<string | null>(null);
+  const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Track previous values to detect theme-only changes
   const prevCanonicalRef = useRef<string>('');
@@ -129,6 +133,18 @@ export function ResultsView({
   const handleRenderComplete = useCallback(() => {
     setShouldAnimate(false);
   }, []);
+
+  function captureCurrentThumbnail(): string {
+    if (!mainCanvasRef.current) return '';
+    const size = 200;
+    const thumb = document.createElement('canvas');
+    thumb.width = size;
+    thumb.height = size;
+    const ctx = thumb.getContext('2d');
+    if (!ctx) return '';
+    ctx.drawImage(mainCanvasRef.current, 0, 0, size, size);
+    return thumb.toDataURL('image/png');
+  }
 
   // Render the active canvas component
   function renderCanvas() {
@@ -231,8 +247,38 @@ export function ResultsView({
               styleName={activeStyle}
             />
           </div>
+          <div className="mt-2">
+            {savedGalleryId ? (
+              <p className="text-xs text-muted-foreground">
+                Saved to gallery.{' '}
+                <a href={`/gallery/${savedGalleryId}`} className="underline">View</a>
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowSaveModal(true)}
+                className="btn-ghost text-sm w-full"
+              >
+                Save to Gallery
+              </button>
+            )}
+          </div>
         </div>
       </div>
+      {showSaveModal && (
+        <GallerySaveModal
+          parameterVector={result.vector}
+          versionInfo={CURRENT_VERSION}
+          styleName={activeStyle}
+          inputTextPreview={inputText.slice(0, 50)}
+          thumbnailDataUrl={captureCurrentThumbnail()}
+          onClose={() => setShowSaveModal(false)}
+          onSaved={(id) => {
+            setSavedGalleryId(id);
+            setShowSaveModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
