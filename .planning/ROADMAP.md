@@ -168,7 +168,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 08-01: Gallery save flow (opt-in, preview, edit)
+- [x] 08-01: Gallery save flow (opt-in, preview, edit)
 - [ ] 08-02: Gallery browse page (filter, sort, pagination)
 - [ ] 08-03: Compare mode (side-by-side rendering and parameter diff)
 - [ ] 08-04: Moderation (report, profanity filter, admin review)

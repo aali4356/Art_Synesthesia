@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Phase 7 fully closed -- gallery_items schema stub, REQUIREMENTS.md all 14 Phase 7 IDs Complete, 463 tests passing
-last_updated: "2026-03-05T20:16:17.888Z"
-last_activity: 2026-03-05 -- 07-09 gallery_items schema stub (INFRA-01), REQUIREMENTS.md traceability update
+status: in_progress
+stopped_at: Phase 8 plan 08-01 complete -- gallery save flow, DB layer, save modal, 475 tests passing
+last_updated: "2026-03-07T17:17:00.000Z"
+last_activity: 2026-03-07 -- 08-01 gallery save flow (schema, db-gallery, creator-token, API upgrade, GallerySaveModal, ResultsView wiring)
 progress:
   total_phases: 9
   completed_phases: 7
-  total_plans: 34
-  completed_plans: 34
-  percent: 89
+  total_plans: 35
+  completed_plans: 35
+  percent: 90
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 7 of 9 (Database Sharing & Privacy) -- Fully Closed
-All 9 plans executed (including gap closures 07-08 and 07-09). 463 tests passing. All 14 Phase 7 requirements marked Complete in REQUIREMENTS.md.
-Next: Phase 8 -- Gallery & Compare (plans 08-01 through 08-04)
-Last activity: 2026-03-05 -- 07-09 gallery_items schema stub (INFRA-01), REQUIREMENTS.md traceability update
+Phase: 8 of 9 (Gallery & Compare) -- In Progress
+Plan 08-01 complete: gallery save flow implemented. 475 tests passing.
+Next: Phase 8 Plan 08-02 -- Gallery Browse Page
+Last activity: 2026-03-07 -- 08-01 gallery save flow (GAL-01, GAL-02, GAL-06, GAL-08)
 
 Progress: [##########] 89%
 
@@ -196,6 +196,10 @@ Recent decisions affecting current work:
 - [07-08]: Canvas components accept animated={false} for static share view — no rAF loop needed
 - [07-09]: gallery_items.ts JSDoc must not contain banned column name literals (raw_input etc.) — no-raw-input.test.ts scans raw source text, not just column definitions; use "verbatim input" in comments instead
 - [07-09]: REQUIREMENTS.md traceability: all 14 Phase 7 IDs (INFRA-01..04, SHARE-01..03, PRIV-01..04, SEC-04..06) marked Complete
+- [08-01]: db-gallery.ts is sole importer of @/db in gallery layer — all route tests mock @/lib/gallery/db-gallery (not @/db) to avoid neon() throwing without DATABASE_URL in test env
+- [08-01]: rate-limit.test.ts dynamically imports gallery route which now imports db-gallery; needs vi.mock('@/lib/gallery/db-gallery') added to avoid DB connection error in test env
+- [08-01]: creatorToken stored in localStorage under key 'synesthesia-creator-token'; clearing browser storage removes ownership (accepted limitation for no-auth design)
+- [08-01]: captureCurrentThumbnail() in ResultsView uses a 200x200 offscreen canvas drawn from mainCanvasRef; returns empty string if no canvas ref
 
 ### Pending Todos
 
@@ -207,6 +211,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-05T15:10:00.000Z
-Stopped at: Phase 7 fully closed -- gallery_items schema stub, REQUIREMENTS.md all 14 Phase 7 IDs Complete, 463 tests passing
-Resume file: .planning/phases/07-database-sharing-privacy/07-09-SUMMARY.md
+Last session: 2026-03-07T17:17:00.000Z
+Stopped at: Phase 8 Plan 08-01 complete -- gallery save flow, DB layer, GallerySaveModal, 475 tests passing
+Resume file: .planning/phases/08-gallery-compare/08-01-SUMMARY.md
