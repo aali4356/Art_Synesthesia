@@ -1,5 +1,25 @@
 import { describe, it, expect, vi } from 'vitest';
 
+// Mock db-gallery so rate-limit tests don't need a real database connection.
+// The gallery route now writes to DB in Phase 8; mocking returns a valid stub.
+vi.mock('@/lib/gallery/db-gallery', () => ({
+  createGalleryItem: vi.fn().mockResolvedValue({
+    id: 'rate-limit-stub-id',
+    parameterVector: {},
+    versionInfo: {},
+    styleName: 'geometric',
+    title: null,
+    inputPreview: null,
+    thumbnailData: null,
+    creatorToken: null,
+    createdAt: new Date(),
+    reportCount: 0,
+    flagged: false,
+    upvoteCount: 0,
+  }),
+  getGalleryItems: vi.fn().mockResolvedValue([]),
+}));
+
 /**
  * SEC-04: Gallery save rate limiter caps at 10 saves per IP per day.
  */
