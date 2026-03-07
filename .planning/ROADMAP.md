@@ -169,8 +169,8 @@ Plans:
 
 Plans:
 - [x] 08-01: Gallery save flow (opt-in, preview, edit)
-- [ ] 08-02: Gallery browse page (filter, sort, pagination)
-- [ ] 08-03: Compare mode (side-by-side rendering and parameter diff)
+- [x] 08-02: Gallery browse page (filter, sort, pagination)
+- [x] 08-03: Compare mode (side-by-side rendering and parameter diff)
 - [ ] 08-04: Moderation (report, profanity filter, admin review)
 
 ### Phase 9: Export & Accessibility
@@ -205,5 +205,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9
 | 5. Additional Renderers | 7/7 | Complete | 2026-03-04 |
 | 6. URL & Data Input | 4/4 | Complete | 2026-03-04 |
 | 7. Database, Sharing & Privacy | 7/7 | Complete | 2026-03-04 |
-| 8. Gallery & Compare | 0/4 | Not started | - |
+| 8. Gallery & Compare | 2/4 | In Progress | - |
 | 9. Export & Accessibility | 0/4 | Not started | - |

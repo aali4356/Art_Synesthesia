@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Phase 8 plan 08-01 complete -- gallery save flow, DB layer, save modal, 475 tests passing
-last_updated: "2026-03-07T17:17:00.000Z"
-last_activity: 2026-03-07 -- 08-01 gallery save flow (schema, db-gallery, creator-token, API upgrade, GallerySaveModal, ResultsView wiring)
+stopped_at: Phase 8 plan 08-04 complete -- moderation upgrade DB-backed, 500 tests passing
+last_updated: "2026-03-07T17:35:00.000Z"
+last_activity: 2026-03-07 -- 08-04 moderation upgrade (report route, admin review, db-report tests, gallery-upvote tests)
 progress:
   total_phases: 9
   completed_phases: 7
   total_plans: 35
   completed_plans: 35
-  percent: 90
+  percent: 95
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: 8 of 9 (Gallery & Compare) -- In Progress
-Plan 08-01 complete: gallery save flow implemented. 475 tests passing.
-Next: Phase 8 Plan 08-02 -- Gallery Browse Page
-Last activity: 2026-03-07 -- 08-01 gallery save flow (GAL-01, GAL-02, GAL-06, GAL-08)
+Phase: 8 of 9 (Gallery & Compare) -- Complete (all plans 08-01 through 08-04 done)
+Plan 08-04 complete: moderation DB upgrade, DB-backed tests, 500 tests passing.
+Next: Phase 9 -- Export & Polish
+Last activity: 2026-03-07 -- 08-04 moderation upgrade (GAL-07, SEC-06 DB-backed, db-report tests, gallery-upvote tests)
 
 Progress: [##########] 89%
 
@@ -77,6 +77,10 @@ Progress: [##########] 89%
 | Phase 07 P07 | ~15min | 4 tasks | 8 files |
 | Phase 07 P08 | ~10min | 4 tasks | 3 files |
 | Phase 07 P09 | ~5min | 5 tasks | 4 files |
+| Phase 08 P01 | ~10min | 6 tasks | 8 files |
+| Phase 08 P02 | ~12min | 5 tasks | 6 files |
+| Phase 08 P03 | ~10min | 5 tasks | 5 files |
+| Phase 08 P04 | ~12min | 6 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -200,6 +204,13 @@ Recent decisions affecting current work:
 - [08-01]: rate-limit.test.ts dynamically imports gallery route which now imports db-gallery; needs vi.mock('@/lib/gallery/db-gallery') added to avoid DB connection error in test env
 - [08-01]: creatorToken stored in localStorage under key 'synesthesia-creator-token'; clearing browser storage removes ownership (accepted limitation for no-auth design)
 - [08-01]: captureCurrentThumbnail() in ResultsView uses a 200x200 offscreen canvas drawn from mainCanvasRef; returns empty string if no canvas ref
+- [08-02]: GalleryGrid wraps GalleryFilters in Suspense because useSearchParams() requires Suspense boundary in Next.js App Router
+- [08-02]: GalleryViewer seed = 'gallery-' + id + styleName + engineVersion (more unique than share seed per-item; avoids visual collisions for same style)
+- [08-02]: localStorage not fully functional in jsdom tests — stub with { getItem, setItem, removeItem, clear } on globalThis in beforeEach
+- [08-02]: Next.js Link mock must spread ...rest props onto anchor to pass aria-label; without it accessible name computed from inner text content only
+- [08-04]: Moderation route tests require vi.mock('@/lib/gallery/db-gallery') -- dynamic imports of routes pull in db-gallery which calls neon() at module init without DATABASE_URL
+- [08-04]: vi.clearAllMocks() (not vi.resetAllMocks()) in beforeEach preserves mock implementations set at module level in vi.mock() factory
+- [08-04]: REQUIREMENTS.md traceability: all 12 Phase 8 IDs (GAL-01..08, COMP-01..04) marked Complete
 
 ### Pending Todos
 
@@ -211,6 +222,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T17:17:00.000Z
-Stopped at: Phase 8 Plan 08-01 complete -- gallery save flow, DB layer, GallerySaveModal, 475 tests passing
-Resume file: .planning/phases/08-gallery-compare/08-01-SUMMARY.md
+Last session: 2026-03-07T17:35:00.000Z
+Stopped at: Phase 8 Plan 08-04 complete -- moderation DB-backed, 500 tests passing, GAL-01..GAL-08 + COMP-01..COMP-04 Complete
+Resume file: .planning/phases/08-gallery-compare/08-04-SUMMARY.md
