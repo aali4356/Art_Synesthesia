@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
+import { incrementReportCount } from '@/lib/gallery/db-gallery';
 
 /**
  * POST /api/moderation/report
  *
- * Reports a gallery item. After 3 reports, item is flagged for review (SEC-06).
- *
- * Phase 7 stub: Uses in-memory map. Phase 8 upgrades to DB-backed report_count column.
+ * Reports a gallery item (GAL-07).
+ * Phase 8: DB-backed via incrementReportCount — replaces Phase 7 in-memory stub.
  *
  * Body: { itemId: string }
+ *
+ * Response:
+ *   200: { reported: true, reportCount: number, flagged: boolean, message: string }
+ *   400: { error: string }  (missing itemId or invalid JSON)
+ *   404: { error: string }  (item not found in DB)
  */
-
-// In-memory report tracking (Phase 7 stub; Phase 8 replaces with DB)
-const reportCounts = new Map<string, number>();
-const REPORT_FLAG_THRESHOLD = 3;
-
 export async function POST(request: Request): Promise<Response> {
   let body: Record<string, unknown>;
   try {
@@ -30,21 +30,23 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const current = reportCounts.get(itemId) ?? 0;
-  const newCount = current + 1;
-  reportCounts.set(itemId, newCount);
+  const result = await incrementReportCount(itemId);
 
-  const flagged = newCount >= REPORT_FLAG_THRESHOLD;
+  if (!result) {
+    return NextResponse.json(
+      { error: 'Gallery item not found' },
+      { status: 404 }
+    );
+  }
+
+  const { reportCount, flagged } = result;
 
   return NextResponse.json({
     reported: true,
-    reportCount: newCount,
+    reportCount,
     flagged,
     message: flagged
       ? 'Item flagged for admin review'
-      : `Item reported (${newCount}/${REPORT_FLAG_THRESHOLD} for flagging)`,
+      : `Item reported (${reportCount}/3 for flagging)`,
   });
 }
-
-// Export for testing and admin route
-export { reportCounts, REPORT_FLAG_THRESHOLD };
