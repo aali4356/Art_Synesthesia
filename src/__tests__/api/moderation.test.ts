@@ -1,14 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+// Mock db-gallery so tests don't need a real database connection
+vi.mock('@/lib/gallery/db-gallery', () => ({
+  incrementReportCount: vi.fn(),
+  getFlaggedItems: vi.fn(),
+  deleteFlaggedItem: vi.fn(),
+}));
+
+import { incrementReportCount, getFlaggedItems } from '@/lib/gallery/db-gallery';
+const mockIncrement = vi.mocked(incrementReportCount);
+const mockGetFlagged = vi.mocked(getFlaggedItems);
+
 /**
  * SEC-06: Items with 3+ reports get flagged; admin can review/remove.
+ * Phase 8: DB-backed via incrementReportCount.
  */
 describe('Moderation — SEC-06', () => {
   beforeEach(() => {
-    vi.resetModules();
+    vi.clearAllMocks();
   });
 
   it('item is not flagged after 1 report', async () => {
+    mockIncrement.mockResolvedValue({ reportCount: 1, flagged: false });
     const { POST } = await import('@/app/api/moderation/report/route');
     const request = new Request('http://localhost/api/moderation/report', {
       method: 'POST',
@@ -16,33 +29,22 @@ describe('Moderation — SEC-06', () => {
       body: JSON.stringify({ itemId: 'item-test-1' }),
     });
     const response = await POST(request);
-    const body = await response.json();
+    const body = await response.json() as { flagged: boolean; reportCount: number };
     expect(body.flagged).toBe(false);
     expect(body.reportCount).toBe(1);
   });
 
   it('item is flagged after 3 reports', async () => {
+    mockIncrement.mockResolvedValue({ reportCount: 3, flagged: true });
     const { POST } = await import('@/app/api/moderation/report/route');
-    const itemId = 'item-test-flag';
-
-    for (let i = 0; i < 2; i++) {
-      await POST(
-        new Request('http://localhost/api/moderation/report', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ itemId }),
-        })
-      );
-    }
-
     const response = await POST(
       new Request('http://localhost/api/moderation/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId }),
+        body: JSON.stringify({ itemId: 'item-test-flag' }),
       })
     );
-    const body = await response.json();
+    const body = await response.json() as { flagged: boolean; reportCount: number };
     expect(body.flagged).toBe(true);
     expect(body.reportCount).toBe(3);
   });
@@ -68,6 +70,7 @@ describe('Moderation — SEC-06', () => {
 
   it('admin route returns flagged items with correct secret', async () => {
     vi.stubEnv('ADMIN_SECRET', 'test-admin-secret-abc');
+    mockGetFlagged.mockResolvedValue([]);
     const { GET } = await import('@/app/api/admin/review/route');
 
     const response = await GET(
@@ -76,7 +79,7 @@ describe('Moderation — SEC-06', () => {
       })
     );
     expect(response.status).toBe(200);
-    const body = await response.json();
+    const body = await response.json() as { flagged: unknown[]; total: number };
     expect(body).toHaveProperty('flagged');
     expect(body).toHaveProperty('total');
   });
