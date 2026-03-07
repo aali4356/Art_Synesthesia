@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { containsProfanity } from '@/lib/moderation/profanity';
+import { createGalleryItem, getGalleryItems } from '@/lib/gallery/db-gallery';
 
 // ---------------------------------------------------------------------------
 // Rate limiting (SEC-04): 10 gallery saves per IP per day, in-memory
+// Phase 8 note: in-memory is acceptable for single-instance v1.
 // ---------------------------------------------------------------------------
 
 const gallerySaveMap = new Map<
@@ -32,38 +34,30 @@ function getGalleryRateLimit(ip: string): {
 /**
  * POST /api/gallery
  *
- * Gallery save endpoint (Phase 7 stub -- full implementation in Phase 8).
- *
- * Phase 7 implements:
- * - Rate limiting: 10 saves/IP/day (SEC-04)
- * - Profanity filter: title and inputPreview checked (SEC-05)
- * - Privacy gate: no raw input text accepted (PRIV-02, PRIV-03)
+ * Gallery save endpoint (GAL-01, GAL-02).
  *
  * Body: {
  *   parameterVector: ParameterVector,
  *   versionInfo: VersionInfo,
  *   styleName: string,
  *   title?: string,
- *   inputPreview?: string  -- max 50 chars, user-edited summary (not raw input)
+ *   inputPreview?: string,     -- max 50 chars, user-edited, NOT raw input
+ *   thumbnailData?: string,    -- base64 PNG data URL
+ *   creatorToken?: string,     -- random UUID from client localStorage (GAL-08)
  * }
  */
 export async function POST(request: Request): Promise<Response> {
-  // Extract IP for rate limiting
   const forwarded = request.headers.get('x-forwarded-for');
   const ip =
     (forwarded ? forwarded.split(',')[0].trim() : null) ??
     request.headers.get('x-real-ip') ??
     '127.0.0.1';
 
-  // Rate limit check (SEC-04)
   const { allowed, remaining } = getGalleryRateLimit(ip);
   if (!allowed) {
     return NextResponse.json(
       { error: 'Gallery save rate limit exceeded (10 per day)' },
-      {
-        status: 429,
-        headers: { 'X-RateLimit-Remaining': '0' },
-      }
+      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
     );
   }
 
@@ -79,7 +73,7 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Privacy gate: no raw input text fields permitted (PRIV-02, PRIV-03)
+  // Privacy gate: no raw input fields (PRIV-02, PRIV-03)
   if ('rawInput' in body || 'inputText' in body || 'raw_input' in body) {
     return NextResponse.json(
       { error: 'Gallery entries must not contain raw input text' },
@@ -87,10 +81,16 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const { parameterVector, versionInfo, styleName, title, inputPreview } =
-    body;
+  const {
+    parameterVector,
+    versionInfo,
+    styleName,
+    title,
+    inputPreview,
+    thumbnailData,
+    creatorToken,
+  } = body;
 
-  // Validate required fields
   if (!parameterVector || typeof parameterVector !== 'object') {
     return NextResponse.json(
       { error: 'Missing parameterVector' },
@@ -110,7 +110,6 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Profanity filter on title (SEC-05)
   if (title && typeof title === 'string' && containsProfanity(title)) {
     return NextResponse.json(
       { error: 'Title contains inappropriate content' },
@@ -118,7 +117,6 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Profanity filter on input preview (SEC-05)
   if (
     inputPreview &&
     typeof inputPreview === 'string' &&
@@ -130,7 +128,6 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Input preview length limit (GAL-01: max 50 chars)
   if (
     inputPreview &&
     typeof inputPreview === 'string' &&
@@ -142,13 +139,36 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // TODO (Phase 8): Write to gallery_items table using db
+  // Write to gallery_items table (Phase 8 — replaces stub)
+  const item = await createGalleryItem({
+    parameterVector: parameterVector as never,
+    versionInfo: versionInfo as never,
+    styleName: styleName as string,
+    title: title && typeof title === 'string' ? title : null,
+    inputPreview: inputPreview && typeof inputPreview === 'string' ? inputPreview : null,
+    thumbnailData: thumbnailData && typeof thumbnailData === 'string' ? thumbnailData : null,
+    creatorToken: creatorToken && typeof creatorToken === 'string' ? creatorToken : null,
+  });
+
   return NextResponse.json(
-    {
-      saved: true,
-      id: 'gallery-save-stub-' + Date.now(),
-      message: 'Gallery persistence will be implemented in Phase 8',
-    },
+    { saved: true, id: item.id },
     { status: 201, headers: rateLimitHeader }
   );
+}
+
+/**
+ * GET /api/gallery
+ * Browse gallery items with optional style filter and sort (GAL-03, GAL-05).
+ * Query params: style, sort (recent|popular), page, limit
+ */
+export async function GET(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+  const style = url.searchParams.get('style') || undefined;
+  const sort = (url.searchParams.get('sort') || 'recent') as 'recent' | 'popular';
+  const page = Math.max(1, parseInt(url.searchParams.get('page') || '1'));
+  const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
+  const offset = (page - 1) * limit;
+
+  const items = await getGalleryItems({ style, sort, limit, offset });
+  return NextResponse.json({ items, page, limit });
 }
