@@ -47,11 +47,19 @@ export const galleryItems = pgTable(
     reportCount: integer('report_count').default(0).notNull(),
     /** True when reportCount >= REPORT_FLAG_THRESHOLD (SEC-06) */
     flagged: boolean('flagged').default(false).notNull(),
+    /** Number of upvotes received (GAL-05: used for popular sort) */
+    upvoteCount: integer('upvote_count').default(0).notNull(),
+    /**
+     * Random UUID stored in creator's localStorage for ownership verification (GAL-08).
+     * Not an IP address — consistent with PRIV-01 no-auth design.
+     */
+    creatorToken: text('creator_token'),
   },
   (table) => [
     index('gallery_items_created_at_idx').on(table.createdAt),
     index('gallery_items_style_name_idx').on(table.styleName),
     index('gallery_items_flagged_idx').on(table.flagged),
+    index('gallery_items_upvote_count_idx').on(table.upvoteCount),
   ]
 );
 
