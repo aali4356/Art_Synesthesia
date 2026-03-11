@@ -32,26 +32,29 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ### Active
 
-- [ ] URL input analysis: fetch, scrape, extract text + page metadata, run through text pipeline with SSRF protection
-- [ ] CSV/JSON data input analysis: statistical analysis (distributions, correlations, cardinality, null ratios)
-- [ ] Organic rendering style with composition laws (Perlin noise, flow fields, gradient blending)
-- [ ] Particle rendering style with composition laws (force-directed, mobile particle cap)
-- [ ] Typographic rendering style with composition laws (text as visual medium, legibility constraints)
-- [ ] Style selector with real mini-preview thumbnails rendered from same parameters
-- [ ] Share links with random IDs storing only parameters (no raw input)
-- [ ] Gallery: save (opt-in), browse, filter by style, sort, report
-- [ ] Compare mode: side-by-side with parameter diff and auto-generated summary
-- [ ] Local-only mode for text input (client-side analysis, no server requests)
-- [ ] Private-by-default generation model
 - [ ] High-res PNG export (server-side re-render at 4096x4096)
 - [ ] SVG export for vector styles (Geometric, Typographic)
 - [ ] Auto-generated alt text from parameters for accessibility
 - [ ] Full keyboard navigation
-- [ ] Rate limiting and abuse prevention (URL: 10/IP/hour, gallery: 10 saves/IP/day)
-- [ ] Profanity filter on titles and input previews
 - [ ] Frame option for exports (subtle border/matte)
-- [ ] Database (PostgreSQL + Drizzle ORM) for gallery, cached analyses, version tracking
-- [ ] Caching strategy: analysis cache, render cache, URL snapshot cache
+
+### Recently Completed
+
+- [x] URL input analysis: fetch, scrape, extract text + page metadata, run through text pipeline with SSRF protection
+- [x] CSV/JSON data input analysis: statistical analysis (distributions, correlations, cardinality, null ratios)
+- [x] Organic rendering style with composition laws (Perlin noise, flow fields, gradient blending)
+- [x] Particle rendering style with composition laws (force-directed, mobile particle cap)
+- [x] Typographic rendering style with composition laws (text as visual medium, legibility constraints)
+- [x] Style selector with real mini-preview thumbnails rendered from same parameters
+- [x] Share links with random IDs storing only parameters (no raw input)
+- [x] Gallery: save (opt-in), browse, filter by style, sort, report
+- [x] Compare mode: side-by-side with parameter diff and auto-generated summary
+- [x] Local-only mode for text input (client-side analysis, no server requests)
+- [x] Private-by-default generation model
+- [x] Rate limiting and abuse prevention (URL: 10/IP/hour, gallery: 10 saves/IP/day)
+- [x] Profanity filter on titles and input previews
+- [x] Database (PostgreSQL + Drizzle ORM) for gallery, cached analyses, version tracking
+- [x] Caching strategy: analysis cache, render cache, URL snapshot cache
 
 ### Out of Scope
 
@@ -99,5 +102,12 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 | Proxy-based canvas mock for testing | Lightweight alternative to vitest-canvas-mock, no native dependencies | Validated — Phase 4 |
 | hidden md:block CSS pattern for responsive collapse | SSR safe, avoids hydration mismatch, Tailwind-native | Established — Phase 4 |
 
+## Current State
+
+- Milestone progress: 8/9 slices complete through S08
+- Newly verified in S08: gallery save/browse/detail/report/delete/upvote flows and compare mode with diff summaries
+- Strongest acceptance signal: `npm test` passes with 518/518 tests
+- Important operational caveat: `npm run build` still requires `DATABASE_URL` because DB-backed route imports can trigger Neon initialization during build-time analysis
+
 ---
-*Last updated: 2026-03-04 after Phase 4*
+*Last updated: 2026-03-11 after S08*

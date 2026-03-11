@@ -76,3 +76,8 @@
 - "analyze-url tests mock @/lib/cache/db-cache with vi.fn() -- no real DB in CI"
 - "Cron cleanup protected by CRON_SECRET bearer token; returns 401 if missing/wrong"
 - "vercel.json cron schedule: 0 3 * * * (03:00 UTC daily)"
+- "Gallery and moderation route tests mock '@/lib/gallery/db-gallery' because route imports transitively initialize Neon without DATABASE_URL in test environments"
+- "Compare mode uses one shared style selector for both panes and disables animation; particle scene capped at 5000 for compare memory safety"
+- "GalleryViewer seed prefix includes gallery item id ('gallery-' + id + styleName + engineVersion); ShareViewer keeps a share-specific seed prefix"
+- "Compare/gallery/share viewers normalize resolvedTheme to the literal union 'dark' | 'light' so renderer builders pass TypeScript in production builds"
+- "DB-backed App Router API routes were marked force-dynamic, but build-time page-data collection can still surface missing DATABASE_URL when DB bootstrap is eager"

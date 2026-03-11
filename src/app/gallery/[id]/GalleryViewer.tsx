@@ -49,7 +49,7 @@ export function GalleryViewer({
   upvoteCount: initialUpvoteCount,
 }: GalleryViewerProps) {
   const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme ?? 'dark';
+  const theme = (resolvedTheme === 'light' ? 'light' : 'dark') as 'dark' | 'light';
   const [scene, setScene] = useState<AnySceneGraph | null>(null);
   const [previewRevealed, setPreviewRevealed] = useState(false);
   const [upvoteCount, setUpvoteCount] = useState(initialUpvoteCount);

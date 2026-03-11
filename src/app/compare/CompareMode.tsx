@@ -29,7 +29,7 @@ interface ComparePaneResult {
   pane: React.ReactNode;
 }
 
-function useComparePaneState(activeStyle: StyleName, theme: string, label: string): ComparePaneResult {
+function useComparePaneState(activeStyle: StyleName, theme: 'dark' | 'light', label: string): ComparePaneResult {
   const [inputText, setInputText] = useState('');
   const { result, generate } = useTextAnalysis();
   const [scene, setScene] = useState<AnySceneGraph | null>(null);

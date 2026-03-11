@@ -21,7 +21,7 @@
   > After this: unit tests prove url-data-input works
 - [x] **S07: Database Sharing Privacy** `risk:medium` `depends:[S06]`
   > After this: unit tests prove database-sharing-privacy works
-- [ ] **S08: Gallery Compare** `risk:medium` `depends:[S07]`
+- [x] **S08: Gallery Compare** `risk:medium` `depends:[S07]`
   > After this: unit tests prove gallery-compare works
 - [ ] **S09: Export & Accessibility** `risk:medium` `depends:[S08]`
   > After this: unit tests prove Export & Accessibility works

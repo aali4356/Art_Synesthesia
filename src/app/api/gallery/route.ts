@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { containsProfanity } from '@/lib/moderation/profanity';
 import { createGalleryItem, getGalleryItems } from '@/lib/gallery/db-gallery';
 

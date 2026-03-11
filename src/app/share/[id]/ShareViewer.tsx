@@ -47,7 +47,7 @@ export function ShareViewer({
   createdAt,
 }: ShareViewerProps) {
   const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme ?? 'dark';
+  const theme = (resolvedTheme === 'light' ? 'light' : 'dark') as 'dark' | 'light';
   const [scene, setScene] = useState<AnySceneGraph | null>(null);
 
   useEffect(() => {
