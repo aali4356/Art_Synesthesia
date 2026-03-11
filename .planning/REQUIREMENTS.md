@@ -142,21 +142,21 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Gallery
 
-- [ ] **GAL-01**: "Save to Gallery" is explicit opt-in with preview of what will be public (thumbnail, input preview first 50 chars, title, style)
-- [ ] **GAL-02**: User can edit or remove input preview before saving
-- [ ] **GAL-03**: Gallery page shows thumbnails with style name, date, optional title
-- [ ] **GAL-04**: Input preview hidden by default in gallery cards ("click to reveal")
-- [ ] **GAL-05**: User can filter gallery by style and sort by recent or popular (upvote count)
-- [ ] **GAL-06**: User can click gallery card to view full size with translation panel
-- [ ] **GAL-07**: Report button on every gallery item
-- [ ] **GAL-08**: User can delete their own gallery entries
+- [x] **GAL-01**: "Save to Gallery" is explicit opt-in with preview of what will be public (thumbnail, input preview first 50 chars, title, style)
+- [x] **GAL-02**: User can edit or remove input preview before saving
+- [x] **GAL-03**: Gallery page shows thumbnails with style name, date, optional title
+- [x] **GAL-04**: Input preview hidden by default in gallery cards ("click to reveal")
+- [x] **GAL-05**: User can filter gallery by style and sort by recent or popular (upvote count)
+- [x] **GAL-06**: User can click gallery card to view full size with translation panel
+- [x] **GAL-07**: Report button on every gallery item
+- [x] **GAL-08**: User can delete their own gallery entries
 
 ### Compare Mode
 
-- [ ] **COMP-01**: User can enter two inputs and see their art side by side in same style
-- [ ] **COMP-02**: Parameter vectors displayed in parallel with visual diff highlighting
-- [ ] **COMP-03**: Auto-generated difference summary: "These differ most in rhythm (+0.43) and warmth (-0.31)"
-- [ ] **COMP-04**: Style selector changes both artworks simultaneously
+- [x] **COMP-01**: User can enter two inputs and see their art side by side in same style
+- [x] **COMP-02**: Parameter vectors displayed in parallel with visual diff highlighting
+- [x] **COMP-03**: Auto-generated difference summary: "These differ most in rhythm (+0.43) and warmth (-0.31)"
+- [x] **COMP-04**: Style selector changes both artworks simultaneously
 
 ### Privacy & Security
 
@@ -325,18 +325,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEC-04 | Phase 7 | Complete |
 | SEC-05 | Phase 7 | Complete |
 | SEC-06 | Phase 7 | Complete |
-| GAL-01 | Phase 8 | Pending |
-| GAL-02 | Phase 8 | Pending |
-| GAL-03 | Phase 8 | Pending |
-| GAL-04 | Phase 8 | Pending |
-| GAL-05 | Phase 8 | Pending |
-| GAL-06 | Phase 8 | Pending |
-| GAL-07 | Phase 8 | Pending |
-| GAL-08 | Phase 8 | Pending |
-| COMP-01 | Phase 8 | Pending |
-| COMP-02 | Phase 8 | Pending |
-| COMP-03 | Phase 8 | Pending |
-| COMP-04 | Phase 8 | Pending |
+| GAL-01 | Phase 8 | Complete |
+| GAL-02 | Phase 8 | Complete |
+| GAL-03 | Phase 8 | Complete |
+| GAL-04 | Phase 8 | Complete |
+| GAL-05 | Phase 8 | Complete |
+| GAL-06 | Phase 8 | Complete |
+| GAL-07 | Phase 8 | Complete |
+| GAL-08 | Phase 8 | Complete |
+| COMP-01 | Phase 8 | Complete |
+| COMP-02 | Phase 8 | Complete |
+| COMP-03 | Phase 8 | Complete |
+| COMP-04 | Phase 8 | Complete |
 | EXPORT-01 | Phase 9 | Pending |
 | EXPORT-02 | Phase 9 | Pending |
 | EXPORT-03 | Phase 9 | Pending |

@@ -153,6 +153,23 @@ export function GalleryViewer({
           {scene ? renderCanvas(scene) : <div className="text-muted-foreground">Loading artwork...</div>}
         </section>
 
+        {/* Translation panel — parameter vector display (GAL-06) */}
+        <section className="mb-6 p-4 rounded-lg border border-border">
+          <h2 className="text-sm font-medium mb-3 uppercase tracking-wide text-muted-foreground">
+            Parameter Vector
+          </h2>
+          <div className="grid grid-cols-3 gap-2 text-sm">
+            {(Object.entries(parameterVector) as [string, number][])
+              .filter(([key]) => key !== 'extensions')
+              .map(([key, value]) => (
+                <div key={key} className="flex justify-between">
+                  <span className="text-muted-foreground capitalize">{key}</span>
+                  <span className="font-mono">{value.toFixed(3)}</span>
+                </div>
+              ))}
+          </div>
+        </section>
+
         {/* Upvote */}
         <div className="mb-6">
           <button
