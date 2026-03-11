@@ -12,58 +12,55 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ### Validated
 
-- ✓ Deterministic input-to-art pipeline: same input always produces same visual output given same engine version — Phase 1-4
-- ✓ Text input analysis: NLP pipeline extracting character frequency, sentiment, syllable patterns, entropy, etc. — Phase 3
-- ✓ Normalized parameter vector (~15 dimensions, 0-1 range) as universal intermediate representation — Phase 2
-- ✓ Quantile-based normalization with calibration harness (30+ text, 15+ URL, 15+ data reference inputs) — Phase 2
-- ✓ Parameter provenance tracking: per-parameter signal breakdown with weights and plain-English explanations — Phase 2
-- ✓ Geometric rendering style with composition laws (grid-based, Mondrian-meets-data-viz) — Phase 4
-- ✓ Seeded PRNG (xoshiro256** or Mulberry32), never Math.random() in rendering — Phase 1
-- ✓ Engine versioning: engineVersion, analyzerVersion, normalizerVersion, rendererVersion — Phase 1
-- ✓ Input canonicalization per type (NFC text, stable JSON key ordering, CSV normalization, URL normalization) — Phase 1
-- ✓ Translation panel showing parameter bars, provenance, and plain-English explanations — Phase 4
-- ✓ Palette generation in perceptual color space (OKLCH) with coherence function — Phase 2
-- ✓ Dark mode default with light mode toggle, respecting system preference — Phase 1
-- ✓ Progressive canvas building animation (respects prefers-reduced-motion) — Phase 4
-- ✓ Quick-start buttons ("Try: your name / a haiku / a recipe") and "Surprise me" — Phase 3
-- ✓ Staged progress animation (Parsing, Analyzing, Normalizing, Rendering) — Phase 3
-- ✓ Reduced motion support (prefers-reduced-motion) — Phase 4
-- ✓ Responsive design: mobile-first with bottom sheet translation panel — Phase 4
+- ✓ Deterministic input-to-art pipeline: same input always produces same visual output given same engine version — M001
+- ✓ Text input analysis: NLP pipeline extracting character frequency, sentiment, syllable patterns, entropy, etc. — M001
+- ✓ URL input analysis: fetch, scrape, extract text + page metadata, run through deterministic pipeline with SSRF protection — M001
+- ✓ CSV/JSON data input analysis: statistical analysis (distributions, correlations, cardinality, null ratios) — M001
+- ✓ Normalized parameter vector (~15 dimensions, 0-1 range) as universal intermediate representation — M001
+- ✓ Quantile-based normalization with calibration harness (30+ text, 15+ URL, 15+ data reference inputs) — M001
+- ✓ Parameter provenance tracking: per-parameter signal breakdown with weights and plain-English explanations — M001
+- ✓ Geometric rendering style with composition laws (grid-based, Mondrian-meets-data-viz) — M001
+- ✓ Organic rendering style with composition laws (noise flow fields, gradient blending) — M001
+- ✓ Particle rendering style with composition laws (clustered starfield, motion safeguards) — M001
+- ✓ Typographic rendering style with composition laws (text as visual medium, legibility constraints) — M001
+- ✓ Style selector with real mini-preview thumbnails rendered from same parameters — M001
+- ✓ Seeded PRNG, hashing, and independent engine/analyzer/normalizer/renderer versioning — M001
+- ✓ Input canonicalization per type (NFC text, stable JSON key ordering, CSV normalization, URL normalization) — M001
+- ✓ Translation panel showing parameter bars, provenance, and plain-English explanations — M001
+- ✓ Palette generation in perceptual color space (OKLCH) with coherence and contrast protection — M001
+- ✓ Dark mode default with light mode toggle, respecting system preference — M001
+- ✓ Progressive canvas building animation with reduced-motion support — M001
+- ✓ Quick-start buttons and Surprise Me flow — M001
+- ✓ Staged progress animation (Parsing, Analyzing, Normalizing, Rendering) — M001
+- ✓ Share links storing only parameters/version/style (no raw input) — M001
+- ✓ Gallery: explicit opt-in save, browse, filter, sort, report, delete-own-entry — M001
+- ✓ Compare mode: side-by-side artworks with parameter diff and summary — M001
+- ✓ Local-only mode for text input with lock indicator and no analysis fetches — M001
+- ✓ Private-by-default generation model — M001
+- ✓ Rate limiting and abuse prevention for URL analysis and gallery saves — M001
+- ✓ Profanity filter on gallery titles and previews — M001
+- ✓ PostgreSQL + Drizzle infrastructure for gallery, caches, and version-aware persistence — M001
+- ✓ Export controls: 4096 PNG path, SVG for vector styles, frame toggle, diagnostics headers — M001
+- ✓ Auto-generated deterministic alt text for canvases and export diagnostics — M001
+- ✓ Responsive design: mobile-first with collapsible/bottom-sheet-style translation surfaces and horizontal style selector — M001
 
 ### Active
 
-- [ ] Full keyboard navigation
+- [ ] Full keyboard navigation across every interactive surface (tabs, style selector, gallery cards, compare, export) with browser-level verification
+- [ ] Server-side export rendering completes in under 3 seconds at 4096x4096 with real rasterized PNG output
+- [ ] Build-safe lazy database bootstrap so `next build` succeeds without `DATABASE_URL` during static analysis/page-data collection
 
 ### Recently Completed
 
-- [x] High-res PNG export path at 4096x4096 with server export endpoint and UI controls
-- [x] SVG export for vector styles (Geometric, Typographic) with unsupported-style validation
-- [x] Auto-generated alt text from parameters for canvas accessibility and export diagnostics
-- [x] Frame option for exports (subtle border/matte, enabled by default)
-
-### Recently Completed
-
-- [x] URL input analysis: fetch, scrape, extract text + page metadata, run through text pipeline with SSRF protection
-- [x] CSV/JSON data input analysis: statistical analysis (distributions, correlations, cardinality, null ratios)
-- [x] Organic rendering style with composition laws (Perlin noise, flow fields, gradient blending)
-- [x] Particle rendering style with composition laws (force-directed, mobile particle cap)
-- [x] Typographic rendering style with composition laws (text as visual medium, legibility constraints)
-- [x] Style selector with real mini-preview thumbnails rendered from same parameters
-- [x] Share links with random IDs storing only parameters (no raw input)
-- [x] Gallery: save (opt-in), browse, filter by style, sort, report
-- [x] Compare mode: side-by-side with parameter diff and auto-generated summary
-- [x] Local-only mode for text input (client-side analysis, no server requests)
-- [x] Private-by-default generation model
-- [x] Rate limiting and abuse prevention (URL: 10/IP/hour, gallery: 10 saves/IP/day)
-- [x] Profanity filter on titles and input previews
-- [x] Database (PostgreSQL + Drizzle ORM) for gallery, cached analyses, version tracking
-- [x] Caching strategy: analysis cache, render cache, URL snapshot cache
+- [x] Milestone M001 completed end-to-end with 9/9 slices and 530/530 tests passing
+- [x] Cross-slice summary, requirement transition audit, and project state refresh completed
+- [x] Build-closeout TypeScript regressions in render-export route and render types fixed during milestone completion
 
 ### Out of Scope
 
 - Song title input type — API-dependent, defer to stretch goals
 - Abstract Landscape rendering style — stretch goal
-- Animated renders (particle/organic drift) — stretch goal
+- Animated renders as a primary product surface — stretch goal beyond subtle existing motion behavior
 - Public API endpoint for external embedding — stretch goal
 - "Artwork of the Day" featured gallery — stretch goal
 - Version toggle on saved pieces (v1/v2 view) — stretch goal
@@ -83,34 +80,38 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ## Constraints
 
-- **Tech Stack**: Next.js (App Router) + TypeScript + Tailwind CSS for frontend, Python microservice (FastAPI) for NLP/statistical analysis (or all-Node with natural/simple-statistics)
-- **Rendering**: Canvas API for raster styles, SVG for vector styles, WebGL optional for particle performance
-- **Database**: PostgreSQL via Drizzle ORM
-- **Deployment**: Vercel for Next.js, Railway or Fly.io for Python microservice
-- **Performance**: Text analysis <500ms, URL <5s, data <2s, canvas render <1s at 800x800, export <3s at 4096x4096
+- **Tech Stack**: Next.js (App Router) + TypeScript + Tailwind CSS, all-Node analysis stack
+- **Rendering**: Canvas API for raster styles, SVG for vector styles
+- **Database**: PostgreSQL via Drizzle ORM + Neon HTTP driver
+- **Deployment**: Vercel-friendly Next.js app, but build-time DB bootstrap still needs hardening
+- **Performance**: Text analysis <500ms, URL <5s, data <2s, canvas render <1s at 800x800, export target <3s at 4096x4096
 - **Security**: SSRF protection mandatory for URL input (block private IPs, DNS rebinding protection)
-- **Determinism**: All randomness via seeded PRNG, never Math.random() in rendering paths
+- **Determinism**: All randomness via seeded PRNG, never Math.random() in rendering/pipeline paths
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Fixed parameter schema (~15 core params) vs dynamic keys | Reliable panel rendering, stable caching, predictable versioning | Validated — Phase 2 |
-| Quantile-based scaling vs min/max normalization | Min/max breaks with outliers, quantile produces more expressive distributions | Validated — Phase 2 |
-| Parameters-only share links (no raw input stored) | Privacy protection — users will paste sensitive text | — Pending |
-| Dark mode default | Dark backgrounds make generated colors pop, artwork is the hero | Validated — Phase 1 |
-| Hybrid stack (Next.js + Python microservice) vs all-Node | Python has stronger NLP/stats libraries, but adds deployment complexity | All-Node chosen — Phase 3 |
-| Perceptual color space (OKLCH) for palette generation | Prevents muddy/harsh color combinations, better visual quality | Validated — Phase 2 |
-| Alea PRNG algorithm | Fast, good distribution, deterministic, small footprint | Validated — Phase 1 |
-| Proxy-based canvas mock for testing | Lightweight alternative to vitest-canvas-mock, no native dependencies | Validated — Phase 4 |
-| hidden md:block CSS pattern for responsive collapse | SSR safe, avoids hydration mismatch, Tailwind-native | Established — Phase 4 |
+| Fixed parameter schema (~15 core params) vs dynamic keys | Reliable panel rendering, stable caching, predictable versioning | Validated — M001 |
+| Quantile-based scaling vs min/max normalization | Min/max breaks with outliers, quantile produces more expressive distributions | Validated — M001 |
+| Parameters-only share links (no raw input stored) | Privacy protection — users will paste sensitive text | Validated — M001 |
+| Dark mode default | Dark backgrounds make generated colors pop, artwork is the hero | Validated — M001 |
+| All-Node analysis stack | Lower operational complexity than hybrid Python service | Validated — M001 |
+| Perceptual color space (OKLCH) for palette generation | Prevents muddy/harsh color combinations, better visual quality | Validated — M001 |
+| Alea PRNG algorithm | Fast, good distribution, deterministic, small footprint | Validated — M001 |
+| Proxy-based canvas mock for testing | Lightweight alternative to vitest-canvas-mock, no native dependencies | Validated — M001 |
+| Scene graphs carry source parameters | Enables deterministic alt text/export metadata without recomputation | Established — M001 |
+| Explicit export capability matrix | Makes unsupported format/style combinations observable and testable | Established — M001 |
 
 ## Current State
 
-- Milestone progress: 9/9 slices complete through S09
-- Newly verified in S09: export controls, render-export API, deterministic alt-text generation, export frame toggle, and reduced-motion/accessibility coverage
-- Strongest acceptance signal: `npm test` passes with 530/530 tests
-- Important operational caveat: `npm run build` still requires `DATABASE_URL` because DB-backed route imports can trigger Neon initialization during build-time analysis
+- **Milestone status:** M001 complete
+- **Slices:** 9/9 complete
+- **Tasks:** 38/38 complete
+- **Strongest acceptance signal:** `npm test` passes with **530/530 tests**
+- **Build status:** `next build` now passes milestone-closeout TypeScript checks but still fails without `DATABASE_URL` because DB-backed route imports eagerly initialize Neon during page-data collection
+- **Operational caveat:** build portability is the main remaining infrastructure gap; runtime/test behavior for the shipped feature set is otherwise well covered
+- **Most important next hardening targets:** build-safe DB bootstrap, true raster PNG export implementation, full keyboard-navigation verification
 
 ---
-*Last updated: 2026-03-11 after S08*
+*Last updated: 2026-03-11 after M001 completion*

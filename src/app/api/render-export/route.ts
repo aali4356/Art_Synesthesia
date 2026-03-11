@@ -116,7 +116,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const pngPayload = buildPngPayload(body);
-  return new Response(pngPayload, {
+  return new Response(pngPayload.buffer as ArrayBuffer, {
     status: 200,
     headers: {
       'content-type': 'image/png',

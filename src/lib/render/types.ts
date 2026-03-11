@@ -6,6 +6,8 @@
  * scene graph, and the render configuration derived from ParameterVector.
  */
 
+import type { ParameterVector } from '@/types/engine';
+
 /** Shape types that can be drawn on the canvas. */
 export type ShapeType = 'rect' | 'circle' | 'triangle' | 'line' | 'empty';
 
