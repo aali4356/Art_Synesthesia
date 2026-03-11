@@ -62,6 +62,8 @@ export interface SceneElement {
 export interface SceneGraph {
   /** Style discriminant for polymorphic dispatch */
   style: 'geometric';
+  /** Original parameter vector used to build this scene */
+  parameters: ParameterVector;
   /** Drawing instructions, sorted by area descending */
   elements: SceneElement[];
   /** Canvas width in pixels */
@@ -168,6 +170,8 @@ export interface GradientStop {
  */
 export interface OrganicSceneGraph extends BaseSceneGraph {
   style: 'organic';
+  /** Original parameter vector used to build this scene */
+  parameters: ParameterVector;
   /** Background gradient stops (linear, top-to-bottom) */
   gradientStops: GradientStop[];
   /** Flow curves traced through simplex noise field */
@@ -231,6 +235,8 @@ export interface ParticleCluster {
  */
 export interface ParticleSceneGraph {
   style: 'particle';
+  /** Original parameter vector used to build this scene */
+  parameters: ParameterVector;
   width: number;
   height: number;
   background: string;
@@ -274,6 +280,8 @@ export interface TypographicWord {
  */
 export interface TypographicSceneGraph {
   style: 'typographic';
+  /** Original parameter vector used to build this scene */
+  parameters: ParameterVector;
   width: number;
   height: number;
   background: string;

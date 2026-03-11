@@ -53,6 +53,7 @@ export function buildParticleSceneGraph(
 
   return {
     style: 'particle',
+    parameters: params,
     width: canvasSize,
     height: canvasSize,
     background,

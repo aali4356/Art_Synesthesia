@@ -32,11 +32,14 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ### Active
 
-- [ ] High-res PNG export (server-side re-render at 4096x4096)
-- [ ] SVG export for vector styles (Geometric, Typographic)
-- [ ] Auto-generated alt text from parameters for accessibility
 - [ ] Full keyboard navigation
-- [ ] Frame option for exports (subtle border/matte)
+
+### Recently Completed
+
+- [x] High-res PNG export path at 4096x4096 with server export endpoint and UI controls
+- [x] SVG export for vector styles (Geometric, Typographic) with unsupported-style validation
+- [x] Auto-generated alt text from parameters for canvas accessibility and export diagnostics
+- [x] Frame option for exports (subtle border/matte, enabled by default)
 
 ### Recently Completed
 
@@ -104,9 +107,9 @@ Any input deterministically produces beautiful, unique artwork with fully transp
 
 ## Current State
 
-- Milestone progress: 8/9 slices complete through S08
-- Newly verified in S08: gallery save/browse/detail/report/delete/upvote flows and compare mode with diff summaries
-- Strongest acceptance signal: `npm test` passes with 518/518 tests
+- Milestone progress: 9/9 slices complete through S09
+- Newly verified in S09: export controls, render-export API, deterministic alt-text generation, export frame toggle, and reduced-motion/accessibility coverage
+- Strongest acceptance signal: `npm test` passes with 530/530 tests
 - Important operational caveat: `npm run build` still requires `DATABASE_URL` because DB-backed route imports can trigger Neon initialization during build-time analysis
 
 ---

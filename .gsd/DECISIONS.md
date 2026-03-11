@@ -81,3 +81,6 @@
 - "GalleryViewer seed prefix includes gallery item id ('gallery-' + id + styleName + engineVersion); ShareViewer keeps a share-specific seed prefix"
 - "Compare/gallery/share viewers normalize resolvedTheme to the literal union 'dark' | 'light' so renderer builders pass TypeScript in production builds"
 - "DB-backed App Router API routes were marked force-dynamic, but build-time page-data collection can still surface missing DATABASE_URL when DB bootstrap is eager"
+- "Scene graphs now carry their source ParameterVector so canvas aria-labels and exports can derive consistent, deterministic alt text without recomputing pipeline state"
+- "Export capability matrix is explicit: PNG allowed for all styles, SVG only for geometric and typographic, with API-level 400 errors for unsupported combinations"
+- "Export route exposes diagnostic headers (x-export-format, x-export-resolution, x-export-frame, x-export-duration-ms, x-export-alt) so failures are externally visible and tests can verify real server behavior"

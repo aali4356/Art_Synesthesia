@@ -19,6 +19,7 @@ import { StyleSelector } from './StyleSelector';
 import { ParameterPanel } from './ParameterPanel';
 import { PipelineProgress } from '@/components/progress';
 import { ShareButton } from './ShareButton';
+import { ExportControls } from './ExportControls';
 import { GallerySaveModal } from '@/components/gallery/GallerySaveModal';
 
 interface ResultsViewProps {
@@ -240,6 +241,13 @@ export function ResultsView({
             summaries={result.summaries}
             version={CURRENT_VERSION}
           />
+          <div className="mt-4">
+            <ExportControls
+              parameterVector={result.vector}
+              versionInfo={CURRENT_VERSION}
+              styleName={activeStyle}
+            />
+          </div>
           <div className="mt-4">
             <ShareButton
               parameterVector={result.vector}

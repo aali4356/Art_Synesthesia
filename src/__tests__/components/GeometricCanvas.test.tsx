@@ -70,6 +70,23 @@ afterEach(() => {
 
 const mockScene: SceneGraph = {
   style: 'geometric',
+  parameters: {
+    complexity: 0.65,
+    warmth: 0.72,
+    symmetry: 0.22,
+    rhythm: 0.58,
+    energy: 0.81,
+    density: 0.43,
+    scaleVariation: 0.36,
+    curvature: 0.67,
+    saturation: 0.74,
+    contrast: 0.55,
+    layering: 0.49,
+    directionality: 0.71,
+    paletteSize: 0.41,
+    texture: 0.52,
+    regularity: 0.37,
+  },
   elements: [
     {
       type: 'rect',
@@ -115,9 +132,9 @@ const mockScene: SceneGraph = {
 // ---------------------------------------------------------------------------
 
 describe('GeometricCanvas', () => {
-  it('renders a canvas element with aria-label', () => {
+  it('renders a canvas element with descriptive aria-label', () => {
     render(<GeometricCanvas scene={mockScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated geometric artwork');
+    const canvas = screen.getByLabelText(/Generated geometric artwork with/i);
     expect(canvas).toBeDefined();
     expect(canvas.tagName).toBe('CANVAS');
   });
@@ -126,7 +143,7 @@ describe('GeometricCanvas', () => {
     // Mock devicePixelRatio
     Object.defineProperty(window, 'devicePixelRatio', { value: 2, writable: true });
     render(<GeometricCanvas scene={mockScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated geometric artwork') as HTMLCanvasElement;
+    const canvas = screen.getByLabelText(/Generated geometric artwork with/i) as HTMLCanvasElement;
     // Canvas physical size should be scene.width * dpr
     expect(canvas.width).toBe(1600);
     expect(canvas.height).toBe(1600);

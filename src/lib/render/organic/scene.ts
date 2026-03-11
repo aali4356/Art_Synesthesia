@@ -111,6 +111,7 @@ export function buildOrganicSceneGraph(
 
   return {
     style: 'organic',
+    parameters: params,
     width: canvasSize,
     height: canvasSize,
     background,

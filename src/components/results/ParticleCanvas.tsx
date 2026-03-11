@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import type { ParticleSceneGraph } from '@/lib/render/types';
 import { drawParticleSceneComplete, startIdleAnimation } from '@/lib/render/particle';
+import { generateArtworkAltText } from '@/lib/accessibility/alt-text';
 
 interface ParticleCanvasProps {
   /** Pre-computed particle scene graph */
@@ -59,7 +60,7 @@ export function ParticleCanvas({
   return (
     <canvas
       ref={canvasRef}
-      aria-label="Generated particle artwork"
+      aria-label={generateArtworkAltText(scene.parameters, 'particle')}
       className={`rounded-lg max-w-full ${className}`}
       style={{ width: scene.width, height: scene.height }}
     />

@@ -23,5 +23,5 @@
   > After this: unit tests prove database-sharing-privacy works
 - [x] **S08: Gallery Compare** `risk:medium` `depends:[S07]`
   > After this: unit tests prove gallery-compare works
-- [ ] **S09: Export & Accessibility** `risk:medium` `depends:[S08]`
+- [x] **S09: Export & Accessibility** `risk:medium` `depends:[S08]`
   > After this: unit tests prove Export & Accessibility works

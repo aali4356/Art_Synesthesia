@@ -50,6 +50,23 @@ afterEach(() => {
 
 const minimalScene: OrganicSceneGraph = {
   style: 'organic',
+  parameters: {
+    complexity: 0.65,
+    warmth: 0.72,
+    symmetry: 0.22,
+    rhythm: 0.58,
+    energy: 0.81,
+    density: 0.43,
+    scaleVariation: 0.36,
+    curvature: 0.67,
+    saturation: 0.74,
+    contrast: 0.55,
+    layering: 0.49,
+    directionality: 0.71,
+    paletteSize: 0.41,
+    texture: 0.52,
+    regularity: 0.37,
+  },
   width: 800,
   height: 800,
   background: '#0a0a0a',
@@ -85,9 +102,9 @@ const sceneWithCurves: OrganicSceneGraph = {
 // ---------------------------------------------------------------------------
 
 describe('OrganicCanvas', () => {
-  it('renders a canvas element with aria-label', () => {
+  it('renders a canvas element with descriptive aria-label', () => {
     render(<OrganicCanvas scene={minimalScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated organic artwork');
+    const canvas = screen.getByLabelText(/Generated organic artwork with/i);
     expect(canvas).toBeDefined();
     expect(canvas.tagName).toBe('CANVAS');
   });
@@ -95,7 +112,7 @@ describe('OrganicCanvas', () => {
   it('canvas has correct HiDPI dimensions (width * dpr)', () => {
     Object.defineProperty(window, 'devicePixelRatio', { value: 2, writable: true });
     render(<OrganicCanvas scene={minimalScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated organic artwork') as HTMLCanvasElement;
+    const canvas = screen.getByLabelText(/Generated organic artwork with/i) as HTMLCanvasElement;
     expect(canvas.width).toBe(1600);
     expect(canvas.height).toBe(1600);
   });

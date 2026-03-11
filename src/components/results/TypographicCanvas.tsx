@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import type { TypographicSceneGraph } from '@/lib/render/types';
 import { drawTypographicSceneComplete } from '@/lib/render/typographic';
+import { generateArtworkAltText } from '@/lib/accessibility/alt-text';
 
 interface TypographicCanvasProps {
   /** Pre-computed typographic scene graph */
@@ -85,7 +86,7 @@ export function TypographicCanvas({
   return (
     <canvas
       ref={canvasRef}
-      aria-label="Generated typographic artwork"
+      aria-label={generateArtworkAltText(scene.parameters, 'typographic')}
       className={`rounded-lg max-w-full ${className}`}
       style={{ width: scene.width, height: scene.height }}
     />

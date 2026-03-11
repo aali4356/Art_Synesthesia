@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import type { SceneGraph } from '@/lib/render/types';
 import { drawElement, drawSceneComplete } from '@/lib/render/geometric';
+import { generateArtworkAltText } from '@/lib/accessibility/alt-text';
 
 /**
  * GeometricCanvas renders a SceneGraph to an HTML Canvas element
@@ -125,7 +126,7 @@ export function GeometricCanvas({
   return (
     <canvas
       ref={canvasRef}
-      aria-label="Generated geometric artwork"
+      aria-label={generateArtworkAltText(scene.parameters, 'geometric')}
       className={`rounded-lg max-w-full ${className}`}
       style={{ width: scene.width, height: scene.height }}
     />

@@ -51,6 +51,7 @@ export function buildTypographicSceneGraph(
 
   return {
     style: 'typographic',
+    parameters: params,
     width: canvasSize,
     height: canvasSize,
     background,

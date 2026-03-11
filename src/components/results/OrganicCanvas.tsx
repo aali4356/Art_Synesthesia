@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import type { OrganicSceneGraph } from '@/lib/render/types';
 import { drawOrganicSceneComplete, drawOrganicScenePartial } from '@/lib/render/organic';
+import { generateArtworkAltText } from '@/lib/accessibility/alt-text';
 
 interface OrganicCanvasProps {
   /** Pre-computed organic scene graph to render */
@@ -94,7 +95,7 @@ export function OrganicCanvas({
   return (
     <canvas
       ref={canvasRef}
-      aria-label="Generated organic artwork"
+      aria-label={generateArtworkAltText(scene.parameters, 'organic')}
       className={`rounded-lg max-w-full ${className}`}
       style={{ width: scene.width, height: scene.height }}
     />

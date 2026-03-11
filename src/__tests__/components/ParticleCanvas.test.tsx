@@ -69,6 +69,23 @@ afterEach(() => {
 
 const minimalScene: ParticleSceneGraph = {
   style: 'particle',
+  parameters: {
+    complexity: 0.65,
+    warmth: 0.72,
+    symmetry: 0.22,
+    rhythm: 0.58,
+    energy: 0.81,
+    density: 0.43,
+    scaleVariation: 0.36,
+    curvature: 0.67,
+    saturation: 0.74,
+    contrast: 0.55,
+    layering: 0.49,
+    directionality: 0.71,
+    paletteSize: 0.41,
+    texture: 0.52,
+    regularity: 0.37,
+  },
   width: 800,
   height: 800,
   background: '#0a0a0a',
@@ -82,9 +99,9 @@ const minimalScene: ParticleSceneGraph = {
 // ---------------------------------------------------------------------------
 
 describe('ParticleCanvas', () => {
-  it('renders a canvas element with aria-label', () => {
+  it('renders a canvas element with descriptive aria-label', () => {
     render(<ParticleCanvas scene={minimalScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated particle artwork');
+    const canvas = screen.getByLabelText(/Generated particle artwork with/i);
     expect(canvas).toBeDefined();
     expect(canvas.tagName).toBe('CANVAS');
   });
@@ -92,7 +109,7 @@ describe('ParticleCanvas', () => {
   it('canvas has width and height set (scaled by DPR)', () => {
     Object.defineProperty(window, 'devicePixelRatio', { value: 2, writable: true });
     render(<ParticleCanvas scene={minimalScene} animated={false} />);
-    const canvas = screen.getByLabelText('Generated particle artwork') as HTMLCanvasElement;
+    const canvas = screen.getByLabelText(/Generated particle artwork with/i) as HTMLCanvasElement;
     expect(canvas.width).toBe(1600);
     expect(canvas.height).toBe(1600);
   });

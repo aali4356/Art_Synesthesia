@@ -328,7 +328,7 @@ Composition law: words overlap only if opacity below 0.4; full-opacity words nev
 
 ### EXPORT-01 — User can download artwork as high-resolution PNG (4096x4096, re-rendered server-side)
 
-- Status: active
+- Status: validated
 - Class: core-capability
 - Source: inferred
 - Primary Slice: none yet
@@ -337,7 +337,7 @@ User can download artwork as high-resolution PNG (4096x4096, re-rendered server-
 
 ### EXPORT-02 — User can download artwork as SVG for Geometric and Typographic styles
 
-- Status: active
+- Status: validated
 - Class: core-capability
 - Source: inferred
 - Primary Slice: none yet
@@ -346,7 +346,7 @@ User can download artwork as SVG for Geometric and Typographic styles
 
 ### EXPORT-03 — Frame toggle adds/removes subtle border matte (8-16px margin) for exports
 
-- Status: active
+- Status: validated
 - Class: core-capability
 - Source: inferred
 - Primary Slice: none yet
@@ -355,7 +355,7 @@ Frame toggle adds/removes subtle border matte (8-16px margin) for exports
 
 ### EXPORT-04 — Frame on by default for exports, off for in-app display
 
-- Status: active
+- Status: validated
 - Class: core-capability
 - Source: inferred
 - Primary Slice: none yet
@@ -400,7 +400,7 @@ Rate limiting: max 10 URL analyses per IP per hour with remaining quota shown in
 
 ### A11Y-01 — Auto-generated alt text from parameters set as aria-label on canvas and included in PNG metadata
 
-- Status: active
+- Status: validated
 - Class: core-capability
 - Source: inferred
 - Primary Slice: none yet
