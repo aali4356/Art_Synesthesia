@@ -1,9 +1,9 @@
 # GSD State
 
 **Active Milestone:** M003 — Signature Product Experience
-**Active Slice:** not started
-**Active Task:** complete
-**Phase:** M002 closed at milestone level with summary written, requirements/project state updated, build health restored, live browser proof captured, and explicit URL blocked-state diagnostics preserved for local no-DB mode
+**Active Slice:** planning complete
+**Active Task:** milestone roadmap written
+**Phase:** M003 planned at milestone level; roadmap, requirement coverage, slice ordering, and planning decisions are now recorded for execution
 
 ## Recent Decisions
 - Design direction: editorial gallery luxe
@@ -20,6 +20,8 @@
 - S04 exposes concise derived family/mapping/expressiveness diagnostics in the real results surface as the primary live-debug seam without surfacing raw inputs
 - Cache helpers and DB-backed share/gallery/admin surfaces that must tolerate local no-DB proof mode now lazy-load DB modules instead of importing `@/db` at module evaluation time
 - S04 completion is defined by truthful live proof: text/data browser proof plus passing build health, with the remaining URL dependency explicitly surfaced through browser/network/server diagnostics
+- D032: M003 should be executed landing/results first, then shared shell/action/viewer primitives, then final gallery/compare/share/export integration
+- D033: M003’s core requirement contract is R003/R004/R009, while R005 and R010 are advanced but not fully closed here
 
 ## Blockers
 - URL analysis in local no-DB mode still reaches DB-backed snapshot storage and returns 500 with `DATABASE_URL is not set`
@@ -27,4 +29,4 @@
 - Known follow-up: `useDataAnalysis` hashes trimmed raw input for palette seeding, so newline-only equivalent inputs can diverge in full palette output despite matching vectors and mapping diagnostics
 
 ## Next Action
-Start M003 planning/research, using the new M002 proof diagnostics seam and browser evidence as the baseline for future premium product-surface redesign work.
+Execute M003/S01: redesign the real homepage landing/generation/results journey into a premium editorial brand experience while preserving the existing generation flow, diagnostics, and accessibility contracts.
