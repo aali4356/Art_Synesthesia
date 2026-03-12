@@ -1,86 +1,20 @@
-- "Used next/font/google for Geist fonts (create-next-app default) rather than geist npm package import"
-- "Web Crypto polyfill uses Uint8Array assertions instead of ArrayBuffer instanceof (jsdom compatibility)"
-- "Installed all Phase 1 dependencies upfront to avoid repeated package installs"
-- "Alea algorithm chosen for seedrandom (fast, good distribution, deterministic)"
-- "SHA-256 via crypto.subtle.digest for cross-platform compatibility (browser + Node)"
-- "deriveSeed concatenates input+style+version with | separator before hashing"
-- "ESLint ban targets src/lib/render/ and src/lib/pipeline/ directories only"
-- "URL default port detection reads from original input string (URL API auto-strips default ports)"
-- "JSON canonicalization strips JSONC-style comments (// and /* */) before parsing"
-- "CSV uses PapaParse with dynamicTyping:false to keep all values as strings for canonical consistency"
-- "Empty CSV cells normalized to 'null' string in canonical output"
-- "Violet accent: oklch(0.65 0.25 285) — high chroma at 285 hue for vibrant purple"
-- "Dark mode background: oklch(0.09 0.005 250) approximating #0a0a0a per user requirement"
-- "ThemeProvider uses storageKey='synesthesia-theme' for namespaced localStorage"
-- "Gallery-padding scales from 2rem (mobile) to 4rem (desktop at 1024px)"
-- "No borders or shadows on containers (gallery aesthetic, user locked decision)"
-- "percentileRank uses binary search + linear interpolation; single-element and all-same distributions return 0.5 midpoint"
-- "TEXT_MAPPINGS uses 2-4 signals per parameter with weights summing to 1.0; signal names prefigure Phase 3 text analyzer outputs"
-- "generateSummary uses threshold-based level labels (low <0.33, moderate 0.33-0.66, high >0.66) and top-2 contributors by weight"
-- "vocabRichness scaled by log2(wordCount+1)/log2(100) to avoid short-text ceiling effect where 1-word inputs trivially get 100% unique ratio"
-- "sentimentMagnitude uses uppercase ratio + punctuation density + word length variance to avoid correlation with exclamationDensity within saturation parameter"
-- "paragraphBalance computed from actual paragraph length variance (split on double newlines) rather than sentence-level proxy"
-- "Added 9 extreme corpus entries to break anti-correlation between signals within parameter groups"
-- "Register modeLrgb for culori wcagContrast (WCAG luminance requires linear RGB internally)"
-- "Gamut mapping via clampChroma allows slight chroma variance between dark/light modes at different lightness levels"
-- "Warmth-to-hue sweep: 220 (blue) through purple/red to 30 (orange) using ((1-warmth)*220 + warmth*390) % 360"
-- "Expanded IMPERATIVE_VERBS to ~100 verbs including cognitive verbs (see, know, feel) for better imperativeRatio spread"
-- "Added action verb density bonus (strictImperativeRatio + verbDensity * 0.3) with stem matching to break zero-cluster in directionality"
-- "Added sequential word detection (first/second/third/then/next/finally) to listPatternDensity for better structural pattern recognition"
-- "Anchored list regex to line start to prevent false positives from parenthetical numbers in prose"
-- "Added 9 extreme corpus entries targeting directionality spread (imperatives, questions, mixed)"
-- "Module-level calibration cache: computed once on first generate, reused for all subsequent calls"
-- "200ms minimum delay per pipeline stage for visual smoothing (skipped when prefers-reduced-motion)"
-- "Placeholder canvas uses palette-colored grid composition rather than placeholder text"
-- "Parameter panel groups: Composition, Form, Expression, Color"
-- "Private mode defaults to true (locked)"
-- "Ada Lovelace as example name for 'your name' quick-start"
-- "Math.random for UI randomness (not rendering) is acceptable per ESLint rule scope"
-- "Surprise Me styled distinctly with border + star icon vs filled pills for regular buttons"
-- "~50 phrases spanning: opening lines, poetry, fun facts, recipes, code, names, philosophy, whimsy"
-- "Proxy-based canvas mock instead of vitest-canvas-mock dependency for lightweight draw testing"
-- "Median area threshold (60x60) for stroke weight assignment ensures GEOM-04 two-weight limit"
-- "Scene graph background uses hardcoded near-black/near-white hex matching existing design tokens"
-- "750ms total animation duration (within 0.5-1s spec), 100ms fade per element, staggered by element count"
-- "Proxy-based canvas mock reused from Plan 01 for component testing (no vitest-canvas-mock dependency)"
-- "Scene graph built in ResultsView via useEffect with async seed derivation, not in hook"
-- "StyleSelector uses 80x80 thumbnail canvases rendered via drawSceneComplete with scale transform"
-- "rendererVersion bumped to 0.2.0 (from 0.1.0) to reflect geometric renderer shipping -- changes PRNG seed for cached results (correct behavior)"
-- "hidden md:block CSS pattern for responsive collapse instead of JS-only approach (SSR safe)"
-- "Separate panelExpanded state from showDetails state to keep provenance toggle independent"
-- "Chevron toggle button visible only on mobile (md:hidden) for clean desktop experience"
-- "Separate PRNG instances (seed+'-noise' vs seed+'-scene') prevent state corruption between noise and scene randomness"
-- "Octave range [2,6] maps to complexity [0,1] via computeOctaves: round(2 + complexity*4)"
-- "Layer cap at 5 with opacity scaling: opacityScale = min(MAX_LAYERS, rawLayers) / rawLayers"
-- "Flow spread = 1.0 - directionality*0.8 so high directionality = tight curves, low = chaotic"
-- "drawBackground applies solid fill first, then optional linear gradient wash (only when gradientStops.length >= 2)"
-- "drawFlowCurve uses quadratic bezier midpoint interpolation when i+2 < points.length, falls back to lineTo for last segment"
-- "Color interpolation: first half of segments uses startColor, second half uses endColor (simple midpoint split)"
-- "OrganicCanvas HiDPI: canvas.width = scene.width * dpr; ctx.scale(dpr, dpr) — same as GeometricCanvas"
-- "Test uses vi.spyOn(window, 'requestAnimationFrame') to assert animated=false never calls rAF"
-- "Empty curves (animated=true, curveCount=0): fills background + fires onRenderComplete without rAF"
-- "Separate PRNGs per subsystem: clusterPrng, placePrng, connectionPrng — prevents any ordering change from invalidating determinism"
-- "negativeSpaceRatio = 0.05 when density > 0.85, else 0.15 — satisfies PTCL-04 without blocking high-density usage"
-- "Cluster radii computed from area budget (maxCoveredArea / count) rather than fixed pixel values — scales correctly at any canvas size"
-- "buildClusters force-places remaining clusters after retry exhaustion to always return exactly clusterCount clusters"
-- "measureFn defaults to approximateMeasure (width = text.length * fontSize * 0.55) for SSR/test safety — avoids Canvas API dependency in pure scene builder"
-- "Web-safe fonts only: Georgia, serif for prominent words; system-ui, sans-serif for smaller words — avoids font loading race condition"
-- "Rotation clamped to [-15, 15] for prominent words (index < 3), not by isProminent flag — consistent with build order"
-- "Reduced-opacity words (collision fallback) get opacity 0.1..0.35 — always below 0.4 threshold (TYPO-04)"
-- "ParameterVector imported from '@/types/engine' (canonical) not '@/lib/pipeline/types'"
-- "Schema barrel placeholder (src/db/schema/index.ts) created so src/db/index.ts compiles before plan 07-02 adds tables"
-- "Test stubs use describe.todo — vitest counts them as skipped (not failures)"
-- "db-cache.ts is the only module that imports @/db in the cache layer -- isolation principle"
-- "TTL helpers: analysisTtl()=7d, renderTtl(res)=24h for res<=200 else 7d"
-- "permanent option uses far-future 9999-12-31 date (not a separate DB flag)"
-- "analyze-url tests mock @/lib/cache/db-cache with vi.fn() -- no real DB in CI"
-- "Cron cleanup protected by CRON_SECRET bearer token; returns 401 if missing/wrong"
-- "vercel.json cron schedule: 0 3 * * * (03:00 UTC daily)"
-- "Gallery and moderation route tests mock '@/lib/gallery/db-gallery' because route imports transitively initialize Neon without DATABASE_URL in test environments"
-- "Compare mode uses one shared style selector for both panes and disables animation; particle scene capped at 5000 for compare memory safety"
-- "GalleryViewer seed prefix includes gallery item id ('gallery-' + id + styleName + engineVersion); ShareViewer keeps a share-specific seed prefix"
-- "Compare/gallery/share viewers normalize resolvedTheme to the literal union 'dark' | 'light' so renderer builders pass TypeScript in production builds"
-- "DB-backed App Router API routes were marked force-dynamic, but build-time page-data collection can still surface missing DATABASE_URL when DB bootstrap is eager"
-- "Scene graphs now carry their source ParameterVector so canvas aria-labels and exports can derive consistent, deterministic alt text without recomputing pipeline state"
-- "Export capability matrix is explicit: PNG allowed for all styles, SVG only for geometric and typographic, with API-level 400 errors for unsupported combinations"
-- "Export route exposes diagnostic headers (x-export-format, x-export-resolution, x-export-frame, x-export-duration-ms, x-export-alt) so failures are externally visible and tests can verify real server behavior"
+# Decisions Register
+
+| # | When | Scope | Decision | Choice | Rationale | Revisable? |
+|---|------|-------|----------|--------|-----------|------------|
+| D001 | M001/S01 | library | Font loading | next/font/google for Geist | Matches project scaffold and avoids extra font-loading complexity | No |
+| D002 | M001/S01 | library | PRNG algorithm | Alea via seedrandom | Fast, deterministic, and already integrated across render paths | No |
+| D003 | M001/S01 | convention | Randomness policy | Ban Math.random() in render/pipeline code | Determinism is a product promise, not an implementation detail | No |
+| D004 | M001/S01 | convention | Theme default | Dark mode default with persisted user choice | Dark backgrounds better frame generated artwork | Yes — if future brand direction changes |
+| D005 | M001/S02 | pattern | Normalization strategy | Quantile-based scaling against calibration corpus | Produces more expressive stable distributions than min/max normalization | No |
+| D006 | M001/S02 | library | Palette color space | OKLCH via culori | Best fit for perceptual palette control and contrast-safe tuning | No |
+| D007 | M001/S03 | pattern | Pipeline orchestration | Module-level cached calibration in client hooks | Avoids recalculating calibration data per render/generation | Yes — if server orchestration changes |
+| D008 | M001/S04 | pattern | Renderer architecture | Pure scene-graph builders plus style-specific canvas components | Keeps composition deterministic and testable while isolating Canvas side effects | No |
+| D009 | M001/S07 | arch | Cache/database access boundary | Route handlers call boundary modules (`db-cache`, `db-gallery`) instead of inline DB code | Improves isolation, testing, and future refactor safety | No |
+| D010 | M001/S09 | pattern | Accessibility/export metadata source | Scene graphs carry source ParameterVector | Enables deterministic alt text and export diagnostics without recomputing pipeline state | No |
+| D011 | M002 | scope | Post-M001 sequencing | Use a design-first multi-milestone sequence (M002 art engine, M003 full-site redesign, M004 product coherence, M005 launch hardening) | Matches user intent to expand ambition rather than shrink to an MVP cleanup | Yes — if scope changes materially |
+| D012 | M002 | design | Core aesthetic direction | Editorial gallery luxe | User wants super artsy, sleek, premium presentation rather than neutral SaaS polish | Yes — if user changes art direction |
+| D013 | M002 | design | Palette strategy | Wide curated deterministic palette families | Directly addresses the user complaint that current outputs feel stuck in repetitive purple/orange/green bands | No |
+| D014 | M002 | scope | Milestone focus | M002 prioritizes palette + renderer expressiveness before full-site redesign | Better artwork quality should precede broader visual shell redesign so later polish showcases stronger output | No |
+| D015 | M002 | product | Product identity | Treat Synesthesia Machine as a distinct branded art product, not just a nicer portfolio demo | User wants a full product and public launch readiness, not only cosmetic cleanup | Yes — if launch strategy changes |
+| D016 | M005 | operability | Launch target | Optimize for public portfolio launch | Balances ambition with realistic launch scope; does not require full SaaS commercialization yet | Yes — if user later pursues commercial productization |
