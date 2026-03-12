@@ -8,7 +8,10 @@ export type HarmonyType =
   | 'analogous'
   | 'complementary'
   | 'triadic'
-  | 'split-complementary';
+  | 'split-complementary'
+  | 'splitComplementary'
+  | 'monochromatic'
+  | 'tetradic';
 
 /**
  * Normalize a hue angle to [0, 360).
@@ -36,7 +39,7 @@ export function selectHarmony(params: ParameterVector): HarmonyType {
   if (params.contrast > 0.5 && params.energy > 0.4) {
     return 'triadic';
   }
-  return 'split-complementary';
+  return 'splitComplementary';
 }
 
 /**
@@ -92,7 +95,8 @@ export function generateHueAngles(
       break;
     }
 
-    case 'split-complementary': {
+    case 'split-complementary':
+    case 'splitComplementary': {
       // Base + two hues ~150 and ~210 degrees away + fill
       const angles = [0, 150, 210];
       for (let i = 0; i < count; i++) {

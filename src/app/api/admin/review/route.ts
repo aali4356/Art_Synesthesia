@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-import { getFlaggedItems, deleteFlaggedItem } from '@/lib/gallery/db-gallery';
+
+async function getGalleryDb() {
+  return import('@/lib/gallery/db-gallery');
+}
 
 /**
  * GET /api/admin/review
@@ -19,12 +22,18 @@ export async function GET(request: Request): Promise<Response> {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const items = await getFlaggedItems();
+  try {
+    const { getFlaggedItems } = await getGalleryDb();
+    const items = await getFlaggedItems();
 
-  return NextResponse.json({
-    flagged: items,
-    total: items.length,
-  });
+    return NextResponse.json({
+      flagged: items,
+      total: items.length,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Admin review backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }
 
 /**
@@ -55,14 +64,20 @@ export async function DELETE(request: Request): Promise<Response> {
     return NextResponse.json({ error: 'Missing itemId' }, { status: 400 });
   }
 
-  const deleted = await deleteFlaggedItem(itemId);
+  try {
+    const { deleteFlaggedItem } = await getGalleryDb();
+    const deleted = await deleteFlaggedItem(itemId);
 
-  if (!deleted) {
-    return NextResponse.json(
-      { error: 'Item not found' },
-      { status: 404 }
-    );
+    if (!deleted) {
+      return NextResponse.json(
+        { error: 'Item not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ removed: true, itemId });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Admin review backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
   }
-
-  return NextResponse.json({ removed: true, itemId });
 }

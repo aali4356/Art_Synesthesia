@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import type { PipelineResult, PipelineStage } from '@/hooks/useTextAnalysis';
 import { CURRENT_VERSION } from '@/lib/engine/version';
@@ -9,7 +9,14 @@ import { buildSceneGraph } from '@/lib/render/geometric';
 import { buildOrganicSceneGraph } from '@/lib/render/organic';
 import { buildParticleSceneGraph } from '@/lib/render/particle';
 import { buildTypographicSceneGraph } from '@/lib/render/typographic';
-import type { AnySceneGraph, StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
+import type {
+  AnySceneGraph,
+  StyleName,
+  SceneGraph,
+  OrganicSceneGraph,
+  ParticleSceneGraph,
+  TypographicSceneGraph,
+} from '@/lib/render/types';
 import { CollapsedInput } from './CollapsedInput';
 import { GeometricCanvas } from './GeometricCanvas';
 import { OrganicCanvas } from './OrganicCanvas';
@@ -29,6 +36,15 @@ interface ResultsViewProps {
   stage: PipelineStage;
   /** Input type — typographic style is disabled for 'data' inputs */
   inputType?: 'text' | 'url' | 'data';
+}
+
+interface ProofDiagnosticRow {
+  label: string;
+  value: string;
+}
+
+function formatExpressivenessValue(value: number): string {
+  return value.toFixed(2);
 }
 
 export function ResultsView({
@@ -123,6 +139,12 @@ export function ResultsView({
     };
   }, [result.canonical, result.vector, result.palette, theme, prefersReducedMotion, inputType, inputText, maxParticles]);
 
+  useEffect(() => {
+    if (activeStyle === 'typographic' && inputType === 'data') {
+      setActiveStyle('geometric');
+    }
+  }, [activeStyle, inputType]);
+
   // Style switch handler — triggers full progressive animation for new style
   const handleStyleChange = useCallback((style: StyleName) => {
     setActiveStyle(style);
@@ -146,6 +168,79 @@ export function ResultsView({
     ctx.drawImage(mainCanvasRef.current, 0, 0, size, size);
     return thumb.toDataURL('image/png');
   }
+
+  const supportedStylesSummary = useMemo(() => {
+    if (inputType === 'data') {
+      return 'geometric, organic, particle · typographic unavailable for data inputs';
+    }
+    return 'geometric, organic, particle, typographic';
+  }, [inputType]);
+
+  const proofSource = useMemo(() => {
+    switch (inputType) {
+      case 'url':
+        return 'url';
+      case 'data':
+        return 'data';
+      default:
+        return 'text';
+    }
+  }, [inputType]);
+
+  const mappingPosture = useMemo(() => {
+    const mapping = result.palette.mapping;
+    return `${mapping.mood} · ${mapping.chromaPosture} · ${mapping.contrastPosture}`;
+  }, [result.palette.mapping]);
+
+  const expressivenessRows = useMemo<ProofDiagnosticRow[]>(() => {
+    const rows: ProofDiagnosticRow[] = [];
+    const organicScene = scenes.organic;
+    const typographicScene = scenes.typographic;
+
+    if (organicScene?.style === 'organic') {
+      rows.push(
+        {
+          label: 'organic.atmosphericRichness',
+          value: formatExpressivenessValue(organicScene.expressiveness.atmosphericRichness),
+        },
+        {
+          label: 'organic.densityLift',
+          value: formatExpressivenessValue(organicScene.expressiveness.densityLift),
+        },
+        {
+          label: 'organic.layeringDepth',
+          value: formatExpressivenessValue(organicScene.expressiveness.layeringDepth),
+        },
+        {
+          label: 'organic.directionalDrama',
+          value: formatExpressivenessValue(organicScene.expressiveness.directionalDrama),
+        },
+      );
+    }
+
+    if (typographicScene?.style === 'typographic') {
+      rows.push(
+        {
+          label: 'typographic.hierarchyLift',
+          value: formatExpressivenessValue(typographicScene.expressiveness.hierarchyLift),
+        },
+        {
+          label: 'typographic.densityLift',
+          value: formatExpressivenessValue(typographicScene.expressiveness.densityLift),
+        },
+        {
+          label: 'typographic.rotationFreedom',
+          value: formatExpressivenessValue(typographicScene.expressiveness.rotationFreedom),
+        },
+        {
+          label: 'typographic.fontVariety',
+          value: formatExpressivenessValue(typographicScene.expressiveness.fontVariety),
+        },
+      );
+    }
+
+    return rows;
+  }, [scenes.organic, scenes.typographic]);
 
   // Render the active canvas component
   function renderCanvas() {
@@ -205,7 +300,15 @@ export function ResultsView({
   return (
     <div className="w-full">
       {/* Collapsed input bar */}
-      <CollapsedInput text={inputText} onRegenerate={onRegenerate} />
+      {inputType === 'text' ? (
+        <div className="border-b border-[var(--border)] p-3">
+          <p className="font-mono text-sm text-[var(--muted-foreground)] truncate">
+            text input ready
+          </p>
+        </div>
+      ) : (
+        <CollapsedInput text={inputText} onRegenerate={onRegenerate} />
+      )}
 
       {/* Progress indicator during generation */}
       {isGenerating && <PipelineProgress currentStage={stage} />}
@@ -235,6 +338,80 @@ export function ResultsView({
 
         {/* Parameter panel */}
         <div className="w-full md:w-1/2">
+          <section
+            aria-label="Proof diagnostics"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--muted)]/30 p-4 mb-4"
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h2 className="text-sm font-semibold tracking-[0.18em] uppercase text-[var(--muted-foreground)]">
+                  proof diagnostics
+                </h2>
+                <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                  derived diagnostics only — raw input hidden
+                </p>
+              </div>
+              <div className="text-xs rounded-full border border-[var(--border)] px-2 py-1 text-[var(--muted-foreground)]">
+                <span>active style</span>
+                <span className="sr-only">: </span>
+                <span className="ml-1">{activeStyle}</span>
+              </div>
+            </div>
+
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-sm">
+              <div>
+                <dt className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">proof source</dt>
+                <dd className="mt-1 font-medium text-[var(--foreground)]">{proofSource}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">palette family</dt>
+                <dd className="mt-1 font-medium text-[var(--foreground)]">{result.palette.familyId}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">harmony</dt>
+                <dd className="mt-1 font-medium text-[var(--foreground)]">{result.palette.mapping.harmony}</dd>
+              </div>
+              <div>
+                <dt className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">mapping posture</dt>
+                <dd className="mt-1 font-medium text-[var(--foreground)]">{mappingPosture}</dd>
+              </div>
+              <div className="sm:col-span-2">
+                <dt className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">supported styles</dt>
+                <dd className="mt-1 font-medium text-[var(--foreground)]">
+                  {inputType === 'data' ? (
+                    <>
+                      <span>geometric, organic, particle</span>
+                      <span className="mx-1">·</span>
+                      <span>typographic unavailable for data inputs</span>
+                    </>
+                  ) : (
+                    supportedStylesSummary
+                  )}
+                </dd>
+              </div>
+            </dl>
+
+            <div className="mt-4 border-t border-[var(--border)] pt-4">
+              <h3 className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)] mb-2">
+                renderer expressiveness
+              </h3>
+              {expressivenessRows.length > 0 ? (
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  {expressivenessRows.map((row) => (
+                    <div key={row.label}>
+                      <dt className="text-[var(--muted-foreground)]">{row.label}</dt>
+                      <dd className="font-medium text-[var(--foreground)]">{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  Waiting for renderer diagnostics.
+                </p>
+              )}
+            </div>
+          </section>
+
           <ParameterPanel
             vector={result.vector}
             provenance={result.provenance}

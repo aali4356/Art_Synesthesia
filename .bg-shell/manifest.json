@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "52611b00",
+    "label": "synesthesia-dev-3001",
+    "command": "npm run dev -- --port 3001",
+    "cwd": "/Users/ahmadali/Library/CloudStorage/OneDrive-Personal/Dev/Personal/Art_Synesthesia",
+    "startedAt": 1773342078722,
+    "processType": "server",
+    "group": "m002-s04",
+    "readyPattern": null,
+    "readyPort": 3001,
+    "pid": 38868
+  }
+]

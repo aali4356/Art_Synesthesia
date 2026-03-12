@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-import { incrementReportCount } from '@/lib/gallery/db-gallery';
+
+let incrementReportCount: typeof import('@/lib/gallery/db-gallery').incrementReportCount;
+
+async function getIncrementReportCount() {
+  if (!incrementReportCount) {
+    ({ incrementReportCount } = await import('@/lib/gallery/db-gallery'));
+  }
+  return incrementReportCount;
+}
 
 /**
  * POST /api/moderation/report
@@ -32,7 +40,14 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const result = await incrementReportCount(itemId);
+  let result: Awaited<ReturnType<typeof import('@/lib/gallery/db-gallery').incrementReportCount>>;
+  try {
+    const runIncrementReportCount = await getIncrementReportCount();
+    result = await runIncrementReportCount(itemId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Moderation backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 
   if (!result) {
     return NextResponse.json(

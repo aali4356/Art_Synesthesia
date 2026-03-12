@@ -1,8 +1,35 @@
-import { db } from '@/db';
-import { analysisCache, renderCache, urlSnapshots } from '@/db/schema';
 import { analysisKey, renderKey } from './keys';
 import { eq, lt } from 'drizzle-orm';
 import type { ParameterVector, ParameterProvenance, VersionInfo } from '@/types/engine';
+
+// ---------------------------------------------------------------------------
+// Lazy DB loading
+// ---------------------------------------------------------------------------
+
+type CacheDbModule = typeof import('@/db');
+type CacheSchemaModule = typeof import('@/db/schema');
+
+let dbModulePromise: Promise<{
+  db: CacheDbModule['db'];
+  analysisCache: CacheSchemaModule['analysisCache'];
+  renderCache: CacheSchemaModule['renderCache'];
+  urlSnapshots: CacheSchemaModule['urlSnapshots'];
+}> | null = null;
+
+async function getCacheDb() {
+  if (!dbModulePromise) {
+    dbModulePromise = Promise.all([import('@/db'), import('@/db/schema')]).then(
+      ([dbModule, schemaModule]) => ({
+        db: dbModule.db,
+        analysisCache: schemaModule.analysisCache,
+        renderCache: schemaModule.renderCache,
+        urlSnapshots: schemaModule.urlSnapshots,
+      })
+    );
+  }
+
+  return dbModulePromise;
+}
 
 // ---------------------------------------------------------------------------
 // TTL helpers
@@ -39,6 +66,7 @@ export async function getAnalysisCache(
   inputHash: string,
   version: VersionInfo
 ): Promise<AnalysisCachePayload | null> {
+  const { db } = await getCacheDb();
   const key = analysisKey(inputHash, version);
   const now = new Date();
   const row = await db.query.analysisCache.findFirst({
@@ -62,6 +90,7 @@ export async function setAnalysisCache(
   payload: AnalysisCachePayload,
   opts?: { permanent?: boolean }
 ): Promise<void> {
+  const { db, analysisCache } = await getCacheDb();
   const key = analysisKey(inputHash, version);
   const expiresAt = opts?.permanent
     ? new Date('9999-12-31T23:59:59Z')
@@ -104,6 +133,7 @@ export async function getRenderCache(
   styleName: string,
   resolution: number
 ): Promise<RenderCachePayload | null> {
+  const { db } = await getCacheDb();
   const key = renderKey(inputHash, version, styleName, resolution);
   const now = new Date();
   const row = await db.query.renderCache.findFirst({
@@ -127,6 +157,7 @@ export async function setRenderCache(
   version: VersionInfo,
   payload: RenderCachePayload
 ): Promise<void> {
+  const { db, renderCache } = await getCacheDb();
   const key = renderKey(inputHash, version, payload.styleName, payload.resolution);
   const expiresAt = renderTtl(payload.resolution);
   await db
@@ -169,6 +200,7 @@ export interface UrlSnapshotPayload {
 export async function getUrlSnapshot(
   canonicalUrl: string
 ): Promise<UrlSnapshotPayload | null> {
+  const { db } = await getCacheDb();
   const row = await db.query.urlSnapshots.findFirst({
     where: (t, { eq: eqFn }) => eqFn(t.canonicalUrl, canonicalUrl),
   });
@@ -188,6 +220,7 @@ export async function setUrlSnapshot(
   canonicalUrl: string,
   payload: UrlSnapshotPayload
 ): Promise<void> {
+  const { db, urlSnapshots } = await getCacheDb();
   await db
     .insert(urlSnapshots)
     .values({
@@ -211,6 +244,7 @@ export async function setUrlSnapshot(
  * Delete a URL snapshot (used when user explicitly re-fetches).
  */
 export async function deleteUrlSnapshot(canonicalUrl: string): Promise<void> {
+  const { db, urlSnapshots } = await getCacheDb();
   await db
     .delete(urlSnapshots)
     .where(eq(urlSnapshots.canonicalUrl, canonicalUrl));
@@ -228,6 +262,7 @@ export async function cleanupExpiredCache(): Promise<{
   analysisDeleted: number;
   renderDeleted: number;
 }> {
+  const { db, analysisCache, renderCache } = await getCacheDb();
   const now = new Date();
   const [aResult, rResult] = await Promise.all([
     db.delete(analysisCache).where(lt(analysisCache.expiresAt, now)),

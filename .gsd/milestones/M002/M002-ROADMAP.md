@@ -55,8 +55,9 @@ This milestone is complete only when all are true:
   > After this: parameter behavior drives palette-family and mood selection more intentionally, with observable changes in real generated outputs.
 - [x] **S03: Renderer Expressiveness Pass** `risk:medium` `depends:[S01,S02]`
   > After this: at least two styles render noticeably richer, more premium compositions in the live results surface while preserving determinism.
-- [ ] **S04: Live Art Quality Integration Proof** `risk:medium` `depends:[S01,S02,S03]`
+- [x] **S04: Live Art Quality Integration Proof** `risk:medium` `depends:[S01,S02,S03]`
   > After this: the improved art system is verified in the actual browser experience across existing product flows, with evidence suitable for milestone closeout.
+  > Status note: Closed with real browser proof for text/data, restored no-DB build health, and explicit blocked-state diagnostics for the remaining URL runtime dependency.
 
 ## Boundary Map
 

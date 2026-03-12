@@ -213,13 +213,20 @@ export default function Home() {
             New input
           </button>
           {activeResult && (
-            <ResultsView
-              result={activeResult}
-              inputText={activeInputText}
-              onRegenerate={handleRegenerate}
-              stage={activeStage}
-              inputType={activeInputType}
-            />
+            <>
+              {activeInputType === 'text' && inputText ? (
+                <p className="font-mono text-sm text-[var(--muted-foreground)] mb-3">
+                  {inputText}
+                </p>
+              ) : null}
+              <ResultsView
+                result={activeResult}
+                inputText={activeInputText}
+                onRegenerate={handleRegenerate}
+                stage={activeStage}
+                inputType={activeInputType}
+              />
+            </>
           )}
         </div>
       )}

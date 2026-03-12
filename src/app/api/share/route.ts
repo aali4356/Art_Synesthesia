@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { shareLinks } from '@/db/schema';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
+
+async function getShareDb() {
+  const [{ db }, { shareLinks }] = await Promise.all([
+    import('@/db'),
+    import('@/db/schema'),
+  ]);
+
+  return { db, shareLinks };
+}
 
 /**
  * POST /api/share
@@ -53,17 +60,24 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Generate share ID and persist
-  const shareId = crypto.randomUUID();
-  await db.insert(shareLinks).values({
-    id: shareId,
-    parameterVector: vector as ParameterVector,
-    versionInfo: version as VersionInfo,
-    styleName: style,
-  });
+  try {
+    const { db, shareLinks } = await getShareDb();
 
-  return NextResponse.json(
-    { shareId, url: `/share/${shareId}` },
-    { status: 201 }
-  );
+    // Generate share ID and persist
+    const shareId = crypto.randomUUID();
+    await db.insert(shareLinks).values({
+      id: shareId,
+      parameterVector: vector as ParameterVector,
+      versionInfo: version as VersionInfo,
+      styleName: style,
+    });
+
+    return NextResponse.json(
+      { shareId, url: `/share/${shareId}` },
+      { status: 201 }
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Share backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }

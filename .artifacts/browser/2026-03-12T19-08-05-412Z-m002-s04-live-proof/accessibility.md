@@ -1,0 +1,25 @@
+- banner:
+  - text: Synesthesia Machine
+  - button "Switch to dark mode":
+    - img
+- main:
+  - paragraph: Turn anything into art.
+  - tablist:
+    - tab "Text"
+    - tab "URL" [selected]
+    - tab "Data"
+  - textbox "URL input for artwork generation":
+    - /placeholder: https://example.com
+    - text: https://example.com
+  - text: "Mode:"
+  - button "Snapshot" [pressed]
+  - button "Live"
+  - alert: Unknown error
+  - button "Analyze"
+  - text: "Try:"
+  - button "your name"
+  - button "a haiku"
+  - button "a recipe"
+  - button "a famous quote"
+  - button "Surprise me"
+- alert

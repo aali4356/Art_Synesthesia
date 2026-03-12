@@ -10,18 +10,18 @@ Deterministic synesthetic art that feels emotionally rich, visually unforgettabl
 
 ## Current State
 
-M001 is complete. The product already has:
-- deterministic canonicalization, analysis, normalization, and rendering pipeline
+M001 is complete and M002 is now complete. The product already has:
+- deterministic canonicalization, analysis, normalization, synesthetic mapping, palette selection, and rendering pipeline
 - text, URL, and data inputs
 - geometric, organic, particle, and typographic renderers
-- shared synesthetic mapping that now drives inspectable organic and typographic expressiveness posture in runtime scene graphs
+- shared synesthetic mapping that drives inspectable organic and typographic expressiveness posture in runtime scene graphs
+- a live `ResultsView` proof diagnostics seam exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
 - share links, gallery, moderation, compare mode, export controls, and alt text
-- strong automated proof via targeted renderer, hook, and product-surface tests
+- strong automated proof plus browser-level acceptance evidence for the upgraded art system
 
-Current gaps are quality and launchability, not basic capability:
-- organic and typographic renderers now visibly consume shared synesthetic expressiveness in deterministic scene graphs, but browser-level visual proof of the upgraded art direction is still pending
-- the site shell and core flows are functional but not yet premium or brand-defining
-- build portability still has an eager DB bootstrap issue without `DATABASE_URL`
+Current gaps are now centered on product polish and launch hardening, not M002 art-system wiring:
+- the site shell and core flows are functional but not yet premium or brand-defining enough for the editorial gallery-luxe goal
+- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, even though build health is restored and the failure is now explicit
 - shipping surfaces like observability, deploy guidance, and account/continuity strategy need hardening
 
 ## Architecture / Key Patterns
@@ -40,7 +40,7 @@ See `.gsd/REQUIREMENTS.md` for the explicit capability contract, requirement sta
 ## Milestone Sequence
 
 - [x] M001: Migration — Ship the complete deterministic v1 product foundation across inputs, renderers, gallery/share/compare, export, and privacy-aware infrastructure.
-- [ ] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
+- [x] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
 - [ ] M003: Signature Product Experience — Redesign the full site into an editorial gallery-luxe product with a stronger brand identity, premium landing/results/gallery surfaces, and memorable UX.
 - [ ] M004: Product Coherence and Continuity — Strengthen onboarding, primary user loops, saved state, account/identity decisions, analytics, and continuity across sessions and surfaces.
 - [ ] M005: Public Launch Readiness — Harden build/deploy reliability, fix operational gaps, improve observability, document production setup, and make the product ready for public portfolio launch.

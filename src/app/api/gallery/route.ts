@@ -2,7 +2,10 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 import { containsProfanity } from '@/lib/moderation/profanity';
-import { createGalleryItem, getGalleryItems } from '@/lib/gallery/db-gallery';
+
+async function getGalleryDb() {
+  return import('@/lib/gallery/db-gallery');
+}
 
 // ---------------------------------------------------------------------------
 // Rate limiting (SEC-04): 10 gallery saves per IP per day, in-memory
@@ -141,21 +144,28 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  // Write to gallery_items table (Phase 8 — replaces stub)
-  const item = await createGalleryItem({
-    parameterVector: parameterVector as never,
-    versionInfo: versionInfo as never,
-    styleName: styleName as string,
-    title: title && typeof title === 'string' ? title : null,
-    inputPreview: inputPreview && typeof inputPreview === 'string' ? inputPreview : null,
-    thumbnailData: thumbnailData && typeof thumbnailData === 'string' ? thumbnailData : null,
-    creatorToken: creatorToken && typeof creatorToken === 'string' ? creatorToken : null,
-  });
+  try {
+    const { createGalleryItem } = await getGalleryDb();
 
-  return NextResponse.json(
-    { saved: true, id: item.id },
-    { status: 201, headers: rateLimitHeader }
-  );
+    // Write to gallery_items table (Phase 8 — replaces stub)
+    const item = await createGalleryItem({
+      parameterVector: parameterVector as never,
+      versionInfo: versionInfo as never,
+      styleName: styleName as string,
+      title: title && typeof title === 'string' ? title : null,
+      inputPreview: inputPreview && typeof inputPreview === 'string' ? inputPreview : null,
+      thumbnailData: thumbnailData && typeof thumbnailData === 'string' ? thumbnailData : null,
+      creatorToken: creatorToken && typeof creatorToken === 'string' ? creatorToken : null,
+    });
+
+    return NextResponse.json(
+      { saved: true, id: item.id },
+      { status: 201, headers: rateLimitHeader }
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503, headers: rateLimitHeader });
+  }
 }
 
 /**
@@ -171,6 +181,12 @@ export async function GET(request: Request): Promise<Response> {
   const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit') || '20')));
   const offset = (page - 1) * limit;
 
-  const items = await getGalleryItems({ style, sort, limit, offset });
-  return NextResponse.json({ items, page, limit });
+  try {
+    const { getGalleryItems } = await getGalleryDb();
+    const items = await getGalleryItems({ style, sort, limit, offset });
+    return NextResponse.json({ items, page, limit });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }

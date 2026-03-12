@@ -8,14 +8,14 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ### R001 — Artwork palette families feel rich, varied, and non-repetitive
 - Class: differentiator
-- Status: active
+- Status: validated
 - Description: The artwork engine must produce substantially broader and more intentional color families so outputs no longer collapse into the same few purple/orange/green-feeling combinations.
 - Why it matters: The current narrow palette range undermines perceived quality and makes the product feel repetitive even when the underlying pipeline is deterministic.
 - Source: user
 - Primary owning slice: M002/S01
 - Supporting slices: M002/S02, M003/S02
-- Validation: mapped
-- Notes: Must preserve determinism while increasing range, mood coverage, and perceptual quality.
+- Validation: validated
+- Notes: S04 added real browser proof for text and data flows via the live `ResultsView` diagnostics seam, showing palette-family identity in actual results. URL flow still depends on DB-backed snapshot storage in local no-DB mode, but the blocked state is now explicit and inspectable rather than hidden.
 
 ### R002 — Synesthesia mapping feels more emotionally expressive and art-directed
 - Class: differentiator

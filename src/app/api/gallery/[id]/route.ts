@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
-import { deleteGalleryItem, getGalleryItem, incrementUpvoteCount } from '@/lib/gallery/db-gallery';
+
+async function getGalleryDb() {
+  return import('@/lib/gallery/db-gallery');
+}
 
 /**
  * GET /api/gallery/[id]
@@ -12,11 +15,18 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   const { id } = await params;
-  const item = await getGalleryItem(id);
-  if (!item) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  try {
+    const { getGalleryItem } = await getGalleryDb();
+    const item = await getGalleryItem(id);
+    if (!item) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
+    return NextResponse.json({ item });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
   }
-  return NextResponse.json({ item });
 }
 
 /**
@@ -36,15 +46,21 @@ export async function DELETE(
     );
   }
 
-  const deleted = await deleteGalleryItem(id, token);
-  if (!deleted) {
-    return NextResponse.json(
-      { error: 'Item not found or token mismatch' },
-      { status: 403 }
-    );
-  }
+  try {
+    const { deleteGalleryItem } = await getGalleryDb();
+    const deleted = await deleteGalleryItem(id, token);
+    if (!deleted) {
+      return NextResponse.json(
+        { error: 'Item not found or token mismatch' },
+        { status: 403 }
+      );
+    }
 
-  return NextResponse.json({ deleted: true, id });
+    return NextResponse.json({ deleted: true, id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }
 
 /**
@@ -58,9 +74,16 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   const { id } = await params;
-  const newCount = await incrementUpvoteCount(id);
-  if (newCount === null) {
-    return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+
+  try {
+    const { incrementUpvoteCount } = await getGalleryDb();
+    const newCount = await incrementUpvoteCount(id);
+    if (newCount === null) {
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+    }
+    return NextResponse.json({ upvoted: true, upvoteCount: newCount });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    return NextResponse.json({ error: message }, { status: 503 });
   }
-  return NextResponse.json({ upvoted: true, upvoteCount: newCount });
 }

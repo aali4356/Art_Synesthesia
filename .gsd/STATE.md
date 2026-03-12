@@ -1,9 +1,9 @@
 # GSD State
 
-**Active Milestone:** M002 — Chromatic Synesthesia Overhaul
-**Active Slice:** S04 — Live Art Quality Integration Proof
-**Active Task:** Plan and execute browser-level live art-quality verification for M002
-**Phase:** Ready for next slice / milestone planning
+**Active Milestone:** M003 — Signature Product Experience
+**Active Slice:** not started
+**Active Task:** complete
+**Phase:** M002 closed through S04 with build health restored, real browser proof captured, and explicit URL blocked-state diagnostics preserved for local no-DB mode
 
 ## Recent Decisions
 - Design direction: editorial gallery luxe
@@ -17,11 +17,14 @@
 - Hook-level determinism for S02 is defined as canonical-input stability of vector and mapping diagnostics when seed derivation is not canonicalized
 - S03 proves runtime integration at the existing hook result and scene-graph boundaries instead of introducing new ResultsView or selector APIs
 - S03 exposes applied renderer expressiveness posture directly on organic and typographic scene graphs for live debugging and downstream acceptance work
+- S04 exposes concise derived family/mapping/expressiveness diagnostics in the real results surface as the primary live-debug seam without surfacing raw inputs
+- Cache helpers and DB-backed share/gallery/admin surfaces that must tolerate local no-DB proof mode now lazy-load DB modules instead of importing `@/db` at module evaluation time
+- S04 completion is defined by truthful live proof: text/data browser proof plus passing build health, with the remaining URL dependency explicitly surfaced through browser/network/server diagnostics
 
 ## Blockers
-- No active blocker.
-- Known follow-up: `useDataAnalysis` hashes trimmed raw input for palette seeding, so newline-only equivalent inputs can diverge in full palette output despite matching vectors and mapping diagnostics.
-- Remaining milestone gap: S04 still needs browser-level live art-quality proof and explicit visual acceptance evidence across real product flows.
+- URL analysis in local no-DB mode still reaches DB-backed snapshot storage and returns 500 with `DATABASE_URL is not set`
+- Browser-visible URL failure copy is currently weak (`Unknown error`) even though the underlying diagnostics are explicit
+- Known follow-up: `useDataAnalysis` hashes trimmed raw input for palette seeding, so newline-only equivalent inputs can diverge in full palette output despite matching vectors and mapping diagnostics
 
 ## Next Action
-Plan and execute S04 to capture browser-verified live runtime art-direction proof and final visual acceptance evidence for M002, using `PaletteResult.mapping` plus renderer `expressiveness` fields as the first diagnostic seam before broader browser inspection.
+Start M003 planning/research, using the new M002 proof diagnostics seam and browser evidence as the baseline for future premium product-surface redesign work.

@@ -1,0 +1,107 @@
+{
+  "entries": [
+    {
+      "id": 1,
+      "tool": "browser_navigate",
+      "status": "success",
+      "durationMs": 1665,
+      "beforeUrl": "about:blank",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#1 | browser_navigate | success | 1665ms | url=\"http://127.0.0.1:3001\" | URL changed to http://127.0.0.1:3001/; title changed to Synesthesia Machine; landmarks 0→2; buttons 0→11"
+    },
+    {
+      "id": 2,
+      "tool": "browser_batch",
+      "status": "error",
+      "durationMs": 20577,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#2 | browser_batch | error | 20577ms | steps=[4], stopOnFailure=true, finalSummaryOnly=true | Stopped at step 3 (wait_for) | focus changed"
+    },
+    {
+      "id": 3,
+      "tool": "browser_click",
+      "status": "success",
+      "durationMs": 309,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#3 | browser_click | success | 309ms | selector=\"button.btn-accent.active\\\\:scale-95\" | SOFT-FAIL (no observable state change) | focus changed; visible text changed"
+    },
+    {
+      "id": 4,
+      "tool": "browser_type",
+      "status": "error",
+      "durationMs": 14035,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#4 | browser_type | error | 14035ms | selector=\"textarea\", text=\"Rain-slick neon alley where saxophone echoes through midn...\", clearFirst=true, slowly=true | Could not focus selector \"textarea\""
+    },
+    {
+      "id": 5,
+      "tool": "browser_batch",
+      "status": "error",
+      "durationMs": 8038,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#5 | browser_batch | error | 8038ms | steps=[7], stopOnFailure=true, finalSummaryOnly=true | Stopped at step 2 (click) | No meaningful browser-state change detected"
+    },
+    {
+      "id": 6,
+      "tool": "browser_click",
+      "status": "success",
+      "durationMs": 14432,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#6 | browser_click | success | 14432ms | selector=\"[role='tab'][aria-label='Organic'], button[role='tab']:ha...\" | SOFT-FAIL (no observable state change) | focus changed; visible text changed"
+    },
+    {
+      "id": 7,
+      "tool": "browser_key_press",
+      "status": "success",
+      "durationMs": 153,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#7 | browser_key_press | success | 153ms | key=\"Tab\" | PASS (focus_changed) | focus changed"
+    },
+    {
+      "id": 8,
+      "tool": "browser_click",
+      "status": "success",
+      "durationMs": 235,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#8 | browser_click | success | 235ms | selector=\"button\" | SOFT-FAIL (no observable state change) | focus changed"
+    },
+    {
+      "id": 9,
+      "tool": "browser_click",
+      "status": "success",
+      "durationMs": 205,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#9 | browser_click | success | 205ms | selector=\"button.btn-ghost.text-sm\" | PASS (target_state_changed) | landmarks 3→2; buttons 25→11; headings changed; visible text changed"
+    },
+    {
+      "id": 10,
+      "tool": "browser_type",
+      "status": "success",
+      "durationMs": 196,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#10 | browser_type | success | 196ms | selector=\"input[type='url']\", text=\"https://example.com\", clearFirst=true | PASS (value_equals_expected, value_contains_expected) | focus changed"
+    },
+    {
+      "id": 11,
+      "tool": "browser_click",
+      "status": "success",
+      "durationMs": 635,
+      "beforeUrl": "http://127.0.0.1:3001/",
+      "afterUrl": "http://127.0.0.1:3001/",
+      "line": "#11 | browser_click | success | 635ms | selector=\"button.btn-accent.active\\\\:scale-95\" | SOFT-FAIL (no observable state change) | focus changed; visible text changed"
+    }
+  ],
+  "retained": 11,
+  "totalRecorded": 11,
+  "bounded": false,
+  "summary": "Timeline: 11 browser actions recorded."
+}

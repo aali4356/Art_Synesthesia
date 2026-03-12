@@ -29,6 +29,7 @@ const HARMONY_SPREAD: Record<PaletteResult['mapping']['harmony'], number> = {
   monochromatic: 0.22,
   analogous: 0.38,
   complementary: 0.92,
+  'split-complementary': 0.84,
   splitComplementary: 0.84,
   triadic: 0.76,
   tetradic: 1,
