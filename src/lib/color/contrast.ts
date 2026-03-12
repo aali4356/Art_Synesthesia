@@ -104,6 +104,7 @@ export function ensureContrast(
 export function adjustForMode(
   mode: 'dark' | 'light',
   color: OklchColor,
+  minRatio: number = 3.0,
 ): OklchColor {
   const profile = mode === 'dark' ? DARK_MODE_PROFILE : LIGHT_MODE_PROFILE;
   const background = mode === 'dark' ? DARK_BG : LIGHT_BG;
@@ -115,5 +116,5 @@ export function adjustForMode(
   };
 
   // Ensure contrast against the mode's background
-  return ensureContrast(clamped, background);
+  return ensureContrast(clamped, background, minRatio);
 }

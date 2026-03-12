@@ -49,7 +49,7 @@ This milestone is complete only when all are true:
 
 ## Slices
 
-- [ ] **S01: Palette Family System** `risk:high` `depends:[]`
+- [x] **S01: Palette Family System** `risk:high` `depends:[]`
   > After this: deterministic generations can produce multiple clearly different curated palette families with test-level proof that repetition has materially dropped.
 - [ ] **S02: Synesthetic Mapping Upgrade** `risk:high` `depends:[S01]`
   > After this: parameter behavior drives palette-family and mood selection more intentionally, with observable changes in real generated outputs.

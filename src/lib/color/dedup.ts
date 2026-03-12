@@ -39,6 +39,8 @@ export interface OklchColor {
 export function rejectNearDuplicates(
   colors: OklchColor[],
   threshold: number = 10,
+  hueStep: number = 10,
+  lightnessStep: number = 0.03,
 ): OklchColor[] {
   if (colors.length === 0) return [];
 
@@ -59,14 +61,19 @@ export function rejectNearDuplicates(
     if (!isTooClose(candidate)) {
       accepted.push(candidate);
     } else {
-      // Try shifting hue in 10-degree increments
+      // Try shifting hue in configurable increments
       let shifted = { ...candidate };
       let found = false;
+      const normalizedHueStep = hueStep <= 0 ? 10 : hueStep;
+      const attempts = Math.max(12, Math.ceil(360 / normalizedHueStep));
 
-      for (let attempt = 0; attempt < 36; attempt++) {
+      for (let attempt = 0; attempt < attempts; attempt++) {
+        const direction = attempt % 2 === 0 ? 1 : -1;
+        const hueMultiplier = Math.floor(attempt / 2) + 1;
         shifted = {
-          ...shifted,
-          h: ((shifted.h + 10) % 360),
+          ...candidate,
+          h: ((candidate.h + direction * normalizedHueStep * hueMultiplier) % 360 + 360) % 360,
+          l: Math.max(0.2, Math.min(0.9, candidate.l + direction * lightnessStep * hueMultiplier)),
         };
 
         if (!isTooClose(shifted)) {

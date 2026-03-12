@@ -298,6 +298,11 @@ describe('generatePalette', () => {
       expect(result).toHaveProperty('light');
       expect(result).toHaveProperty('harmony');
       expect(result).toHaveProperty('count');
+      expect(result).toHaveProperty('familyId');
+      expect(result).toHaveProperty('familyName');
+      expect(result).toHaveProperty('familyDescriptor');
+      expect(result).toHaveProperty('selectionKey');
+      expect(result).toHaveProperty('selectionVector');
     });
 
     it('PaletteColor has oklch, hex, and css', () => {
