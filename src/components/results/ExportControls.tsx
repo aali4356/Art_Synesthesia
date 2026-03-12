@@ -68,59 +68,56 @@ export function ExportControls({
   }
 
   return (
-    <div className={`flex flex-col gap-3 ${className}`}>
-      <div className="rounded-lg border border-border p-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h3 className="text-sm font-medium">Export</h3>
-            <p className="text-xs text-muted-foreground">High-resolution 4096×4096 server render.</p>
-          </div>
-          <button
-            type="button"
-            onClick={handleExport}
-            disabled={state.status === 'loading'}
-            className="px-4 py-2 rounded bg-secondary hover:bg-secondary/80 disabled:opacity-50 transition-colors text-sm font-medium"
-          >
-            {state.status === 'loading' ? 'Exporting…' : `Download ${format.toUpperCase()}`}
-          </button>
+    <div className={`editorial-action-card ${className}`}>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-1">
+          <p className="editorial-note-label mb-0">Export</p>
+          <h3 className="text-base font-medium text-[var(--foreground)]">Render a high-resolution edition.</h3>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            High-resolution 4096×4096 server render with deterministic parameters.
+          </p>
         </div>
-
-        <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2" role="group" aria-label="Export format">
-            {supportedFormats.map((candidate) => (
-              <button
-                key={candidate}
-                type="button"
-                onClick={() => setFormat(candidate)}
-                aria-pressed={format === candidate}
-                className={`text-xs px-3 py-1 rounded border transition-colors duration-150 ${
-                  format === candidate
-                    ? 'border-[var(--color-accent)] text-[var(--foreground)] bg-[var(--color-accent)]/10'
-                    : 'border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-                }`}
-              >
-                {candidate.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={frame}
-              onChange={(e) => setFrame(e.target.checked)}
-            />
-            Include export frame
-          </label>
-        </div>
-
-        {state.status === 'success' && state.message && (
-          <p className="mt-2 text-xs text-muted-foreground">{state.message}</p>
-        )}
-        {state.status === 'error' && state.message && (
-          <p className="mt-2 text-xs text-destructive" role="alert">{state.message}</p>
-        )}
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={state.status === 'loading'}
+          className="btn-accent text-sm disabled:opacity-50"
+        >
+          {state.status === 'loading' ? 'Exporting…' : `Download ${format.toUpperCase()}`}
+        </button>
       </div>
+
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Export format">
+          {supportedFormats.map((candidate) => (
+            <button
+              key={candidate}
+              type="button"
+              onClick={() => setFormat(candidate)}
+              aria-pressed={format === candidate}
+              className={`editorial-chip-button ${format === candidate ? 'is-active' : ''}`}
+            >
+              {candidate.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
+        <label className="editorial-inline-toggle">
+          <input
+            type="checkbox"
+            checked={frame}
+            onChange={(e) => setFrame(e.target.checked)}
+          />
+          <span>Include export frame</span>
+        </label>
+      </div>
+
+      {state.status === 'success' && state.message && (
+        <p className="mt-3 text-xs text-[var(--muted-foreground)]">{state.message}</p>
+      )}
+      {state.status === 'error' && state.message && (
+        <p className="mt-3 text-xs text-[var(--color-accent)]" role="alert">{state.message}</p>
+      )}
     </div>
   );
 }

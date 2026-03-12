@@ -58,7 +58,6 @@ export function ResultsView({
   const theme = (resolvedTheme === 'light' ? 'light' : 'dark') as 'dark' | 'light';
   const isGenerating = stage !== 'complete' && stage !== 'idle';
 
-  // Multi-style scene state
   const [scenes, setScenes] = useState<Record<StyleName, AnySceneGraph | null>>({
     geometric: null,
     organic: null,
@@ -72,19 +71,15 @@ export function ResultsView({
   const [savedGalleryId, setSavedGalleryId] = useState<string | null>(null);
   const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Track previous values to detect theme-only changes
   const prevCanonicalRef = useRef<string>('');
   const prevThemeRef = useRef<string>(theme);
 
-  // Detect prefers-reduced-motion
   const prefersReducedMotion = typeof window !== 'undefined'
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
     : false;
 
-  // Determine maxParticles based on screen width (mobile cap)
   const maxParticles = typeof window !== 'undefined' && window.innerWidth < 768 ? 2000 : 10000;
 
-  // Build all 4 scene graphs when result or theme changes
   useEffect(() => {
     let cancelled = false;
 
@@ -95,7 +90,6 @@ export function ResultsView({
 
       const isNewGeneration = prevCanonicalRef.current !== result.canonical;
 
-      // Derive seeds for all 4 renderers
       const [geoSeed, orgSeed, ptclSeed, typoSeed] = await Promise.all([
         deriveSeed(result.canonical, 'geometric', CURRENT_VERSION.engineVersion),
         deriveSeed(result.canonical, 'organic', CURRENT_VERSION.engineVersion),
@@ -105,20 +99,16 @@ export function ResultsView({
 
       if (cancelled) return;
 
-      // Build all 4 scenes
       const geoScene = buildSceneGraph(result.vector, result.palette, theme, geoSeed);
       const orgScene = buildOrganicSceneGraph(result.vector, result.palette, theme, orgSeed);
       const ptclScene = buildParticleSceneGraph(result.vector, result.palette, theme, ptclSeed, 800, maxParticles);
-      // Typographic scene is null for data inputs
       const typoScene = inputType === 'data'
         ? null
         : buildTypographicSceneGraph(result.vector, result.palette, theme, typoSeed, inputText);
 
-      // Update refs
       prevCanonicalRef.current = result.canonical;
       prevThemeRef.current = theme;
 
-      // Animate only on new generation, not theme change
       const animate = isNewGeneration && !prefersReducedMotion;
       setShouldAnimate(animate);
       setScenes({
@@ -128,7 +118,6 @@ export function ResultsView({
         typographic: typoScene,
       });
 
-      // Suppress unused variable warning
       void isThemeChange;
     }
 
@@ -145,14 +134,12 @@ export function ResultsView({
     }
   }, [activeStyle, inputType]);
 
-  // Style switch handler — triggers full progressive animation for new style
   const handleStyleChange = useCallback((style: StyleName) => {
     setActiveStyle(style);
     setShouldAnimate(true);
     setAnimationKey((k) => k + 1);
   }, []);
 
-  // Render complete callback
   const handleRenderComplete = useCallback(() => {
     setShouldAnimate(false);
   }, []);
@@ -242,7 +229,6 @@ export function ResultsView({
     return rows;
   }, [scenes.organic, scenes.typographic]);
 
-  // Render the active canvas component
   function renderCanvas() {
     const key = `${activeStyle}-${animationKey}`;
     switch (activeStyle) {
@@ -298,51 +284,76 @@ export function ResultsView({
   }
 
   return (
-    <div className="w-full">
-      {/* Collapsed input bar */}
-      {inputType === 'text' ? (
-        <div className="border-b border-[var(--border)] p-3">
-          <p className="font-mono text-sm text-[var(--muted-foreground)] truncate">
-            text input ready
-          </p>
+    <div className="space-y-6">
+      <section className="editorial-panel editorial-control-surface overflow-hidden">
+        {inputType === 'text' ? (
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-2">
+              <p className="editorial-note-label mb-0">Source state</p>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                text input ready
+              </p>
+            </div>
+            <div className="editorial-chip">proof-safe continuity maintained</div>
+          </div>
+        ) : (
+          <CollapsedInput text={inputText} onRegenerate={onRegenerate} />
+        )}
+
+        {isGenerating && (
+          <div className="mt-5 editorial-support-panel">
+            <p className="editorial-note-label mb-3">Generation progress</p>
+            <PipelineProgress currentStage={stage} />
+          </div>
+        )}
+      </section>
+
+      <section className="editorial-results-grid">
+        <div className="space-y-6">
+          <section className="editorial-panel editorial-control-surface overflow-hidden">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="space-y-3 max-w-2xl">
+                <p className="editorial-note-label mb-0">Results salon</p>
+                <h2 className="editorial-display text-3xl sm:text-4xl leading-[0.92]">
+                  The artwork, proof, and controls stay on the same editorial stage.
+                </h2>
+                <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
+                  Review the active render, switch the visual language, and inspect derived proof
+                  signals without exposing the underlying source material.
+                </p>
+              </div>
+              <div className="editorial-chip-stack" aria-label="Results continuity cues">
+                <span className="editorial-chip">active style · {activeStyle}</span>
+                <span className="editorial-chip">proof source · {proofSource}</span>
+                <span className="editorial-chip">palette family · {result.palette.familyId}</span>
+              </div>
+            </div>
+
+            <div className="mt-6 border-t border-[var(--border-soft)] pt-5">
+              <StyleSelector
+                scenes={scenes}
+                activeStyle={activeStyle}
+                onStyleChange={handleStyleChange}
+                inputType={inputType}
+              />
+            </div>
+          </section>
+
+          <section className="editorial-panel editorial-canvas-frame overflow-hidden">
+            <div
+              className={`transition-opacity duration-500 ${isGenerating ? 'opacity-40' : 'opacity-100'}`}
+            >
+              {renderCanvas()}
+            </div>
+          </section>
         </div>
-      ) : (
-        <CollapsedInput text={inputText} onRegenerate={onRegenerate} />
-      )}
 
-      {/* Progress indicator during generation */}
-      {isGenerating && <PipelineProgress currentStage={stage} />}
-
-      {/* Style selector between input and canvas */}
-      <div className="mt-4 mb-2">
-        <StyleSelector
-          scenes={scenes}
-          activeStyle={activeStyle}
-          onStyleChange={handleStyleChange}
-          inputType={inputType}
-        />
-      </div>
-
-      {/* Main content: canvas + parameter panel */}
-      <div className="flex flex-col md:flex-row gap-8 mt-4">
-        {/* Canvas area */}
-        <div
-          className={`
-            w-full md:w-1/2 max-w-lg mx-auto md:mx-0
-            transition-opacity duration-500
-            ${isGenerating ? 'opacity-40' : 'opacity-100'}
-          `}
-        >
-          {renderCanvas()}
-        </div>
-
-        {/* Parameter panel */}
-        <div className="w-full md:w-1/2">
+        <div className="space-y-6">
           <section
             aria-label="Proof diagnostics"
-            className="rounded-2xl border border-[var(--border)] bg-[var(--muted)]/30 p-4 mb-4"
+            className="editorial-panel editorial-control-surface"
           >
-            <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex items-start justify-between gap-3 mb-4">
               <div>
                 <h2 className="text-sm font-semibold tracking-[0.18em] uppercase text-[var(--muted-foreground)]">
                   proof diagnostics
@@ -351,7 +362,7 @@ export function ResultsView({
                   derived diagnostics only — raw input hidden
                 </p>
               </div>
-              <div className="text-xs rounded-full border border-[var(--border)] px-2 py-1 text-[var(--muted-foreground)]">
+              <div className="editorial-chip">
                 <span>active style</span>
                 <span className="sr-only">: </span>
                 <span className="ml-1">{activeStyle}</span>
@@ -391,7 +402,7 @@ export function ResultsView({
               </div>
             </dl>
 
-            <div className="mt-4 border-t border-[var(--border)] pt-4">
+            <div className="mt-4 border-t border-[var(--border-soft)] pt-4">
               <h3 className="text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)] mb-2">
                 renderer expressiveness
               </h3>
@@ -412,44 +423,71 @@ export function ResultsView({
             </div>
           </section>
 
-          <ParameterPanel
-            vector={result.vector}
-            provenance={result.provenance}
-            summaries={result.summaries}
-            version={CURRENT_VERSION}
-          />
-          <div className="mt-4">
-            <ExportControls
-              parameterVector={result.vector}
-              versionInfo={CURRENT_VERSION}
-              styleName={activeStyle}
-            />
-          </div>
-          <div className="mt-4">
-            <ShareButton
-              parameterVector={result.vector}
-              versionInfo={CURRENT_VERSION}
-              styleName={activeStyle}
-            />
-          </div>
-          <div className="mt-2">
-            {savedGalleryId ? (
-              <p className="text-xs text-muted-foreground">
-                Saved to gallery.{' '}
-                <a href={`/gallery/${savedGalleryId}`} className="underline">View</a>
+          <section className="editorial-panel editorial-control-surface">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
+              <div>
+                <p className="editorial-note-label mb-1">Action desk</p>
+                <h3 className="text-lg font-medium text-[var(--foreground)]">Collect, export, or share this edition.</h3>
+              </div>
+              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                public actions remain privacy-safe
               </p>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowSaveModal(true)}
-                className="btn-ghost text-sm w-full"
-              >
-                Save to Gallery
-              </button>
-            )}
-          </div>
+            </div>
+
+            <div className="space-y-4">
+              <ExportControls
+                parameterVector={result.vector}
+                versionInfo={CURRENT_VERSION}
+                styleName={activeStyle}
+              />
+              <ShareButton
+                parameterVector={result.vector}
+                versionInfo={CURRENT_VERSION}
+                styleName={activeStyle}
+              />
+
+              <div className="editorial-action-card">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-[var(--foreground)]">Gallery archive</p>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                      Publish only the artwork, style, and optional short preview — never the full raw source.
+                    </p>
+                  </div>
+                  {savedGalleryId ? (
+                    <a href={`/gallery/${savedGalleryId}`} className="btn-ghost text-sm text-center">
+                      View saved artwork
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowSaveModal(true)}
+                      className="btn-accent text-sm"
+                    >
+                      Save to Gallery
+                    </button>
+                  )}
+                </div>
+                {savedGalleryId && (
+                  <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+                    Gallery save complete. Use “View saved artwork” to open the public detail page.
+                  </p>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section className="editorial-panel editorial-control-surface">
+            <ParameterPanel
+              vector={result.vector}
+              provenance={result.provenance}
+              summaries={result.summaries}
+              version={CURRENT_VERSION}
+            />
+          </section>
         </div>
-      </div>
+      </section>
+
       {showSaveModal && (
         <GallerySaveModal
           parameterVector={result.vector}

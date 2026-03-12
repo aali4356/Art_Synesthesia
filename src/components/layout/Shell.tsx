@@ -5,18 +5,13 @@ interface ShellProps {
   children: ReactNode;
 }
 
-/**
- * Responsive layout shell.
- * Desktop: content centered with generous gallery whitespace.
- * Mobile: full width with stacked sections.
- * DS-04: Responsive breakpoints for input/canvas/panel layout.
- */
 export function Shell({ children }: ShellProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="editorial-shell min-h-screen flex flex-col">
+      <div className="editorial-shell__ambient" aria-hidden="true" />
       <Header />
-      <main className="flex-1 gallery-padding">
-        <div className="mx-auto max-w-6xl w-full">{children}</div>
+      <main className="flex-1 gallery-padding relative">
+        <div className="mx-auto max-w-7xl w-full">{children}</div>
       </main>
     </div>
   );

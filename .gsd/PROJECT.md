@@ -42,5 +42,6 @@ See `.gsd/REQUIREMENTS.md` for the explicit capability contract, requirement sta
 - [x] M001: Migration — Ship the complete deterministic v1 product foundation across inputs, renderers, gallery/share/compare, export, and privacy-aware infrastructure.
 - [x] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
 - [ ] M003: Signature Product Experience — Redesign the full site into an editorial gallery-luxe product with a stronger brand identity, premium landing/results/gallery surfaces, and memorable UX.
+  - S01 complete: the real homepage now delivers a branded editorial landing → generation → results journey with privacy-safe proof diagnostics and branded export/share/save action surfaces verified in-browser.
 - [ ] M004: Product Coherence and Continuity — Strengthen onboarding, primary user loops, saved state, account/identity decisions, analytics, and continuity across sessions and surfaces.
 - [ ] M005: Public Launch Readiness — Harden build/deploy reliability, fix operational gaps, improve observability, document production setup, and make the product ready for public portfolio launch.

@@ -79,108 +79,140 @@ export function GallerySaveModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-4 py-8 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-label="Save to Gallery"
     >
-      <div className="bg-background border border-border rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl">
-        <h2 className="text-lg font-semibold mb-1">Save to Gallery</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Preview what will be publicly visible before saving.
-        </p>
-
-        {/* Thumbnail preview */}
-        {thumbnailDataUrl && (
-          <div className="mb-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={thumbnailDataUrl}
-              alt="Artwork thumbnail preview"
-              className="w-24 h-24 object-cover rounded border border-border"
-            />
+      <div className="editorial-modal-shell max-h-[90vh] w-full max-w-xl overflow-y-auto">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="editorial-note-label mb-1">Gallery save</p>
+            <h2 className="editorial-display text-3xl leading-[0.95]">Save to Gallery</h2>
+            <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg leading-relaxed">
+              Preview exactly what will be public before publishing this edition. The full raw source is never included here.
+            </p>
           </div>
-        )}
-
-        {/* Style name (read-only) */}
-        <div className="mb-3">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide">Style</span>
-          <p className="font-mono text-sm capitalize">{styleName}</p>
-        </div>
-
-        {/* Title (optional) */}
-        <div className="mb-3">
-          <label htmlFor="gallery-title" className="text-xs text-muted-foreground uppercase tracking-wide block mb-1">
-            Title (optional)
-          </label>
-          <input
-            id="gallery-title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Give your artwork a name"
-            className="w-full border border-border rounded px-3 py-1.5 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-accent"
-            maxLength={100}
-          />
-        </div>
-
-        {/* Input preview (editable, removable) — GAL-02 */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-1">
-            <label htmlFor="gallery-preview" className="text-xs text-muted-foreground uppercase tracking-wide">
-              Input preview (optional)
-            </label>
-            <button
-              type="button"
-              onClick={() => setIncludePreview(!includePreview)}
-              className="text-xs text-muted-foreground underline"
-            >
-              {includePreview ? 'Remove' : 'Add back'}
-            </button>
-          </div>
-          {includePreview ? (
-            <div>
-              <input
-                id="gallery-preview"
-                type="text"
-                value={inputPreview}
-                onChange={(e) => setInputPreview(e.target.value.slice(0, MAX_PREVIEW_CHARS))}
-                placeholder="Short description (max 50 chars)"
-                className="w-full border border-border rounded px-3 py-1.5 text-sm bg-background focus:outline-none focus:ring-1 focus:ring-accent"
-                maxLength={MAX_PREVIEW_CHARS}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is NOT your full input, just a public hint
-              </p>
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground italic">No input preview will be shown</p>
-          )}
-        </div>
-
-        {/* Error */}
-        {error && (
-          <p className="text-sm text-red-500 mb-3" role="alert">{error}</p>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-3 justify-end">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
             className="btn-ghost text-sm"
           >
-            Cancel
+            Close
           </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="btn-primary text-sm"
-          >
-            {saving ? 'Saving…' : 'Save to Gallery'}
-          </button>
+        </div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-start">
+          <div className="editorial-action-card">
+            <p className="editorial-note-label mb-2">Public preview</p>
+            {thumbnailDataUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={thumbnailDataUrl}
+                alt="Artwork thumbnail preview"
+                className="aspect-square w-full rounded-[1.25rem] border border-[var(--border-soft)] object-cover"
+              />
+            ) : (
+              <div className="flex aspect-square items-center justify-center rounded-[1.25rem] border border-dashed border-[var(--border)] text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                preview unavailable
+              </div>
+            )}
+            <div className="mt-3 space-y-2 text-sm">
+              <div>
+                <span className="editorial-note-label mb-1">Style</span>
+                <p className="capitalize text-[var(--foreground)]">{styleName}</p>
+              </div>
+              <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                Public saves can include the artwork image, style, title, and an optional short input preview only.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="gallery-title" className="editorial-field-label">
+                Title (optional)
+              </label>
+              <input
+                id="gallery-title"
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Give your artwork a name"
+                className="editorial-input"
+                maxLength={100}
+              />
+            </div>
+
+            <div className="editorial-action-card">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <label htmlFor="gallery-preview" className="editorial-field-label mb-0">
+                  Input preview (optional)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIncludePreview(!includePreview)}
+                  className="btn-ghost text-sm"
+                >
+                  {includePreview ? 'Remove' : 'Add back'}
+                </button>
+              </div>
+
+              {includePreview ? (
+                <div>
+                  <input
+                    id="gallery-preview"
+                    type="text"
+                    value={inputPreview}
+                    onChange={(e) => setInputPreview(e.target.value.slice(0, MAX_PREVIEW_CHARS))}
+                    placeholder="Short description (max 50 chars)"
+                    className="editorial-input"
+                    maxLength={MAX_PREVIEW_CHARS}
+                  />
+                  <p className="mt-2 text-xs text-[var(--muted-foreground)] leading-relaxed">
+                    {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is not your full input, only a public-facing hint.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs italic text-[var(--muted-foreground)]">
+                  No input preview will be shown.
+                </p>
+              )}
+            </div>
+
+            <div className="editorial-action-card">
+              <p className="editorial-note-label mb-2">Privacy posture</p>
+              <ul className="space-y-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
+                <li>• Raw source text is not sent with share/save metadata from this modal.</li>
+                <li>• You control whether any short public input preview appears on the gallery card.</li>
+                <li>• The saved page reflects the current style and render thumbnail only.</li>
+              </ul>
+            </div>
+
+            {error && (
+              <p className="text-sm text-[var(--color-accent)]" role="alert">{error}</p>
+            )}
+
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={saving}
+                className="btn-ghost text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="btn-accent text-sm"
+              >
+                {saving ? 'Saving…' : 'Save to Gallery'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

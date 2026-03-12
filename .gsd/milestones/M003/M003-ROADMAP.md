@@ -58,7 +58,7 @@ This milestone is complete only when all are true:
 
 ## Slices
 
-- [ ] **S01: Editorial landing, generation, and results journey** `risk:high` `depends:[]`
+- [x] **S01: Editorial landing, generation, and results journey** `risk:high` `depends:[]`
   > After this: a visitor can use the real homepage flow to understand the product, generate artwork, and land in a premium branded results experience that already feels continuous rather than split between marketing and tool UI.
 - [ ] **S02: Shared brand system across shell, actions, and viewer surfaces** `risk:medium` `depends:[S01]`
   > After this: the redesigned visual language is no longer homepage-only — shared chrome, action treatments, viewer framing, copy posture, and route-level surface patterns visibly unify results and the reusable product seams downstream pages depend on.

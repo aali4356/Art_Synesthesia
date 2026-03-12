@@ -9,21 +9,18 @@ import { DataInput } from './DataInput';
 import { GenerateButton } from './GenerateButton';
 
 interface InputZoneProps {
-  // Text tab props
   text: string;
   onTextChange: (text: string) => void;
   onGenerate: () => void;
   isPrivate: boolean;
   onTogglePrivate: () => void;
   isGenerating: boolean;
-  // URL tab props
   url: string;
   onUrlChange: (url: string) => void;
   onAnalyzeUrl: (mode: 'snapshot' | 'live') => void;
   isAnalyzingUrl: boolean;
   urlError: string | null;
   urlRemainingQuota: number | null;
-  // Data tab props
   data: string;
   onDataChange: (data: string, hint: 'csv' | 'json' | 'auto') => void;
   onAnalyzeData: () => void;
@@ -58,68 +55,102 @@ export function InputZone({
     setActiveTab(tab);
   }, []);
 
+  const tabNarrative = {
+    text: {
+      eyebrow: 'Text atelier',
+      title: 'Compose from language',
+      body: 'Paste a phrase, memo, poem, or note. Generate with keyboard shortcuts intact and keep the proof surface private by default.',
+    },
+    url: {
+      eyebrow: 'Reference capture',
+      title: 'Analyze a live or snapped link',
+      body: 'Bring in a URL when the visual should answer to a published reference. Snapshot and live modes remain truthful about runtime limits.',
+    },
+    data: {
+      eyebrow: 'Dataset studio',
+      title: 'Transform tables into visual evidence',
+      body: 'Drop CSV or JSON, or paste raw data directly. The same branded surface holds structure, upload cues, and diagnostics.',
+    },
+  } satisfies Record<TabKey, { eyebrow: string; title: string; body: string }>;
+
+  const activeNarrative = tabNarrative[activeTab];
+
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <InputTabs activeTab={activeTab} onTabChange={handleTabChange} />
+    <section className="editorial-panel editorial-control-surface w-full max-w-3xl mx-auto">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-8">
+        <div className="space-y-5">
+          <div className="space-y-3">
+            <p className="editorial-note-label">Choose your source</p>
+            <h2 className="editorial-display text-3xl sm:text-4xl leading-[0.95]">
+              {activeNarrative.title}
+            </h2>
+            <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
+              {activeNarrative.body}
+            </p>
+          </div>
 
-      {activeTab === 'text' && (
-        <>
-          <TextInput
-            value={text}
-            onChange={onTextChange}
-            onSubmit={onGenerate}
-            disabled={isGenerating}
-          />
-          <GenerateButton
-            onGenerate={onGenerate}
-            isPrivate={isPrivate}
-            onTogglePrivate={onTogglePrivate}
-            disabled={isGenerating || text.trim().length === 0}
-          />
-          <span
-            className="flex items-center gap-1 text-xs text-muted-foreground mt-2"
-            title="Local analysis — your text never leaves your browser"
-            aria-label="Local analysis mode: your text never leaves your browser"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              className="w-3 h-3"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1zm2 5V4.5a2 2 0 1 0-4 0V6h4z"
-                clipRule="evenodd"
+          <div className="editorial-meta-stack space-y-4">
+            <div>
+              <p className="editorial-note-label">Current mode</p>
+              <p className="text-base text-[var(--foreground)]">{activeNarrative.eyebrow}</p>
+            </div>
+            <div>
+              <p className="editorial-note-label">Privacy posture</p>
+              <p className="text-sm text-[var(--foreground)] leading-relaxed">
+                Private-by-default generation. Raw source stays off the proof surface.
+              </p>
+            </div>
+            <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
+              <li>• Text, URL, and data inputs stay available inside one control surface.</li>
+              <li>• Keyboard submission remains active for text and URL flows.</li>
+              <li>• Diagnostics stay derived and legible without surfacing source material.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <InputTabs activeTab={activeTab} onTabChange={handleTabChange} />
+
+          {activeTab === 'text' && (
+            <div className="space-y-4">
+              <TextInput
+                value={text}
+                onChange={onTextChange}
+                onSubmit={onGenerate}
+                disabled={isGenerating}
               />
-            </svg>
-            Local only
-          </span>
-        </>
-      )}
+              <GenerateButton
+                onGenerate={onGenerate}
+                isPrivate={isPrivate}
+                onTogglePrivate={onTogglePrivate}
+                disabled={isGenerating || text.trim().length === 0}
+              />
+            </div>
+          )}
 
-      {activeTab === 'url' && (
-        <UrlInput
-          url={url}
-          onUrlChange={onUrlChange}
-          onAnalyze={onAnalyzeUrl}
-          disabled={isAnalyzingUrl}
-          remainingQuota={urlRemainingQuota}
-          error={urlError}
-        />
-      )}
+          {activeTab === 'url' && (
+            <UrlInput
+              url={url}
+              onUrlChange={onUrlChange}
+              onAnalyze={onAnalyzeUrl}
+              disabled={isAnalyzingUrl}
+              remainingQuota={urlRemainingQuota}
+              error={urlError}
+            />
+          )}
 
-      {activeTab === 'data' && (
-        <DataInput
-          data={data}
-          onDataChange={onDataChange}
-          onAnalyze={onAnalyzeData}
-          disabled={isAnalyzingData}
-          error={dataError}
-          formatHint={dataFormatHint}
-        />
-      )}
-    </div>
+          {activeTab === 'data' && (
+            <DataInput
+              data={data}
+              onDataChange={onDataChange}
+              onAnalyze={onAnalyzeData}
+              disabled={isAnalyzingData}
+              error={dataError}
+              formatHint={dataFormatHint}
+            />
+          )}
+        </div>
+      </div>
+    </section>
   );
 }

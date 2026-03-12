@@ -30,14 +30,14 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ### R003 — Visual design should feel editorial, gallery-luxe, and distinctively branded
 - Class: differentiator
-- Status: active
+- Status: validated
 - Description: The web experience should look super artsy, sleek, and intentionally designed, with premium typography, spacing, composition, and materials.
 - Why it matters: The product must feel like a serious art object and premium digital experience, not a functional prototype.
 - Source: user
 - Primary owning slice: M003/S01
 - Supporting slices: M003/S02, M003/S03
-- Validation: mapped
-- Notes: The chosen direction is editorial gallery luxe, not generic startup SaaS.
+- Validation: validated
+- Notes: S01 shipped and browser-verified the real homepage landing→generation→results journey in an editorial gallery-luxe system, proving the direction works in the actual app rather than only in static mockup-like surfaces.
 
 ### R004 — Core product surfaces must feel coherent as one branded product
 - Class: primary-user-loop
@@ -96,14 +96,14 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ### R009 — Premium launch surfaces should communicate the brand and product value clearly
 - Class: primary-user-loop
-- Status: active
+- Status: validated
 - Description: The homepage, onboarding, empty states, and key copy surfaces should communicate what Synesthesia Machine is, why it is special, and why someone should try/share it.
 - Why it matters: A premium art product needs narrative and framing, not just controls.
 - Source: user
 - Primary owning slice: M003/S01
 - Supporting slices: M003/S03, M004/S01
-- Validation: mapped
-- Notes: Includes brand voice, hero positioning, and launch-facing copy/system.
+- Validation: validated
+- Notes: S01 added and browser-verified branded landing copy, private-first framing, curated prompt context, and continuity messaging that explain the product and how to begin on the real entry route.
 
 ### R010 — Keyboard and accessibility quality should catch up with the visual ambition
 - Class: quality-attribute
@@ -227,13 +227,13 @@ Use it to track what is actively in scope, what has been validated by completed 
 |---|---|---|---|---|---|
 | R001 | differentiator | active | M002/S01 | M002/S02, M003/S02 | mapped |
 | R002 | differentiator | validated | M002/S02 | M002/S03, M003/S03 | validated |
-| R003 | differentiator | active | M003/S01 | M003/S02, M003/S03 | mapped |
+| R003 | differentiator | validated | M003/S01 | M003/S02, M003/S03 | validated |
 | R004 | primary-user-loop | active | M003/S03 | M004/S01, M004/S02 | mapped |
 | R005 | launchability | active | M005/S03 | M003/S03, M004/S03, M005/S01, M005/S02 | mapped |
 | R006 | operability | active | M005/S01 | M005/S02 | mapped |
 | R007 | failure-visibility | active | M004/S03 | M005/S02 | mapped |
 | R008 | continuity | active | M004/S02 | M004/S01, M005/S03 | mapped |
-| R009 | primary-user-loop | active | M003/S01 | M003/S03, M004/S01 | mapped |
+| R009 | primary-user-loop | validated | M003/S01 | M003/S03, M004/S01 | validated |
 | R010 | quality-attribute | active | M004/S03 | M003/S03, M005/S03 | mapped |
 | R011 | core-capability | validated | M001/S01 | M001/S02, M001/S03, M001/S04, M001/S05, M001/S06 | validated |
 | R012 | core-capability | validated | M001/S04 | M001/S05 | validated |
@@ -247,7 +247,7 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ## Coverage Summary
 
-- Active requirements: 9
+- Active requirements: 7
 - Mapped to slices: 10
-- Validated: 6
+- Validated: 8
 - Unmapped active requirements: 0

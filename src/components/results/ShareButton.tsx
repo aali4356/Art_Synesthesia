@@ -37,7 +37,6 @@ export function ShareButton({
       const response = await fetch('/api/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Only vector, version, and style -- never raw input
         body: JSON.stringify({ vector: parameterVector, version: versionInfo, style: styleName }),
       });
 
@@ -66,39 +65,58 @@ export function ShareButton({
 
   if (state.status === 'success') {
     return (
-      <div className={`flex flex-col gap-2 ${className}`}>
-        <div className="flex items-center gap-2 p-2 rounded border border-border text-sm font-mono break-all">
-          <span className="flex-1 text-muted-foreground">{state.fullUrl}</span>
+      <div className={`editorial-action-card ${className}`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="editorial-note-label mb-1">Share</p>
+            <h3 className="text-base font-medium text-[var(--foreground)]">Create a public proof link.</h3>
+            <p className="text-sm text-[var(--muted-foreground)] mt-1">
+              The share payload includes only vector, version, and style metadata — never the raw source.
+            </p>
+          </div>
+          <button
+            onClick={() => setState({ status: 'idle' })}
+            className="btn-ghost text-sm"
+          >
+            Create new link
+          </button>
+        </div>
+
+        <div className="mt-4 editorial-link-strip">
+          <span className="flex-1 font-mono text-sm text-[var(--muted-foreground)] break-all">{state.fullUrl}</span>
           <button
             onClick={handleCopy}
-            className="shrink-0 px-2 py-1 text-xs rounded bg-secondary hover:bg-secondary/80 transition-colors"
+            className="btn-accent text-sm shrink-0"
             aria-label="Copy share link to clipboard"
           >
             Copy
           </button>
         </div>
-        <button
-          onClick={() => setState({ status: 'idle' })}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Create new link
-        </button>
       </div>
     );
   }
 
   return (
-    <div className={`flex flex-col gap-1 ${className}`}>
-      <button
-        onClick={handleShare}
-        disabled={state.status === 'loading'}
-        className="px-4 py-2 rounded bg-secondary hover:bg-secondary/80 disabled:opacity-50 transition-colors text-sm font-medium"
-        aria-label="Share this artwork"
-      >
-        {state.status === 'loading' ? 'Creating link...' : 'Share'}
-      </button>
+    <div className={`editorial-action-card ${className}`}>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-1">
+          <p className="editorial-note-label mb-0">Share</p>
+          <h3 className="text-base font-medium text-[var(--foreground)]">Publish a view-only edition link.</h3>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Generate a public route for this artwork without attaching the original prompt or source payload.
+          </p>
+        </div>
+        <button
+          onClick={handleShare}
+          disabled={state.status === 'loading'}
+          className="btn-accent text-sm disabled:opacity-50"
+          aria-label="Share this artwork"
+        >
+          {state.status === 'loading' ? 'Creating link...' : 'Share'}
+        </button>
+      </div>
       {state.status === 'error' && (
-        <p className="text-xs text-destructive">{state.message}</p>
+        <p className="mt-3 text-xs text-[var(--color-accent)]" role="alert">{state.message}</p>
       )}
     </div>
   );
