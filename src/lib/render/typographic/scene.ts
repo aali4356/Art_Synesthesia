@@ -2,9 +2,10 @@ import { createPRNG } from '@/lib/engine/prng';
 import type { ParameterVector } from '@/types/engine';
 import type { PaletteResult } from '@/lib/color/palette';
 import type { TypographicSceneGraph } from '@/lib/render/types';
+import { interpretRendererExpressiveness } from '@/lib/render/expressiveness';
 import { extractWeightedWords } from './words';
 import { placeWords, approximateMeasure } from './layout';
-import type { MeasureFn } from './layout';
+import type { LayoutExpressiveness, MeasureFn } from './layout';
 
 /**
  * Builds a complete typographic scene graph from text input and parameters.
@@ -29,13 +30,23 @@ export function buildTypographicSceneGraph(
   measureFn: MeasureFn = approximateMeasure,
 ): TypographicSceneGraph {
   const prng = createPRNG(seed + '-typo-layout');
+  const expressiveness = interpretRendererExpressiveness(palette, theme);
 
-  const maxWords = Math.round(5 + params.complexity * 55);
+  const maxWords = Math.round(5 + params.complexity * 36 + expressiveness.densityLift * 24);
   const weightedWords = extractWeightedWords(inputText, maxWords);
 
   const colors = theme === 'dark'
     ? palette.dark.map((c) => c.hex)
     : palette.light.map((c) => c.hex);
+
+  const layoutExpressiveness: LayoutExpressiveness = {
+    densityLift: expressiveness.densityLift,
+    hierarchyLift: expressiveness.hierarchyLift,
+    rotationFreedom: expressiveness.rotationFreedom,
+    fontVariety: expressiveness.fontVariety,
+    placementBiasX: expressiveness.placementBiasX,
+    placementBiasY: expressiveness.placementBiasY,
+  };
 
   const words = placeWords(
     weightedWords,
@@ -45,6 +56,7 @@ export function buildTypographicSceneGraph(
     measureFn,
     params.energy,
     params.complexity,
+    layoutExpressiveness,
   );
 
   const background = theme === 'dark' ? '#0a0a0a' : '#fafafa';
@@ -56,5 +68,6 @@ export function buildTypographicSceneGraph(
     height: canvasSize,
     background,
     words,
+    expressiveness: layoutExpressiveness,
   };
 }

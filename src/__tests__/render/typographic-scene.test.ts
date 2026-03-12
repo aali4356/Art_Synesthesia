@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildTypographicSceneGraph, approximateMeasure } from '@/lib/render/typographic';
+import type { PaletteResult } from '@/lib/color/palette';
 
 function mockParams(overrides: Record<string, number> = {}) {
   return {
@@ -16,6 +17,48 @@ const mockPalette = {
   light: [{ hex: '#4040a0' }, { hex: '#204080' }, { hex: '#803040' }],
 } as any;
 
+function makePaletteWithMapping(mappingOverrides: Partial<PaletteResult['mapping']>): PaletteResult {
+  return {
+    dark: [
+      { hex: '#c0a0ff', css: 'oklch(0.77 0.14 300)', oklch: { mode: 'oklch', l: 0.77, c: 0.14, h: 300 } },
+      { hex: '#80c0ff', css: 'oklch(0.78 0.11 240)', oklch: { mode: 'oklch', l: 0.78, c: 0.11, h: 240 } },
+      { hex: '#ff80a0', css: 'oklch(0.76 0.16 8)', oklch: { mode: 'oklch', l: 0.76, c: 0.16, h: 8 } },
+    ],
+    light: [
+      { hex: '#4040a0', css: 'oklch(0.46 0.14 280)', oklch: { mode: 'oklch', l: 0.46, c: 0.14, h: 280 } },
+      { hex: '#204080', css: 'oklch(0.39 0.09 255)', oklch: { mode: 'oklch', l: 0.39, c: 0.09, h: 255 } },
+      { hex: '#803040', css: 'oklch(0.44 0.12 15)', oklch: { mode: 'oklch', l: 0.44, c: 0.12, h: 15 } },
+    ],
+    harmony: 'triadic',
+    count: 3,
+    familyId: 'test-family',
+    familyName: 'Test Family',
+    familyDescriptor: 'test family',
+    selectionKey: 'test-selection',
+    selectionVector: {
+      warmth: 0.5,
+      energy: 0.5,
+      saturation: 0.5,
+      contrast: 0.5,
+      symmetry: 0.5,
+      layering: 0.5,
+      texture: 0.5,
+    },
+    mapping: {
+      mood: 'balanced resonance',
+      temperatureBias: 'warm',
+      harmonySource: 'family',
+      hueAnchor: 'family-base',
+      chromaPosture: 'balanced',
+      contrastPosture: 'balanced',
+      harmony: 'triadic',
+      familyId: 'test-family',
+      anchorHue: 300,
+      ...mappingOverrides,
+    },
+  };
+}
+
 const sampleText = 'The quick brown fox jumps over the lazy dog. Exploration and curiosity drive great discoveries.';
 const shortText = 'Love';
 
@@ -30,7 +73,6 @@ describe('buildTypographicSceneGraph', () => {
     expect(scene.width).toBe(800);
     expect(scene.height).toBe(800);
 
-    // Each word has required fields (TYPO-01)
     for (const w of scene.words) {
       expect(typeof w.text).toBe('string');
       expect(typeof w.x).toBe('number');
@@ -64,7 +106,7 @@ describe('buildTypographicSceneGraph', () => {
     );
     const total = scene.words.length;
     const rotated = scene.words.filter((w) => Math.abs(w.rotation) > 10).length;
-    expect(rotated / total).toBeLessThanOrEqual(0.31); // allow 1% rounding tolerance
+    expect(rotated / total).toBeLessThanOrEqual(0.31);
   });
 
   it('TYPO-04: no two full-opacity words overlap', () => {
@@ -96,6 +138,50 @@ describe('buildTypographicSceneGraph', () => {
         expect(w.opacity).toBeLessThan(0.4);
       }
     }
+  });
+
+  it('TYPO-05: vivid bold mappings loosen hierarchy and rotation while soft muted mappings stay tighter', () => {
+    const calmPalette = makePaletteWithMapping({
+      mood: 'calm drift',
+      temperatureBias: 'cool',
+      chromaPosture: 'muted',
+      contrastPosture: 'soft',
+      harmony: 'analogous',
+      familyId: 'lagoon-mist',
+      anchorHue: 205,
+    });
+    const dramaticPalette = makePaletteWithMapping({
+      mood: 'midnight bloom',
+      temperatureBias: 'warm',
+      chromaPosture: 'lush',
+      contrastPosture: 'dramatic',
+      harmony: 'triadic',
+      familyId: 'orchid-nocturne',
+      anchorHue: 314,
+    });
+
+    const calmScene = buildTypographicSceneGraph(
+      mockParams(), calmPalette, 'dark', 'mapping-typographic', sampleText, 800, approximateMeasure,
+    );
+    const dramaticScene = buildTypographicSceneGraph(
+      mockParams(), dramaticPalette, 'dark', 'mapping-typographic', sampleText, 800, approximateMeasure,
+    );
+
+    expect(calmScene.words.length).toBeLessThan(dramaticScene.words.length);
+
+    const calmProminent = calmScene.words.filter((word) => word.isProminent);
+    const dramaticProminent = dramaticScene.words.filter((word) => word.isProminent);
+    const calmAverageProminentSize = calmProminent.reduce((sum, word) => sum + word.fontSize, 0) / calmProminent.length;
+    const dramaticAverageProminentSize = dramaticProminent.reduce((sum, word) => sum + word.fontSize, 0) / dramaticProminent.length;
+    expect(calmAverageProminentSize).toBeLessThan(dramaticAverageProminentSize);
+
+    const calmAverageRotation = calmScene.words.reduce((sum, word) => sum + Math.abs(word.rotation), 0) / calmScene.words.length;
+    const dramaticAverageRotation = dramaticScene.words.reduce((sum, word) => sum + Math.abs(word.rotation), 0) / dramaticScene.words.length;
+    expect(calmAverageRotation).toBeLessThan(dramaticAverageRotation);
+
+    const calmProminentFamilies = new Set(calmProminent.map((word) => word.fontFamily));
+    const dramaticProminentFamilies = new Set(dramaticProminent.map((word) => word.fontFamily));
+    expect(calmProminentFamilies.size).toBeLessThan(dramaticProminentFamilies.size);
   });
 
   it('short text (1 word) produces a prominent scene with large font', () => {

@@ -2,15 +2,32 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import { StyleSelector } from '@/components/results/StyleSelector';
 import type { StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
+import { deriveSeed } from '@/lib/engine/prng';
+import { buildOrganicSceneGraph } from '@/lib/render/organic';
+import { buildTypographicSceneGraph } from '@/lib/render/typographic';
+import type { PaletteResult } from '@/lib/color/palette';
+import type { ParameterVector } from '@/types/engine';
 
 // ---------------------------------------------------------------------------
 // Mocks — prevent real canvas draw calls in jsdom
 // ---------------------------------------------------------------------------
 
-vi.mock('@/lib/render/geometric', () => ({ drawSceneComplete: vi.fn() }));
-vi.mock('@/lib/render/organic', () => ({ drawOrganicSceneComplete: vi.fn() }));
-vi.mock('@/lib/render/particle', () => ({ drawParticleSceneComplete: vi.fn() }));
-vi.mock('@/lib/render/typographic', () => ({ drawTypographicSceneComplete: vi.fn() }));
+vi.mock('@/lib/render/geometric', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/render/geometric')>();
+  return { ...actual, drawSceneComplete: vi.fn() };
+});
+vi.mock('@/lib/render/organic', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/render/organic')>();
+  return { ...actual, drawOrganicSceneComplete: vi.fn() };
+});
+vi.mock('@/lib/render/particle', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/render/particle')>();
+  return { ...actual, drawParticleSceneComplete: vi.fn() };
+});
+vi.mock('@/lib/render/typographic', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/render/typographic')>();
+  return { ...actual, drawTypographicSceneComplete: vi.fn() };
+});
 
 // Mock canvas getContext
 function createMockContext(): CanvasRenderingContext2D {
@@ -74,14 +91,43 @@ const mockGeoScene: SceneGraph = {
 
 const mockOrgScene: OrganicSceneGraph = {
   style: 'organic',
+  parameters: {
+    complexity: 0.5,
+    warmth: 0.5,
+    symmetry: 0.5,
+    rhythm: 0.5,
+    energy: 0.5,
+    density: 0.5,
+    scaleVariation: 0.5,
+    curvature: 0.5,
+    saturation: 0.5,
+    contrast: 0.5,
+    layering: 0.5,
+    directionality: 0.5,
+    paletteSize: 0.5,
+    texture: 0.5,
+    regularity: 0.5,
+  },
   width: 800,
   height: 800,
   background: '#0a0a0a',
-  gradientStops: [{ offset: 0, color: '#ff0000' }],
-  curves: [],
-  layers: 1,
-  octaves: 2,
-  dominantDirection: 0,
+  gradientStops: [
+    { offset: 0, color: '#ff0000' },
+    { offset: 0.45, color: '#ffaa00' },
+    { offset: 1, color: '#0a0a0a' },
+  ],
+  curves: [
+    {
+      points: [{ x: 10, y: 10 }, { x: 120, y: 64 }, { x: 200, y: 160 }],
+      startColor: '#ff0000',
+      endColor: '#ffaa00',
+      width: 2,
+      opacity: 0.72,
+    },
+  ],
+  layers: 2,
+  octaves: 3,
+  dominantDirection: 0.9,
 };
 
 const mockPtclScene: ParticleSceneGraph = {
@@ -100,6 +146,58 @@ const mockTypoScene: TypographicSceneGraph = {
   height: 800,
   background: '#0a0a0a',
   words: [],
+  expressiveness: {
+    densityLift: 0.5,
+    hierarchyLift: 0.5,
+    rotationFreedom: 0.5,
+    fontVariety: 0.5,
+    placementBiasX: 0.5,
+    placementBiasY: 0.5,
+  },
+};
+
+const mockVector: ParameterVector = {
+  complexity: 0.72,
+  symmetry: 0.38,
+  density: 0.66,
+  curvature: 0.71,
+  texture: 0.58,
+  scaleVariation: 0.64,
+  rhythm: 0.52,
+  regularity: 0.31,
+  directionality: 0.69,
+  layering: 0.74,
+  energy: 0.63,
+  warmth: 0.44,
+  saturation: 0.67,
+  contrast: 0.78,
+  paletteSize: 0.59,
+};
+
+const mockPaletteWithMapping: PaletteResult = {
+  dark: [
+    { hex: '#ff6b6b', oklch: { l: 0.72, c: 0.18, h: 24 } },
+    { hex: '#ffd166', oklch: { l: 0.84, c: 0.16, h: 82 } },
+    { hex: '#118ab2', oklch: { l: 0.56, c: 0.14, h: 228 } },
+  ],
+  light: [
+    { hex: '#d1495b', oklch: { l: 0.62, c: 0.16, h: 18 } },
+    { hex: '#edae49', oklch: { l: 0.76, c: 0.14, h: 84 } },
+    { hex: '#00798c', oklch: { l: 0.5, c: 0.12, h: 218 } },
+  ],
+  familyId: 'ember-cascade',
+  harmony: 'complementary',
+  mapping: {
+    mood: 'cinematic',
+    temperatureBias: 'hot',
+    harmonySource: 'family',
+    hueAnchor: 'family-base',
+    chromaPosture: 'vivid',
+    contrastPosture: 'bold',
+    harmony: 'complementary',
+    familyId: 'ember-cascade',
+    anchorHue: 24,
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -322,5 +420,50 @@ describe('StyleSelector', () => {
     );
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper.className).toContain('overflow-x-auto');
+  });
+
+  it('renders mapping-aware organic and typographic runtime scenes without selector API changes', async () => {
+    const [organicSeed, typographicSeed] = await Promise.all([
+      deriveSeed('selector-runtime-canonical', 'organic', 'test-engine'),
+      deriveSeed('selector-runtime-canonical', 'typographic', 'test-engine'),
+    ]);
+
+    const organicScene = buildOrganicSceneGraph(
+      mockVector,
+      mockPaletteWithMapping,
+      'dark',
+      organicSeed,
+    );
+    const typographicScene = buildTypographicSceneGraph(
+      mockVector,
+      mockPaletteWithMapping,
+      'dark',
+      typographicSeed,
+      'A vivid composition blooms across the page with layered cinematic phrases.',
+    );
+
+    render(
+      <StyleSelector
+        scenes={{
+          geometric: mockGeoScene,
+          organic: organicScene,
+          particle: mockPtclScene,
+          typographic: typographicScene,
+        }}
+        activeStyle="organic"
+        onStyleChange={vi.fn()}
+        inputType="text"
+      />,
+    );
+
+    expect(organicScene.expressiveness.atmosphericRichness).toBeGreaterThan(0.7);
+    expect(typographicScene.expressiveness.hierarchyLift).toBeGreaterThan(0.7);
+
+    const organicCard = screen.getByText('Organic').closest('[data-style]');
+    const typographicCard = screen.getByText('Typographic').closest('[data-style]');
+
+    expect(organicCard?.querySelector('canvas')).toBeDefined();
+    expect(typographicCard?.querySelector('canvas')).toBeDefined();
+    expect(typographicCard?.getAttribute('data-disabled')).toBeNull();
   });
 });

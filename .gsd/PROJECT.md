@@ -14,13 +14,13 @@ M001 is complete. The product already has:
 - deterministic canonicalization, analysis, normalization, and rendering pipeline
 - text, URL, and data inputs
 - geometric, organic, particle, and typographic renderers
+- shared synesthetic mapping that now drives inspectable organic and typographic expressiveness posture in runtime scene graphs
 - share links, gallery, moderation, compare mode, export controls, and alt text
-- strong automated proof via 530 passing tests
+- strong automated proof via targeted renderer, hook, and product-surface tests
 
 Current gaps are quality and launchability, not basic capability:
-- renderer styles still need to visibly consume the richer synesthetic intent in live results beyond palette changes
+- organic and typographic renderers now visibly consume shared synesthetic expressiveness in deterministic scene graphs, but browser-level visual proof of the upgraded art direction is still pending
 - the site shell and core flows are functional but not yet premium or brand-defining
-- browser-level visual proof of the upgraded art direction is still pending
 - build portability still has an eager DB bootstrap issue without `DATABASE_URL`
 - shipping surfaces like observability, deploy guidance, and account/continuity strategy need hardening
 

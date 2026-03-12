@@ -1,6 +1,15 @@
 import type { TypographicWord } from '@/lib/render/types';
 import type { WeightedWord } from './words';
 
+export interface LayoutExpressiveness {
+  densityLift: number;
+  hierarchyLift: number;
+  rotationFreedom: number;
+  fontVariety: number;
+  placementBiasX: number;
+  placementBiasY: number;
+}
+
 export interface MeasureResult {
   width: number;
   height: number;
@@ -64,13 +73,14 @@ export function placeWords(
   measure: MeasureFn,
   energyParam: number,
   complexityParam: number,
+  expressiveness: LayoutExpressiveness,
 ): TypographicWord[] {
   const padding = canvasSize * 0.05;
   const usableSize = canvasSize - padding * 2;
 
   const targetCount = Math.min(
     words.length,
-    Math.round(5 + complexityParam * 35),
+    Math.max(1, Math.floor(words.length * (0.42 + expressiveness.densityLift * 0.4 + complexityParam * 0.18))),
   );
   const wordsToPlace = words.slice(0, targetCount);
 
@@ -91,14 +101,24 @@ export function placeWords(
       const scaleFactor = (usableSize * 0.85) / testMeasure.width;
       fontSize = Math.min(100 * scaleFactor, usableSize * 0.7);
     } else if (isProminent) {
-      const baseFontSize = 40 + word.weight * 60 * (0.5 + energyParam * 0.5);
+      const hierarchyBoost = 1 + expressiveness.hierarchyLift * (index === 0 ? 0.42 : 0.26);
+      const baseFontSize = 40 + word.weight * 60 * (0.5 + energyParam * 0.5) * hierarchyBoost;
       fontSize = Math.max(16, baseFontSize); // TYPO-02: min 16px
     } else {
-      const baseFontSize = 10 + word.weight * 30 * (0.3 + energyParam * 0.7);
+      const densityScale = 0.28 + energyParam * 0.62 + expressiveness.densityLift * 0.22;
+      const baseFontSize = 10 + word.weight * 30 * densityScale;
       fontSize = Math.max(8, baseFontSize);
     }
 
-    const fontFamily = isProminent ? 'Georgia, serif' : 'system-ui, sans-serif';
+    const prominentFamilies = expressiveness.fontVariety >= 0.62
+      ? ['Georgia, serif', 'Arial Black, Gadget, sans-serif', 'Trebuchet MS, sans-serif']
+      : ['Georgia, serif', 'Georgia, serif', 'Georgia, serif'];
+    const supportFamilies = expressiveness.fontVariety >= 0.5
+      ? ['system-ui, sans-serif', 'Trebuchet MS, sans-serif', 'Verdana, sans-serif']
+      : ['system-ui, sans-serif', 'system-ui, sans-serif'];
+    const fontFamily = isProminent
+      ? prominentFamilies[index % prominentFamilies.length]
+      : supportFamilies[index % supportFamilies.length];
     const fontWeight = isProminent ? 'bold' : 'normal';
     const color = colors[index % colors.length];
 
@@ -110,12 +130,12 @@ export function placeWords(
 
     if (isProminent) {
       // Prominent: slight tilt only, max 15 degrees (TYPO-02)
-      rotation = (prng() - 0.5) * 20; // -10 to +10 deg
+      rotation = (prng() - 0.5) * (12 + expressiveness.rotationFreedom * 12);
       rotation = Math.max(-15, Math.min(15, rotation));
-    } else if (canRotate && prng() < 0.35) {
-      rotation = (prng() - 0.5) * 70; // -35 to +35 deg
+    } else if (canRotate && prng() < 0.2 + expressiveness.rotationFreedom * 0.3) {
+      rotation = (prng() - 0.5) * (36 + expressiveness.rotationFreedom * 34);
     } else {
-      rotation = (prng() - 0.5) * 14; // -7 to +7 deg
+      rotation = (prng() - 0.5) * (10 + expressiveness.rotationFreedom * 12);
     }
 
     totalWords++;
@@ -136,17 +156,22 @@ export function placeWords(
       x = padding + (usableSize - expandedW) / 2;
       y = padding + (usableSize - expandedH) / 2 + expandedH;
     } else if (isProminent && placed.length === 0) {
-      x = padding + (usableSize - expandedW) / 2 + (prng() - 0.5) * usableSize * 0.2;
-      y = padding + usableSize * 0.3 + (prng() - 0.5) * usableSize * 0.2;
+      const biasX = (expressiveness.placementBiasX - 0.5) * usableSize * 0.28;
+      const biasY = (expressiveness.placementBiasY - 0.5) * usableSize * 0.24;
+      x = padding + (usableSize - expandedW) / 2 + biasX + (prng() - 0.5) * usableSize * 0.14;
+      y = padding + usableSize * 0.3 + biasY + (prng() - 0.5) * usableSize * 0.14;
     } else {
       const spiralSteps = 40;
       let placed_ok = false;
 
+      const centerX = canvasSize * (0.3 + expressiveness.placementBiasX * 0.4);
+      const centerY = canvasSize * (0.3 + expressiveness.placementBiasY * 0.4);
+
       for (let step = 0; step < spiralSteps; step++) {
-        const spiralAngle = step * 0.5;
-        const spiralR = step * (canvasSize / spiralSteps) * 0.3;
-        const cx = canvasSize / 2 + Math.cos(spiralAngle) * spiralR + (prng() - 0.5) * 40;
-        const cy = canvasSize / 2 + Math.sin(spiralAngle) * spiralR + (prng() - 0.5) * 40;
+        const spiralAngle = step * (0.42 + expressiveness.rotationFreedom * 0.16);
+        const spiralR = step * (canvasSize / spiralSteps) * (0.22 + expressiveness.densityLift * 0.18);
+        const cx = centerX + Math.cos(spiralAngle) * spiralR + (prng() - 0.5) * (24 + expressiveness.rotationFreedom * 26);
+        const cy = centerY + Math.sin(spiralAngle) * spiralR + (prng() - 0.5) * (24 + expressiveness.rotationFreedom * 26);
 
         const testX = Math.max(padding, Math.min(canvasSize - padding - expandedW, cx - expandedW / 2));
         const testY = Math.max(padding + expandedH, Math.min(canvasSize - padding, cy + expandedH / 2));

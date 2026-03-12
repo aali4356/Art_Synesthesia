@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildOrganicSceneGraph } from '@/lib/render/organic';
+import type { PaletteResult } from '@/lib/color/palette';
 
 function makeParams(overrides: Record<string, number> = {}) {
   return {
@@ -20,6 +21,48 @@ const mockPalette = {
   harmony: 'triadic',
   count: 3,
 } as any;
+
+function makePaletteWithMapping(mappingOverrides: Partial<PaletteResult['mapping']>): PaletteResult {
+  return {
+    dark: [
+      { hex: '#7b3dd4', css: 'oklch(0.62 0.21 300)', oklch: { mode: 'oklch', l: 0.62, c: 0.21, h: 300 } },
+      { hex: '#d4783d', css: 'oklch(0.71 0.16 45)', oklch: { mode: 'oklch', l: 0.71, c: 0.16, h: 45 } },
+      { hex: '#3dd47b', css: 'oklch(0.74 0.19 155)', oklch: { mode: 'oklch', l: 0.74, c: 0.19, h: 155 } },
+    ],
+    light: [
+      { hex: '#4040a0', css: 'oklch(0.46 0.15 280)', oklch: { mode: 'oklch', l: 0.46, c: 0.15, h: 280 } },
+      { hex: '#a04020', css: 'oklch(0.57 0.14 40)', oklch: { mode: 'oklch', l: 0.57, c: 0.14, h: 40 } },
+      { hex: '#206040', css: 'oklch(0.43 0.09 160)', oklch: { mode: 'oklch', l: 0.43, c: 0.09, h: 160 } },
+    ],
+    harmony: 'triadic',
+    count: 3,
+    familyId: 'test-family',
+    familyName: 'Test Family',
+    familyDescriptor: 'test family',
+    selectionKey: 'test-selection',
+    selectionVector: {
+      warmth: 0.5,
+      energy: 0.5,
+      saturation: 0.5,
+      contrast: 0.5,
+      symmetry: 0.5,
+      layering: 0.5,
+      texture: 0.5,
+    },
+    mapping: {
+      mood: 'balanced resonance',
+      temperatureBias: 'warm',
+      harmonySource: 'family',
+      hueAnchor: 'family-base',
+      chromaPosture: 'balanced',
+      contrastPosture: 'balanced',
+      harmony: 'triadic',
+      familyId: 'test-family',
+      anchorHue: 300,
+      ...mappingOverrides,
+    },
+  };
+}
 
 describe('buildOrganicSceneGraph', () => {
   it('ORGN-01: returns OrganicSceneGraph with correct structure', () => {
@@ -46,7 +89,6 @@ describe('buildOrganicSceneGraph', () => {
   it('ORGN-03: layer count <= 5; opacity reduced when layering param is high', () => {
     const highLayering = buildOrganicSceneGraph(makeParams({ layering: 1.0 }), mockPalette, 'dark', 'layers');
     expect(highLayering.layers).toBeLessThanOrEqual(5);
-    // When layering would exceed 5, opacity should be reduced
     for (const curve of highLayering.curves) {
       expect(curve.opacity).toBeGreaterThan(0);
       expect(curve.opacity).toBeLessThanOrEqual(1);
@@ -73,6 +115,41 @@ describe('buildOrganicSceneGraph', () => {
       expect(stop.offset).toBeGreaterThanOrEqual(0);
       expect(stop.offset).toBeLessThanOrEqual(1);
     }
+  });
+
+  it('ORGN-05: bold vivid mappings produce denser, richer, more directional scenes than soft muted mappings', () => {
+    const calmPalette = makePaletteWithMapping({
+      mood: 'calm drift',
+      temperatureBias: 'cool',
+      chromaPosture: 'muted',
+      contrastPosture: 'soft',
+      harmony: 'analogous',
+      familyId: 'lagoon-mist',
+      anchorHue: 205,
+    });
+    const dramaticPalette = makePaletteWithMapping({
+      mood: 'incandescent surge',
+      temperatureBias: 'hot',
+      chromaPosture: 'vivid',
+      contrastPosture: 'bold',
+      harmony: 'complementary',
+      familyId: 'solar-flare',
+      anchorHue: 28,
+    });
+
+    const calmScene = buildOrganicSceneGraph(makeParams(), calmPalette, 'dark', 'mapping-organic');
+    const dramaticScene = buildOrganicSceneGraph(makeParams(), dramaticPalette, 'dark', 'mapping-organic');
+
+    expect(calmScene.curves.length).toBeLessThan(dramaticScene.curves.length);
+    expect(calmScene.gradientStops.length).toBeLessThan(dramaticScene.gradientStops.length);
+
+    const calmAverageOpacity = calmScene.curves.reduce((sum, curve) => sum + curve.opacity, 0) / calmScene.curves.length;
+    const dramaticAverageOpacity = dramaticScene.curves.reduce((sum, curve) => sum + curve.opacity, 0) / dramaticScene.curves.length;
+    expect(calmAverageOpacity).toBeLessThan(dramaticAverageOpacity);
+
+    const calmDirectionalStrength = Math.abs(calmScene.dominantDirection);
+    const dramaticDirectionalStrength = Math.abs(dramaticScene.dominantDirection);
+    expect(calmDirectionalStrength).toBeLessThan(dramaticDirectionalStrength);
   });
 
   it('uses dark background in dark theme', () => {

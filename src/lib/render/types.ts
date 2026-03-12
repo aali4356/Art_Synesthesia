@@ -184,6 +184,13 @@ export interface OrganicSceneGraph extends BaseSceneGraph {
   octaves: number;
   /** Dominant flow direction in radians (derived from directionality param) */
   dominantDirection: number;
+  /** Stable inspection surface for shared palette.mapping interpretation */
+  expressiveness: {
+    atmosphericRichness: number;
+    densityLift: number;
+    layeringDepth: number;
+    directionalDrama: number;
+  };
 }
 
 /**
@@ -288,6 +295,15 @@ export interface TypographicSceneGraph {
   height: number;
   background: string;
   words: TypographicWord[];
+  /** Stable inspection surface for shared palette.mapping interpretation */
+  expressiveness: {
+    densityLift: number;
+    hierarchyLift: number;
+    rotationFreedom: number;
+    fontVariety: number;
+    placementBiasX: number;
+    placementBiasY: number;
+  };
 }
 
 /**

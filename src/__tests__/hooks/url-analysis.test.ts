@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useUrlAnalysis } from '@/hooks/useUrlAnalysis';
+import { buildOrganicSceneGraph } from '@/lib/render/organic';
+import { buildTypographicSceneGraph } from '@/lib/render/typographic';
+import { deriveSeed } from '@/lib/engine/prng';
 
 const mockApiPayload = {
   signals: {
@@ -101,5 +104,47 @@ describe('useUrlAnalysis', () => {
     expect(first.result.current.result?.palette.familyId).toBe(second.result.current.result?.palette.familyId);
     expect(first.result.current.result?.palette.harmony).toBe(second.result.current.result?.palette.harmony);
     expect(first.result.current.result?.palette.mapping).toEqual(second.result.current.result?.palette.mapping);
+  });
+
+  it('builds renderer-ready organic and typographic scenes from URL hook output', async () => {
+    const { result } = renderHook(() => useUrlAnalysis());
+    const input = 'https://example.com/path?a=1&b=2';
+
+    await act(async () => {
+      await result.current.generate(input);
+    });
+
+    await waitFor(() => {
+      expect(result.current.stage).toBe('complete');
+      expect(result.current.result).not.toBeNull();
+    });
+
+    const pipelineResult = result.current.result;
+    expect(pipelineResult).not.toBeNull();
+    if (!pipelineResult) throw new Error('expected URL pipeline result');
+
+    const [organicSeed, typographicSeed] = await Promise.all([
+      deriveSeed(pipelineResult.canonical, 'organic', '1.0.0'),
+      deriveSeed(pipelineResult.canonical, 'typographic', '1.0.0'),
+    ]);
+
+    const organicScene = buildOrganicSceneGraph(
+      pipelineResult.vector,
+      pipelineResult.palette,
+      'dark',
+      organicSeed,
+    );
+    const typographicScene = buildTypographicSceneGraph(
+      pipelineResult.vector,
+      pipelineResult.palette,
+      'dark',
+      typographicSeed,
+      pipelineResult.title || pipelineResult.canonical,
+    );
+
+    expect(organicScene.curves.length).toBeGreaterThan(0);
+    expect(organicScene.expressiveness.atmosphericRichness).toBeGreaterThan(0);
+    expect(typographicScene.words.length).toBeGreaterThan(0);
+    expect(typographicScene.expressiveness.hierarchyLift).toBeGreaterThan(0);
   });
 });

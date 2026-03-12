@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useDataAnalysis } from '@/hooks/useDataAnalysis';
+import { buildOrganicSceneGraph } from '@/lib/render/organic';
+import { deriveSeed } from '@/lib/engine/prng';
 
 function csvWithWindowsNewlines() {
   return [
@@ -74,5 +76,35 @@ describe('useDataAnalysis', () => {
     expect(first.result.current.result?.palette.familyId).toBe(second.result.current.result?.palette.familyId);
     expect(first.result.current.result?.palette.harmony).toBe(second.result.current.result?.palette.harmony);
     expect(first.result.current.result?.palette.mapping).toEqual(second.result.current.result?.palette.mapping);
+  });
+
+  it('keeps organic renderer-ready output available while data inputs remain typographic-ineligible', async () => {
+    const { result } = renderHook(() => useDataAnalysis());
+
+    await act(async () => {
+      await result.current.generate(csvWithUnixNewlines(), 'csv');
+    });
+
+    await waitFor(() => {
+      expect(result.current.stage).toBe('complete');
+      expect(result.current.result).not.toBeNull();
+    });
+
+    const pipelineResult = result.current.result;
+    expect(pipelineResult).not.toBeNull();
+    if (!pipelineResult) throw new Error('expected data pipeline result');
+
+    const organicSeed = await deriveSeed(pipelineResult.canonical, 'organic', '1.0.0');
+    const organicScene = buildOrganicSceneGraph(
+      pipelineResult.vector,
+      pipelineResult.palette,
+      'dark',
+      organicSeed,
+    );
+
+    expect(organicScene.style).toBe('organic');
+    expect(organicScene.curves.length).toBeGreaterThan(0);
+    expect(organicScene.expressiveness.layeringDepth).toBeGreaterThan(0);
+    expect(pipelineResult.format).toBe('csv');
   });
 });

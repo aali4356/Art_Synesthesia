@@ -1,9 +1,9 @@
 # GSD State
 
 **Active Milestone:** M002 — Chromatic Synesthesia Overhaul
-**Active Slice:** S03 — Renderer Expressiveness Pass
-**Active Task:** Ready to plan
-**Phase:** Slice Complete / Next Slice Ready
+**Active Slice:** S04 — Live Art Quality Integration Proof
+**Active Task:** Plan and execute browser-level live art-quality verification for M002
+**Phase:** Ready for next slice / milestone planning
 
 ## Recent Decisions
 - Design direction: editorial gallery luxe
@@ -15,11 +15,13 @@
 - S02 added a first-class deterministic synesthetic mapping artifact consumed by `generatePalette()` while preserving the shared `generatePalette(vector, seed)` seam
 - S02 exposes additive mapping diagnostics on `PaletteResult` and proves them through text/URL/data hook integration tests
 - Hook-level determinism for S02 is defined as canonical-input stability of vector and mapping diagnostics when seed derivation is not canonicalized
+- S03 proves runtime integration at the existing hook result and scene-graph boundaries instead of introducing new ResultsView or selector APIs
+- S03 exposes applied renderer expressiveness posture directly on organic and typographic scene graphs for live debugging and downstream acceptance work
 
 ## Blockers
-- No active blocker for closing S02; slice-level color and hook verification passed.
+- No active blocker.
 - Known follow-up: `useDataAnalysis` hashes trimmed raw input for palette seeding, so newline-only equivalent inputs can diverge in full palette output despite matching vectors and mapping diagnostics.
-- Remaining milestone gap: renderer styles do not yet visibly consume the upgraded synesthetic mapping in live results; S03 owns that proof.
+- Remaining milestone gap: S04 still needs browser-level live art-quality proof and explicit visual acceptance evidence across real product flows.
 
 ## Next Action
-Plan and execute S03 using `PaletteResult.mapping` as the renderer-facing intent contract, then prove at least two styles visibly gain richer expression while preserving determinism.
+Plan and execute S04 to capture browser-verified live runtime art-direction proof and final visual acceptance evidence for M002, using `PaletteResult.mapping` plus renderer `expressiveness` fields as the first diagnostic seam before broader browser inspection.

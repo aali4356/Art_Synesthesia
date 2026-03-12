@@ -53,7 +53,7 @@ This milestone is complete only when all are true:
   > After this: deterministic generations can produce multiple clearly different curated palette families with test-level proof that repetition has materially dropped.
 - [x] **S02: Synesthetic Mapping Upgrade** `risk:high` `depends:[S01]`
   > After this: parameter behavior drives palette-family and mood selection more intentionally, with observable changes in real generated outputs.
-- [ ] **S03: Renderer Expressiveness Pass** `risk:medium` `depends:[S01,S02]`
+- [x] **S03: Renderer Expressiveness Pass** `risk:medium` `depends:[S01,S02]`
   > After this: at least two styles render noticeably richer, more premium compositions in the live results surface while preserving determinism.
 - [ ] **S04: Live Art Quality Integration Proof** `risk:medium` `depends:[S01,S02,S03]`
   > After this: the improved art system is verified in the actual browser experience across existing product flows, with evidence suitable for milestone closeout.
