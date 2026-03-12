@@ -24,17 +24,17 @@ function makeParams(overrides: Partial<ParameterVector>): ParameterVector {
 }
 
 describe('selectHarmony', () => {
-  it('returns analogous for high symmetry + low contrast', () => {
+  it('still returns analogous for high symmetry + low contrast at the raw vector layer', () => {
     const result = selectHarmony(makeParams({ symmetry: 0.8, contrast: 0.2, energy: 0.5 }));
     expect(result).toBe('analogous');
   });
 
-  it('returns complementary for high contrast + high energy', () => {
+  it('still returns complementary for high contrast + high energy at the raw vector layer', () => {
     const result = selectHarmony(makeParams({ symmetry: 0.3, contrast: 0.8, energy: 0.8 }));
     expect(result).toBe('complementary');
   });
 
-  it('returns triadic for high contrast + moderate energy', () => {
+  it('still returns triadic for high contrast + moderate energy at the raw vector layer', () => {
     const result = selectHarmony(makeParams({ symmetry: 0.3, contrast: 0.6, energy: 0.5 }));
     expect(result).toBe('triadic');
   });
@@ -42,6 +42,27 @@ describe('selectHarmony', () => {
   it('returns split-complementary as default fallback', () => {
     const result = selectHarmony(makeParams({ symmetry: 0.5, contrast: 0.4, energy: 0.4 }));
     expect(result).toBe('split-complementary');
+  });
+
+  it('documents the future mismatch where family-authoritative harmony should override the raw vector result', async () => {
+    const { generatePalette } = await import('@/lib/color/palette');
+    const params = makeParams({
+      warmth: 0.97,
+      energy: 0.94,
+      contrast: 0.88,
+      symmetry: 0.93,
+      saturation: 0.92,
+    });
+
+    expect(selectHarmony(params)).toBe('complementary');
+
+    const result = generatePalette(params, 'family-harmony-authority');
+    expect(result.familyId).toBe('solar-flare');
+    expect(result.harmony).toBe('complementary');
+    expect(result.mapping).toMatchObject({
+      harmony: 'complementary',
+      harmonySource: 'family',
+    });
   });
 });
 

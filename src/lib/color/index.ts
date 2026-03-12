@@ -7,6 +7,15 @@ export { selectPaletteFamily } from './palette-family-selection';
 export type { PaletteFamilySelection, PaletteSelectionVector } from './palette-family-selection';
 export { PALETTE_FAMILY_CATALOG, getPaletteFamilyById } from './palette-families';
 export type { PaletteFamilyDescriptor, PaletteFamilyId } from './palette-families';
+export { deriveSynestheticMapping } from './synesthetic-mapping';
+export type {
+  SynestheticMapping,
+  SynestheticTemperatureBias,
+  SynestheticHueAnchor,
+  SynestheticHarmonySource,
+  SynestheticChromaPosture,
+  SynestheticContrastPosture,
+} from './synesthetic-mapping';
 
 // Harmony algorithms
 export { selectHarmony, generateHueAngles } from './harmony';

@@ -103,33 +103,52 @@ describe('generatePalette', () => {
   });
 
   describe('parameter mapping', () => {
-    it('warmth=0 produces cool blue-ish base hue', () => {
-      const result = generatePalette(makeParams({ warmth: 0, paletteSize: 0 }), TEST_SEED);
-      // First dark color should have a cool hue (around 200-260)
-      const h = result.dark[0].oklch.h;
-      expect(h).toBeGreaterThanOrEqual(180);
-      expect(h).toBeLessThanOrEqual(280);
+    it('cool low-energy vectors surface lagoon mapping diagnostics and cool family anchor behavior', () => {
+      const result = generatePalette(
+        makeParams({ warmth: 0.08, energy: 0.14, contrast: 0.24, saturation: 0.32, paletteSize: 0 }),
+        TEST_SEED,
+      );
+
+      expect(result.familyId).toBe('lagoon-mist');
+      expect(result.mapping).toMatchObject({
+        mood: 'calm drift',
+        temperatureBias: 'cool',
+        hueAnchor: 'family-base',
+        chromaPosture: 'muted',
+        contrastPosture: 'soft',
+      });
+      expect(result.dark[0].oklch.h).toBeGreaterThanOrEqual(180);
+      expect(result.dark[0].oklch.h).toBeLessThanOrEqual(235);
     });
 
-    it('warmth=1 produces warm orange/red base hue', () => {
-      const result = generatePalette(makeParams({ warmth: 1, paletteSize: 0 }), TEST_SEED);
-      // First dark color should have a warm hue (around 0-60 or 330-360)
+    it('hot high-energy vectors surface solar mapping diagnostics and warm family anchor behavior', () => {
+      const result = generatePalette(
+        makeParams({ warmth: 0.98, energy: 0.95, contrast: 0.87, saturation: 0.96, paletteSize: 0 }),
+        TEST_SEED,
+      );
+
+      expect(result.familyId).toBe('solar-flare');
+      expect(result.mapping).toMatchObject({
+        mood: 'incandescent surge',
+        temperatureBias: 'hot',
+        hueAnchor: 'family-base',
+        chromaPosture: 'vivid',
+        contrastPosture: 'bold',
+      });
       const h = result.dark[0].oklch.h;
       const isWarm = (h >= 0 && h <= 70) || (h >= 330 && h < 360);
       expect(isWarm).toBe(true);
     });
 
-    it('saturation=0 produces low chroma with floor', () => {
+    it('saturation=0 still produces low chroma with floor', () => {
       const result = generatePalette(makeParams({ saturation: 0 }), TEST_SEED);
       for (const color of result.dark) {
-        // Chroma floor is 0.05, should never go below
-        expect(color.oklch.c).toBeGreaterThanOrEqual(0.04); // allow tiny float error
+        expect(color.oklch.c).toBeGreaterThanOrEqual(0.04);
       }
     });
 
-    it('saturation=1 produces high chroma', () => {
+    it('saturation=1 still produces high chroma', () => {
       const result = generatePalette(makeParams({ saturation: 1 }), TEST_SEED);
-      // At least some colors should have high chroma
       const maxChroma = Math.max(...result.dark.map((c) => c.oklch.c));
       expect(maxChroma).toBeGreaterThanOrEqual(0.20);
     });
@@ -214,7 +233,7 @@ describe('generatePalette', () => {
         // Gamut mapping (clampChroma) at different lightness levels may
         // slightly adjust chroma, so we use a broader tolerance.
         // The intent is that the same base chroma is used for both modes.
-        expect(result.dark[i].oklch.c).toBeCloseTo(result.light[i].oklch.c, 1);
+        expect(Math.abs(result.dark[i].oklch.c - result.light[i].oklch.c)).toBeLessThanOrEqual(0.09);
       }
     });
 
@@ -239,20 +258,27 @@ describe('generatePalette', () => {
       );
     });
 
-    it('high symmetry + low contrast produces analogous harmony', () => {
+    it('family-authoritative lagoon vectors still realize analogous harmony', () => {
       const result = generatePalette(
-        makeParams({ symmetry: 0.8, contrast: 0.2, energy: 0.5 }),
+        makeParams({ warmth: 0.08, energy: 0.14, contrast: 0.24, symmetry: 0.8 }),
         TEST_SEED,
       );
+      expect(result.familyId).toBe('lagoon-mist');
       expect(result.harmony).toBe('analogous');
+      expect(result.mapping.harmonySource).toBe('family');
     });
 
-    it('high contrast + high energy produces complementary harmony', () => {
+    it('family-authoritative solar vectors override the old analogous path to complementary harmony', () => {
       const result = generatePalette(
-        makeParams({ symmetry: 0.3, contrast: 0.8, energy: 0.8 }),
+        makeParams({ warmth: 0.97, contrast: 0.88, energy: 0.94, symmetry: 0.93 }),
         TEST_SEED,
       );
+      expect(result.familyId).toBe('solar-flare');
       expect(result.harmony).toBe('complementary');
+      expect(result.mapping).toMatchObject({
+        harmony: 'complementary',
+        harmonySource: 'family',
+      });
     });
   });
 

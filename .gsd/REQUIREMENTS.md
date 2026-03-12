@@ -19,14 +19,14 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ### R002 — Synesthesia mapping feels more emotionally expressive and art-directed
 - Class: differentiator
-- Status: active
+- Status: validated
 - Description: The system should map inputs into palettes, compositions, and style behavior that feel more intentionally synesthetic rather than merely technically parameterized.
 - Why it matters: This is the heart of the product identity; stronger mapping quality makes the product memorable instead of just clever.
 - Source: user
 - Primary owning slice: M002/S02
 - Supporting slices: M002/S03, M003/S03
-- Validation: mapped
-- Notes: Includes upgraded palette logic, renderer interpretation, and cross-style emotional consistency.
+- Validation: validated
+- Notes: Palette-level proof is now established for deterministic full-vector synesthetic mapping, stable diagnostics, and text/URL/data flow propagation; renderer interpretation and cross-style emotional consistency remain for later slices.
 
 ### R003 — Visual design should feel editorial, gallery-luxe, and distinctively branded
 - Class: differentiator
@@ -164,7 +164,7 @@ Use it to track what is actively in scope, what has been validated by completed 
 
 ### R015 — Accessibility metadata and export diagnostics are already in place
 - Class: failure-visibility
-n- Status: validated
+- Status: validated
 - Description: Alt text generation and export response diagnostics are implemented for current render/export flows.
 - Why it matters: Future milestones should build on these observability and accessibility foundations rather than replacing them.
 - Source: execution
@@ -226,7 +226,7 @@ n- Status: validated
 | ID | Class | Status | Primary owner | Supporting | Proof |
 |---|---|---|---|---|---|
 | R001 | differentiator | active | M002/S01 | M002/S02, M003/S02 | mapped |
-| R002 | differentiator | active | M002/S02 | M002/S03, M003/S03 | mapped |
+| R002 | differentiator | validated | M002/S02 | M002/S03, M003/S03 | validated |
 | R003 | differentiator | active | M003/S01 | M003/S02, M003/S03 | mapped |
 | R004 | primary-user-loop | active | M003/S03 | M004/S01, M004/S02 | mapped |
 | R005 | launchability | active | M005/S03 | M003/S03, M004/S03, M005/S01, M005/S02 | mapped |
@@ -247,7 +247,7 @@ n- Status: validated
 
 ## Coverage Summary
 
-- Active requirements: 10
+- Active requirements: 9
 - Mapped to slices: 10
-- Validated: 5
+- Validated: 6
 - Unmapped active requirements: 0

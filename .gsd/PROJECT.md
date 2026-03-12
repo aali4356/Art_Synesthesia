@@ -18,16 +18,16 @@ M001 is complete. The product already has:
 - strong automated proof via 530 passing tests
 
 Current gaps are quality and launchability, not basic capability:
-- palette output feels repetitive and visually narrow
+- renderer styles still need to visibly consume the richer synesthetic intent in live results beyond palette changes
 - the site shell and core flows are functional but not yet premium or brand-defining
-- the synesthesia experience needs stronger visual/art-direction coherence
+- browser-level visual proof of the upgraded art direction is still pending
 - build portability still has an eager DB bootstrap issue without `DATABASE_URL`
 - shipping surfaces like observability, deploy guidance, and account/continuity strategy need hardening
 
 ## Architecture / Key Patterns
 
 - Next.js App Router + TypeScript + Tailwind CSS frontend
-- Deterministic core pipeline: canonicalize -> analyze -> normalize -> parameter vector -> palette -> scene graph -> render
+- Deterministic core pipeline: canonicalize -> analyze -> normalize -> parameter vector -> synesthetic mapping -> palette -> scene graph -> render
 - Renderer architecture is scene-graph based, with pure builders and style-specific canvas components
 - Scene graphs carry source ParameterVector for accessibility and export reuse
 - DB-backed persistence/caching flows through boundary modules (`db-cache`, `db-gallery`) rather than inline route logic
@@ -40,7 +40,7 @@ See `.gsd/REQUIREMENTS.md` for the explicit capability contract, requirement sta
 ## Milestone Sequence
 
 - [x] M001: Migration — Ship the complete deterministic v1 product foundation across inputs, renderers, gallery/share/compare, export, and privacy-aware infrastructure.
-- [ ] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
+- [ ] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
 - [ ] M003: Signature Product Experience — Redesign the full site into an editorial gallery-luxe product with a stronger brand identity, premium landing/results/gallery surfaces, and memorable UX.
 - [ ] M004: Product Coherence and Continuity — Strengthen onboarding, primary user loops, saved state, account/identity decisions, analytics, and continuity across sessions and surfaces.
 - [ ] M005: Public Launch Readiness — Harden build/deploy reliability, fix operational gaps, improve observability, document production setup, and make the product ready for public portfolio launch.

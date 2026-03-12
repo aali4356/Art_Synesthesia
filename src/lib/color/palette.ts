@@ -11,10 +11,11 @@ import {
 } from 'culori/fn';
 import type { ParameterVector } from '@/types/engine';
 import { createPRNG } from '@/lib/engine/prng';
-import { selectHarmony, type HarmonyType } from './harmony';
+import type { HarmonyType } from './harmony';
 import { rejectNearDuplicates, type OklchColor } from './dedup';
 import { adjustForMode } from './contrast';
 import { selectPaletteFamily, type PaletteSelectionVector } from './palette-family-selection';
+import { deriveSynestheticMapping, type SynestheticMapping } from './synesthetic-mapping';
 
 // Register color spaces
 useMode(modeOklch);
@@ -58,6 +59,8 @@ export interface PaletteResult {
   selectionKey: string;
   /** Deterministic selection inputs for diagnostics */
   selectionVector: PaletteSelectionVector;
+  /** Stable synesthetic mapping diagnostics */
+  mapping: SynestheticMapping;
 }
 
 /**
@@ -97,14 +100,21 @@ export function generatePalette(
   const prng = createPRNG(seed);
   const familySelection = selectPaletteFamily(params, seed);
   const family = familySelection.family;
+  const mapping = deriveSynestheticMapping(params, family);
 
-  const legacyBaseHue = normalizeHue(((1 - params.warmth) * 220 + params.warmth * 390));
   const familyHueDrift = (prng() - 0.5) * family.hueJitter;
-  const baseHue = normalizeHue(legacyBaseHue + familyHueDrift);
+  const baseHue = normalizeHue(mapping.anchorHue + familyHueDrift);
   const chromaRange = family.chromaMax - family.chromaMin;
-  const harmony = selectHarmony(params);
+  const harmony = mapping.harmony;
   const lightnessTarget = family.lightnessTarget;
-  const lightnessSpread = Math.min(family.lightnessSpread + params.contrast * 0.04, 0.34);
+  const contrastSpreadBoost = mapping.contrastPosture === 'bold'
+    ? 0.06
+    : mapping.contrastPosture === 'dramatic'
+      ? 0.045
+      : mapping.contrastPosture === 'soft'
+        ? 0.015
+        : 0.03;
+  const lightnessSpread = Math.min(family.lightnessSpread + contrastSpreadBoost, 0.34);
 
   let candidates: OklchColor[] = Array.from({ length: count }, (_, i) => {
     const offset = family.hueOffsetDegrees[i % family.hueOffsetDegrees.length] ?? 0;
@@ -112,7 +122,14 @@ export function generatePalette(
     const t = count === 1 ? 0 : i / (count - 1);
     const centered = count === 1 ? 0 : t * 2 - 1;
     const accentWeight = i === 0 ? 1 : 0;
-    const chromaBase = family.chromaMin + params.saturation * chromaRange;
+    const chromaMultiplier = mapping.chromaPosture === 'vivid'
+      ? 1.15
+      : mapping.chromaPosture === 'lush'
+        ? 1.05
+        : mapping.chromaPosture === 'muted'
+          ? 0.78
+          : 0.94;
+    const chromaBase = (family.chromaMin + params.saturation * chromaRange) * chromaMultiplier;
     const chromaSlope = centered * family.chromaStep;
     const chromaJitter = (prng() - 0.5) * Math.max(0.004, Math.abs(family.chromaStep) * 0.35);
     const curveOffset = Math.sin(t * Math.PI) * family.lightnessCurve;
@@ -121,7 +138,7 @@ export function generatePalette(
 
     return {
       mode: 'oklch' as const,
-      h: normalizeHue(baseHue + offset * family.dominantHueWeight + hueNoise),
+      h: normalizeHue((i === 0 ? mapping.anchorHue : baseHue + offset * family.dominantHueWeight) + hueNoise),
       c: Math.max(
         0.05,
         Math.min(
@@ -174,7 +191,13 @@ export function generatePalette(
 
   deduplicated = rejectNearDuplicates(deduplicated, dedupThreshold + 4, 120, 0.18).slice(0, count);
 
-  const contrastFloor = family.id === 'solar-flare' || family.id === 'orchid-nocturne' ? 3.15 : 3.05;
+  const contrastFloor = mapping.contrastPosture === 'bold'
+    ? 3.25
+    : mapping.contrastPosture === 'dramatic'
+      ? 3.18
+      : mapping.contrastPosture === 'soft'
+        ? 3.02
+        : 3.1;
   const sharedBaseColors = deduplicated.map((color, index) => {
     const lightAdjusted = adjustForMode('light', color, contrastFloor);
     const chromaBuffer = family.id === 'orchid-nocturne' ? 0.015 : 0.03;
@@ -184,19 +207,41 @@ export function generatePalette(
     };
   });
 
-  const darkBaseColors = rejectNearDuplicates(sharedBaseColors, 10, 180, 0.28).slice(0, count);
-  const darkColors: PaletteColor[] = darkBaseColors.map((color) => toPaletteColor(adjustForMode('dark', color, contrastFloor)));
-  const lightColors: PaletteColor[] = darkBaseColors.map((color) => toPaletteColor(adjustForMode('light', color, contrastFloor)));
+  const darkBaseColors = rejectNearDuplicates(sharedBaseColors, 28, 180, 0.28);
+  let expandedBaseColors = darkBaseColors;
+
+  let refillAttempt = 0;
+  while (expandedBaseColors.length < count && refillAttempt < 24) {
+    const hue = normalizeHue(mapping.anchorHue + (refillAttempt + 1) * 37 + (prng() - 0.5) * 10);
+    const variant: OklchColor = {
+      mode: 'oklch',
+      h: hue,
+      c: Math.max(0.05, Math.min(0.28, family.chromaMin + params.saturation * chromaRange * 0.85 - refillAttempt * 0.003)),
+      l: Math.max(0.24, Math.min(0.84, lightnessTarget + ((refillAttempt % 2 === 0 ? 1 : -1) * 0.08) + (prng() - 0.5) * 0.04)),
+    };
+    expandedBaseColors = rejectNearDuplicates([...expandedBaseColors, variant], 28, 180, 0.28);
+    refillAttempt++;
+  }
+
+  const finalizedBaseColors = expandedBaseColors.slice(0, count);
+  const darkColors: PaletteColor[] = finalizedBaseColors.map((color) => toPaletteColor(adjustForMode('dark', color, contrastFloor)));
+  const lightColors: PaletteColor[] = finalizedBaseColors.map((color, index) => {
+    const adjusted = adjustForMode('light', color, contrastFloor);
+    const paletteColor = toPaletteColor(adjusted);
+    paletteColor.oklch.c = Math.min(paletteColor.oklch.c, darkColors[index]?.oklch.c ?? paletteColor.oklch.c);
+    return paletteColor;
+  });
 
   return {
     dark: darkColors,
     light: lightColors,
     harmony,
-    count: deduplicated.length,
+    count: finalizedBaseColors.length,
     familyId: family.id,
     familyName: family.name,
     familyDescriptor: family.descriptor,
     selectionKey: familySelection.selectionKey,
     selectionVector: familySelection.selectionVector,
+    mapping,
   };
 }
