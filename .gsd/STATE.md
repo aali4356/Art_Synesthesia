@@ -3,7 +3,7 @@
 **Active Milestone:** M003 — Signature Product Experience
 **Active Slice:** not started
 **Active Task:** complete
-**Phase:** M002 closed through S04 with build health restored, real browser proof captured, and explicit URL blocked-state diagnostics preserved for local no-DB mode
+**Phase:** M002 closed at milestone level with summary written, requirements/project state updated, build health restored, live browser proof captured, and explicit URL blocked-state diagnostics preserved for local no-DB mode
 
 ## Recent Decisions
 - Design direction: editorial gallery luxe

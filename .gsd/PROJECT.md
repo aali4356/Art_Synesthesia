@@ -10,19 +10,19 @@ Deterministic synesthetic art that feels emotionally rich, visually unforgettabl
 
 ## Current State
 
-M001 is complete and M002 is now complete. The product already has:
-- deterministic canonicalization, analysis, normalization, synesthetic mapping, palette selection, and rendering pipeline
-- text, URL, and data inputs
-- geometric, organic, particle, and typographic renderers
-- shared synesthetic mapping that drives inspectable organic and typographic expressiveness posture in runtime scene graphs
+M001 and M002 are complete. The product already has:
+- deterministic canonicalization, analysis, normalization, synesthetic mapping, curated palette-family selection, palette realization, and scene-graph rendering
+- text, URL, and data inputs flowing through the shared generation/results pipeline
+- geometric, organic, particle, and typographic renderers, with organic and typographic now consuming shared mapping-driven expressiveness posture
 - a live `ResultsView` proof diagnostics seam exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
 - share links, gallery, moderation, compare mode, export controls, and alt text
-- strong automated proof plus browser-level acceptance evidence for the upgraded art system
+- passing art-system contract coverage plus browser-level acceptance evidence for the upgraded live results experience
+- restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries
 
-Current gaps are now centered on product polish and launch hardening, not M002 art-system wiring:
-- the site shell and core flows are functional but not yet premium or brand-defining enough for the editorial gallery-luxe goal
-- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, even though build health is restored and the failure is now explicit
-- shipping surfaces like observability, deploy guidance, and account/continuity strategy need hardening
+Current gaps are now centered on product polish, coherence, and launch hardening rather than the core art engine:
+- the site shell and primary surfaces are functional but not yet premium or distinct enough for the editorial gallery-luxe brand direction
+- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, even though the failure path is explicit and inspectable
+- shipping surfaces like broader observability, deploy guidance, continuity strategy, and cross-surface coherence still need hardening
 
 ## Architecture / Key Patterns
 
