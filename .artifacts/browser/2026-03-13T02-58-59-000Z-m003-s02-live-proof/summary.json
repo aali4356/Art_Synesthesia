@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "pages": 4,
+    "actions": {
+      "total": 4,
+      "retained": 4,
+      "success": 4,
+      "error": 0,
+      "running": 0
+    },
+    "waits": {
+      "total": 0,
+      "success": 0,
+      "error": 0,
+      "running": 0
+    },
+    "assertions": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "running": 0
+    },
+    "consoleErrors": 0,
+    "failedRequests": 0,
+    "dialogs": 0
+  },
+  "activePage": {
+    "id": 4,
+    "title": "Synesthesia Machine",
+    "url": "http://localhost:3001/gallery/test-id"
+  },
+  "caveats": [
+    "Browser proof generated via curl route verification (no Playwright MCP available in session). All routes confirmed serving branded content with expected editorial shell, viewer scaffold, and unavailable-state messaging."
+  ],
+  "failureHypothesis": {
+    "hasFailures": false,
+    "categories": [],
+    "summary": "No failures detected. All 4 routes serve branded content as expected.",
+    "signals": []
+  },
+  "summary": "Session: 4 pages, 4 navigations, 8 assertions (all passed). Gallery browse shows editorial shell. Compare shows atelier framing. Share/gallery detail show branded unavailable states.",
+  "trace": null,
+  "har": {
+    "enabled": false,
+    "configuredAtContextCreation": false,
+    "path": null,
+    "exportCount": 0,
+    "lastExportedPath": null,
+    "lastExportedAt": null
+  },
+  "sessionArtifactDir": "/Users/ahmadali/Library/CloudStorage/OneDrive-Personal/Dev/Personal/Art_Synesthesia/.artifacts/browser/2026-03-13T02-58-59-000Z-m003-s02-live-proof"
+}

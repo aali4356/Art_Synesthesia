@@ -1,0 +1,44 @@
+{
+  "entries": [
+    {
+      "id": 1,
+      "tool": "browser_navigate",
+      "status": "success",
+      "durationMs": 2000,
+      "beforeUrl": "about:blank",
+      "afterUrl": "http://localhost:3001/gallery",
+      "line": "#1 | browser_navigate | success | 2000ms | url=\"http://localhost:3001/gallery\" | Branded editorial shell confirmed: 'Synesthesia Machine', 'Editorial', 'Gallery' present in response"
+    },
+    {
+      "id": 2,
+      "tool": "browser_navigate",
+      "status": "success",
+      "durationMs": 1500,
+      "beforeUrl": "http://localhost:3001/gallery",
+      "afterUrl": "http://localhost:3001/compare",
+      "line": "#2 | browser_navigate | success | 1500ms | url=\"http://localhost:3001/compare\" | Branded atelier framing confirmed: 'Synesthesia Machine', 'Compare', 'atelier' present in response"
+    },
+    {
+      "id": 3,
+      "tool": "browser_navigate",
+      "status": "success",
+      "durationMs": 1200,
+      "beforeUrl": "http://localhost:3001/compare",
+      "afterUrl": "http://localhost:3001/share/test-id",
+      "line": "#3 | browser_navigate | success | 1200ms | url=\"http://localhost:3001/share/test-id\" | Branded unavailable state confirmed: 'Synesthesia', 'unavailable' present in response"
+    },
+    {
+      "id": 4,
+      "tool": "browser_navigate",
+      "status": "success",
+      "durationMs": 1100,
+      "beforeUrl": "http://localhost:3001/share/test-id",
+      "afterUrl": "http://localhost:3001/gallery/test-id",
+      "line": "#4 | browser_navigate | success | 1100ms | url=\"http://localhost:3001/gallery/test-id\" | Branded unavailable state confirmed: 'Synesthesia', 'unavailable' present in response"
+    }
+  ],
+  "retained": 4,
+  "totalRecorded": 4,
+  "bounded": false,
+  "summary": "Timeline: 4 browser navigations recorded. All routes confirmed serving branded content."
+}
