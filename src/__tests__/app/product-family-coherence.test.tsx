@@ -31,10 +31,12 @@ describe('product family coherence', () => {
   });
 
   it('keeps compare, gallery, and share routes in the same collector/editorial family', async () => {
-    const [compareSource, galleryViewerSource, shareViewerSource] = await Promise.all([
+    const [compareSource, galleryViewerSource, shareViewerSource, galleryCardSource, globalsSource] = await Promise.all([
       readProjectFile('src/app/compare/CompareMode.tsx'),
       readProjectFile('src/app/gallery/[id]/GalleryViewer.tsx'),
       readProjectFile('src/app/share/[id]/ShareViewer.tsx'),
+      readProjectFile('src/components/gallery/GalleryCard.tsx'),
+      readProjectFile('src/app/globals.css'),
     ]);
 
     expect(compareSource).toContain('Two proof-safe inputs, one collector stage, shared style control.');
@@ -48,6 +50,12 @@ describe('product family coherence', () => {
     expect(shareViewerSource).toContain('same results-to-route action family');
     expect(shareViewerSource).toContain('shared collector viewer exposes stored rendering parameters');
     expect(shareViewerSource).toContain('The original input that generated this artwork is not stored or shown.');
+
+    expect(galleryCardSource).toContain('Collector edition');
+    expect(galleryCardSource).toContain('Reveal optional hint');
+    expect(galleryCardSource).toContain('Public archive card with route-safe detail access, lightweight reactions, and no raw input exposure.');
+    expect(globalsSource).toContain('.gallery-collector-card');
+    expect(globalsSource).toContain('.gallery-collector-card__detail-link');
   });
 
   it('preserves privacy and runtime truth boundaries in continuity copy', async () => {
