@@ -19,6 +19,7 @@ import { GeometricCanvas } from '@/components/results/GeometricCanvas';
 import { OrganicCanvas } from '@/components/results/OrganicCanvas';
 import { ParticleCanvas } from '@/components/results/ParticleCanvas';
 import { TypographicCanvas } from '@/components/results/TypographicCanvas';
+import { BrandedViewerScaffold } from '@/components/viewers/BrandedViewerScaffold';
 
 interface ShareViewerProps {
   parameterVector: ParameterVector;
@@ -119,47 +120,42 @@ export function ShareViewer({
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-4xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold">Shared Artwork</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Style: <span className="capitalize">{styleName}</span>
-            {' · '}
-            Created {createdDate}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Engine v{versionInfo.engineVersion} · Analyzer v{versionInfo.analyzerVersion}
-          </p>
-        </header>
-
-        {/* Canvas section -- renders the artwork */}
-        <section className="mb-6">
-          {scene ? renderCanvas(scene, styleName) : <div>Loading artwork...</div>}
-        </section>
-
-        {/* Parameter section -- keeps existing parameter grid */}
-        <section className="mb-6 p-4 rounded-lg border border-border">
-          <h2 className="text-sm font-medium mb-3 uppercase tracking-wide text-muted-foreground">
-            Parameter Vector
-          </h2>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            {(Object.entries(parameterVector) as [string, number][])
-              .filter(([key]) => key !== 'extensions')
-              .map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="text-muted-foreground capitalize">{key}</span>
-                  <span className="font-mono">{value.toFixed(3)}</span>
-                </div>
-              ))}
-          </div>
-        </section>
-
-        <p className="text-xs text-muted-foreground">
-          The original input that generated this artwork is not stored or shown.
-          Share links store only the parameter vector used to render the artwork.
+    <BrandedViewerScaffold
+      eyebrow="Shared viewer"
+      title="Shared artwork"
+      description="A privacy-safe collector surface for viewing parameter-only editions outside the original generation session."
+      badges={[
+        { label: 'parameter-only payload' },
+        { label: 'shared viewer family' },
+        { label: 'privacy-safe diagnostics' },
+      ]}
+      meta={[
+        { label: 'Style', value: styleName },
+        { label: 'Created', value: createdDate },
+        { label: 'Engine', value: `v${versionInfo.engineVersion}` },
+        { label: 'Analyzer', value: `v${versionInfo.analyzerVersion}` },
+      ]}
+      canvasLabel="Shared collector render"
+      canvas={scene ? renderCanvas(scene, styleName) : <div className="text-[var(--muted-foreground)]">Loading artwork...</div>}
+      sidebarTitle="Parameter vector"
+      sidebarDescription="The share route exposes the stored rendering parameters and version metadata without revealing any original source text."
+      sidebar={
+        <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+          {(Object.entries(parameterVector) as [string, number][])
+            .filter(([key]) => key !== 'extensions')
+            .map(([key, value]) => (
+              <div key={key} className="flex justify-between gap-4 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_oklch,var(--surface)_62%,transparent)] px-3 py-2">
+                <span className="text-[var(--muted-foreground)] capitalize">{key}</span>
+                <span className="font-mono text-[var(--foreground)]">{value.toFixed(3)}</span>
+              </div>
+            ))}
+        </div>
+      }
+      footerNote={
+        <p>
+          The original input that generated this artwork is not stored or shown. Share links store only the parameter vector used to render the artwork.
         </p>
-      </div>
-    </div>
+      }
+    />
   );
 }

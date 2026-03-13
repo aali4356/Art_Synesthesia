@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 import type {
@@ -20,6 +19,7 @@ import { GeometricCanvas } from '@/components/results/GeometricCanvas';
 import { OrganicCanvas } from '@/components/results/OrganicCanvas';
 import { ParticleCanvas } from '@/components/results/ParticleCanvas';
 import { TypographicCanvas } from '@/components/results/TypographicCanvas';
+import { BrandedViewerScaffold } from '@/components/viewers/BrandedViewerScaffold';
 
 interface GalleryViewerProps {
   id: string;
@@ -114,79 +114,87 @@ export function GalleryViewer({
   });
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-4">
-          <Link href="/gallery" className="text-sm text-muted-foreground hover:text-foreground">
-            &larr; Back to Gallery
-          </Link>
+    <BrandedViewerScaffold
+      backHref="/gallery"
+      backLabel="Back to Gallery"
+      eyebrow="Collector viewer"
+      title={title ?? 'Gallery edition'}
+      description="A branded collector surface for public opt-in editions, with route-safe metadata, optional input-hint reveal, and gallery-specific engagement controls."
+      badges={[
+        { label: 'public opt-in archive' },
+        { label: 'shared viewer family' },
+        { label: 'gallery-safe actions' },
+      ]}
+      meta={[
+        { label: 'Style', value: styleName },
+        { label: 'Published', value: formattedDate },
+        { label: 'Engine', value: `v${versionInfo.engineVersion}` },
+        { label: 'Likes', value: `${upvoteCount}` },
+      ]}
+      canvasLabel="Collector render"
+      canvas={scene ? renderCanvas(scene) : <div className="text-[var(--muted-foreground)]">Loading artwork...</div>}
+      sidebarTitle="Parameter vector"
+      sidebarDescription="Gallery detail keeps the same shared viewer framing as share links while preserving gallery-only affordances and truthful public metadata."
+      sidebar={
+        <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+          {(Object.entries(parameterVector) as [string, number][])
+            .filter(([key]) => key !== 'extensions')
+            .map(([key, value]) => (
+              <div key={key} className="flex justify-between gap-4 rounded-2xl border border-[var(--border-soft)] bg-[color-mix(in_oklch,var(--surface)_62%,transparent)] px-3 py-2">
+                <span className="text-[var(--muted-foreground)] capitalize">{key}</span>
+                <span className="font-mono text-[var(--foreground)]">{value.toFixed(3)}</span>
+              </div>
+            ))}
         </div>
-
-        <header className="mb-6">
-          {title && <h1 className="text-2xl font-semibold">{title}</h1>}
-          <p className="text-sm text-muted-foreground mt-1">
-            Style: <span className="capitalize">{styleName}</span>
-            {' · '}
-            {formattedDate}
-          </p>
-
-          {/* Input preview (hidden by default — GAL-04) */}
-          {inputPreview && (
-            <div className="mt-2">
+      }
+      actions={
+        <>
+          {inputPreview ? (
+            <div className="editorial-action-card space-y-3">
+              <div>
+                <p className="editorial-note-label mb-1">Input hint</p>
+                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                  Reveal the optional contributor-approved input hint without exposing raw stored source text.
+                </p>
+              </div>
               {previewRevealed ? (
-                <p className="text-sm text-muted-foreground italic">&quot;{inputPreview}&quot;</p>
+                <p className="text-sm italic text-[var(--muted-foreground)]">&quot;{inputPreview}&quot;</p>
               ) : (
                 <button
                   type="button"
                   onClick={() => setPreviewRevealed(true)}
-                  className="text-sm text-accent underline"
+                  className="btn-ghost text-sm"
                 >
                   Click to reveal input hint
                 </button>
               )}
             </div>
-          )}
-        </header>
+          ) : null}
 
-        {/* Canvas */}
-        <section className="mb-6">
-          {scene ? renderCanvas(scene) : <div className="text-muted-foreground">Loading artwork...</div>}
-        </section>
-
-        {/* Translation panel — parameter vector display (GAL-06) */}
-        <section className="mb-6 p-4 rounded-lg border border-border">
-          <h2 className="text-sm font-medium mb-3 uppercase tracking-wide text-muted-foreground">
-            Parameter Vector
-          </h2>
-          <div className="grid grid-cols-3 gap-2 text-sm">
-            {(Object.entries(parameterVector) as [string, number][])
-              .filter(([key]) => key !== 'extensions')
-              .map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="text-muted-foreground capitalize">{key}</span>
-                  <span className="font-mono">{value.toFixed(3)}</span>
-                </div>
-              ))}
+          <div className="editorial-action-card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="editorial-note-label mb-1">Support the edition</p>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                Public reactions stay route-local and keep the gallery contract lightweight.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleUpvote}
+              disabled={upvoted}
+              className="btn-ghost text-sm disabled:opacity-50"
+              aria-label={upvoted ? 'Already upvoted' : 'Upvote this artwork'}
+            >
+              {upvoted ? '♥' : '♡'} {upvoteCount} {upvoteCount === 1 ? 'like' : 'likes'}
+            </button>
           </div>
-        </section>
-
-        {/* Upvote */}
-        <div className="mb-6">
-          <button
-            type="button"
-            onClick={handleUpvote}
-            disabled={upvoted}
-            className="btn-ghost text-sm disabled:opacity-50"
-            aria-label={upvoted ? 'Already upvoted' : 'Upvote this artwork'}
-          >
-            {upvoted ? '♥' : '♡'} {upvoteCount} {upvoteCount === 1 ? 'like' : 'likes'}
-          </button>
-        </div>
-
-        <p className="text-xs text-muted-foreground">
-          The original input is not stored. This artwork represents parameters only.
+        </>
+      }
+      footerNote={
+        <p>
+          The original input is not stored. This artwork represents parameters only, even when the gallery route offers an optional contributor-approved hint.
         </p>
-      </div>
-    </div>
+      }
+    />
   );
 }

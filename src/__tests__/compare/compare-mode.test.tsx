@@ -103,3 +103,16 @@ describe('COMP-04: Shared style selector changes both artworks simultaneously', 
     expect(activeButtons[0].textContent).toMatch(/organic/i);
   });
 });
+
+describe('S02 branded compare control contract', () => {
+  it('keeps the two-pane compare behavior while naming the editorial intro and action framing that still needs implementation', () => {
+    render(<CompareMode />);
+
+    expect(screen.getByRole('group', { name: /select style for both canvases/i })).toBeDefined();
+    expect(screen.getByLabelText('Input A input text')).toBeDefined();
+    expect(screen.getByLabelText('Input B input text')).toBeDefined();
+    expect(screen.getByText('Compare atelier')).toBeDefined();
+    expect(screen.getAllByText('Action desk')).toHaveLength(2);
+    expect(screen.getAllByRole('button', { name: /generate/i })).toHaveLength(2);
+  });
+});

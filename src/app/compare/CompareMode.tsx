@@ -9,7 +9,14 @@ import { buildSceneGraph } from '@/lib/render/geometric';
 import { buildOrganicSceneGraph } from '@/lib/render/organic';
 import { buildParticleSceneGraph } from '@/lib/render/particle';
 import { buildTypographicSceneGraph } from '@/lib/render/typographic';
-import type { AnySceneGraph, StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
+import type {
+  AnySceneGraph,
+  StyleName,
+  SceneGraph,
+  OrganicSceneGraph,
+  ParticleSceneGraph,
+  TypographicSceneGraph,
+} from '@/lib/render/types';
 import { GeometricCanvas } from '@/components/results/GeometricCanvas';
 import { OrganicCanvas } from '@/components/results/OrganicCanvas';
 import { ParticleCanvas } from '@/components/results/ParticleCanvas';
@@ -17,19 +24,20 @@ import { TypographicCanvas } from '@/components/results/TypographicCanvas';
 import { computeParameterDiff } from '@/lib/compare/diff';
 import { generateDiffSummary, isSignificantDiff } from '@/lib/compare/summary';
 import type { ParameterVector } from '@/types/engine';
+import { Shell } from '@/components/layout/Shell';
 
 const STYLE_NAMES: StyleName[] = ['geometric', 'organic', 'particle', 'typographic'];
-
-// ---------------------------------------------------------------------------
-// Single-input pane (text input + generate button + canvas)
-// ---------------------------------------------------------------------------
 
 interface ComparePaneResult {
   vector: ParameterVector | null;
   pane: React.ReactNode;
 }
 
-function useComparePaneState(activeStyle: StyleName, theme: 'dark' | 'light', label: string): ComparePaneResult {
+function useComparePaneState(
+  activeStyle: StyleName,
+  theme: 'dark' | 'light',
+  label: string
+): ComparePaneResult {
   const [inputText, setInputText] = useState('');
   const { result, generate } = useTextAnalysis();
   const [scene, setScene] = useState<AnySceneGraph | null>(null);
@@ -52,7 +60,6 @@ function useComparePaneState(activeStyle: StyleName, theme: 'dark' | 'light', la
           built = buildOrganicSceneGraph(result.vector, result.palette, theme, seed);
           break;
         case 'particle':
-          // Cap at 5000 for compare mode to avoid memory pressure (RESEARCH pitfall 4)
           built = buildParticleSceneGraph(result.vector, result.palette, theme, seed, 600, 5000);
           break;
         case 'typographic':
@@ -70,7 +77,6 @@ function useComparePaneState(activeStyle: StyleName, theme: 'dark' | 'light', la
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result?.canonical, activeStyle, theme]);
 
-  // Rebuild scene when style changes if we have a result
   useEffect(() => {
     if (!result || !prevCanonical.current) return;
 
@@ -102,124 +108,196 @@ function useComparePaneState(activeStyle: StyleName, theme: 'dark' | 'light', la
 
   function renderCanvas() {
     if (!scene) return null;
-    // Compare canvases: animated=false, 600x600 (set via CSS max-w)
     switch (activeStyle) {
       case 'organic':
-        return <OrganicCanvas scene={scene as OrganicSceneGraph} animated={false} className="w-full max-w-sm mx-auto block" />;
+        return (
+          <OrganicCanvas
+            scene={scene as OrganicSceneGraph}
+            animated={false}
+            className="w-full max-w-sm mx-auto block"
+          />
+        );
       case 'particle':
-        return <ParticleCanvas scene={scene as ParticleSceneGraph} animated={false} className="w-full max-w-sm mx-auto block" />;
+        return (
+          <ParticleCanvas
+            scene={scene as ParticleSceneGraph}
+            animated={false}
+            className="w-full max-w-sm mx-auto block"
+          />
+        );
       case 'typographic':
-        return <TypographicCanvas scene={scene as TypographicSceneGraph} animated={false} className="w-full max-w-sm mx-auto block" />;
+        return (
+          <TypographicCanvas
+            scene={scene as TypographicSceneGraph}
+            animated={false}
+            className="w-full max-w-sm mx-auto block"
+          />
+        );
       case 'geometric':
       default:
-        return <GeometricCanvas scene={scene as SceneGraph} animated={false} className="w-full max-w-sm mx-auto block" />;
+        return (
+          <GeometricCanvas
+            scene={scene as SceneGraph}
+            animated={false}
+            className="w-full max-w-sm mx-auto block"
+          />
+        );
     }
   }
 
   const pane = (
-    <div className="flex flex-col gap-3">
-      <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
-      </label>
-      <textarea
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
-        placeholder="Paste any text here..."
-        className="w-full h-24 border border-border rounded px-3 py-2 text-sm bg-background resize-none focus:outline-none focus:ring-1 focus:ring-accent font-mono"
-        aria-label={`${label} input text`}
-      />
+    <section className="editorial-panel editorial-control-surface space-y-5" aria-label={`${label} compare pane`}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="editorial-note-label mb-1">Action desk</p>
+          <h2 className="text-xl font-medium text-[var(--foreground)]">{label}</h2>
+        </div>
+        <span className="editorial-chip">proof-safe input</span>
+      </div>
+
+      <div>
+        <label htmlFor={`${label}-input`} className="editorial-field-label">
+          {label} source text
+        </label>
+        <textarea
+          id={`${label}-input`}
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Paste any text here..."
+          className="editorial-textarea"
+          aria-label={`${label} input text`}
+        />
+      </div>
+
       <button
         type="button"
         onClick={handleGenerate}
         disabled={!inputText.trim()}
-        className="btn-primary text-sm w-full disabled:opacity-50"
+        className="btn-accent text-sm w-full disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Generate
       </button>
 
-      {/* Canvas */}
-      <div className="min-h-[200px] flex items-center justify-center">
-        {scene ? renderCanvas() : (
-          <div className="text-muted-foreground text-sm text-center">
-            Enter text and click Generate
+      <div className="editorial-panel editorial-canvas-frame editorial-compare-canvas min-h-[240px] flex items-center justify-center">
+        {scene ? (
+          renderCanvas()
+        ) : (
+          <div className="text-center space-y-2">
+            <p className="editorial-note-label">Canvas idle</p>
+            <p className="text-sm text-[var(--muted-foreground)]">Enter text and click Generate</p>
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 
   return { vector: result?.vector ?? null, pane };
 }
 
-// ---------------------------------------------------------------------------
-// Shared style selector strip
-// ---------------------------------------------------------------------------
-
-function StyleStrip({ activeStyle, onStyleChange }: { activeStyle: StyleName; onStyleChange: (s: StyleName) => void }) {
+function StyleStrip({
+  activeStyle,
+  onStyleChange,
+}: {
+  activeStyle: StyleName;
+  onStyleChange: (s: StyleName) => void;
+}) {
   return (
-    <div className="flex gap-2 justify-center mb-6" role="group" aria-label="Select style for both canvases">
-      {STYLE_NAMES.map((style) => (
-        <button
-          key={style}
-          type="button"
-          onClick={() => onStyleChange(style)}
-          className={`px-3 py-1.5 rounded text-sm capitalize transition-colors ${
-            activeStyle === style
-              ? 'bg-accent text-accent-foreground'
-              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-          }`}
-          aria-pressed={activeStyle === style}
-        >
-          {style}
-        </button>
-      ))}
-    </div>
+    <section className="editorial-panel editorial-control-surface space-y-4" aria-labelledby="compare-style-heading">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="editorial-note-label mb-1">Viewer stage</p>
+          <h2 id="compare-style-heading" className="text-xl font-medium text-[var(--foreground)]">
+            Shared renderer selection.
+          </h2>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
+            One style control drives both panes so the comparison stays visually aligned.
+          </p>
+        </div>
+        <div className="editorial-chip-stack" aria-hidden="true">
+          <span className="editorial-chip">one style · two panes</span>
+          <span className="editorial-chip">keyboard-usable toggles</span>
+        </div>
+      </div>
+
+      <div className="editorial-chip-stack" role="group" aria-label="Select style for both canvases">
+        {STYLE_NAMES.map((style) => (
+          <button
+            key={style}
+            type="button"
+            onClick={() => onStyleChange(style)}
+            className={`editorial-chip-button ${activeStyle === style ? 'is-active' : ''}`}
+            aria-pressed={activeStyle === style}
+          >
+            {style}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Parameter diff display (COMP-02)
-// ---------------------------------------------------------------------------
-
-function ParameterDiffPanel({ leftVector, rightVector }: { leftVector: ParameterVector; rightVector: ParameterVector }) {
+function ParameterDiffPanel({
+  leftVector,
+  rightVector,
+}: {
+  leftVector: ParameterVector;
+  rightVector: ParameterVector;
+}) {
   const diffs = computeParameterDiff(leftVector, rightVector);
   const summary = generateDiffSummary(diffs);
 
   return (
-    <div className="mt-8 border-t border-border pt-6">
-      <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-4">
-        Parameter Comparison
-      </h2>
+    <section className="editorial-panel editorial-control-surface space-y-5" aria-labelledby="compare-diff-heading">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="editorial-note-label mb-1">Parameter comparison</p>
+          <h2 id="compare-diff-heading" className="text-xl font-medium text-[var(--foreground)]">
+            Delta summary
+          </h2>
+        </div>
+        <span className="editorial-chip">significant shifts highlighted</span>
+      </div>
 
-      {/* Auto-generated summary (COMP-03) */}
-      <p className="text-sm text-foreground mb-4 italic">{summary}</p>
+      <p className="text-sm text-[var(--foreground)] italic">{summary}</p>
 
-      {/* Parallel parameter bars */}
       <div className="space-y-3">
         {diffs.map((diff) => {
           const significant = isSignificantDiff(diff.absDelta);
           return (
-            <div key={diff.parameter} className={`${significant ? 'bg-accent/5 rounded p-2 -mx-2' : ''}`}>
+            <div
+              key={diff.parameter}
+              className={`rounded-[1rem] ${significant ? 'bg-[color-mix(in_oklch,var(--surface-veil)_76%,transparent)] p-3' : ''}`}
+            >
               <div className="flex items-center justify-between mb-1">
-                <span className={`font-mono text-xs ${significant ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                <span
+                  className={`font-mono text-xs ${significant ? 'text-[var(--foreground)] font-medium' : 'text-[var(--muted-foreground)]'}`}
+                >
                   {diff.parameter}
                 </span>
-                <span className={`font-mono text-xs ${diff.delta > 0.1 ? 'text-green-500' : diff.delta < -0.1 ? 'text-red-400' : 'text-muted-foreground'}`}>
-                  {diff.delta >= 0 ? '+' : ''}{diff.delta.toFixed(2)}
+                <span
+                  className={`font-mono text-xs ${diff.delta > 0.1 ? 'text-green-500' : diff.delta < -0.1 ? 'text-red-400' : 'text-[var(--muted-foreground)]'}`}
+                >
+                  {diff.delta >= 0 ? '+' : ''}
+                  {diff.delta.toFixed(2)}
                 </span>
               </div>
-              {/* Left bar (blue-ish) */}
               <div className="w-full h-1 bg-muted rounded-full overflow-hidden mb-0.5">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${Math.max(1, diff.leftValue * 100)}%`, backgroundColor: 'var(--color-accent)', opacity: 0.5 }}
+                  style={{
+                    width: `${Math.max(1, diff.leftValue * 100)}%`,
+                    backgroundColor: 'var(--color-accent)',
+                    opacity: 0.5,
+                  }}
                 />
               </div>
-              {/* Right bar (solid) */}
               <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${Math.max(1, diff.rightValue * 100)}%`, backgroundColor: significant ? 'var(--color-accent)' : 'var(--muted-foreground)' }}
+                  style={{
+                    width: `${Math.max(1, diff.rightValue * 100)}%`,
+                    backgroundColor: significant ? 'var(--color-accent)' : 'var(--muted-foreground)',
+                  }}
                 />
               </div>
             </div>
@@ -227,22 +305,25 @@ function ParameterDiffPanel({ leftVector, rightVector }: { leftVector: Parameter
         })}
       </div>
 
-      {/* Legend */}
-      <div className="flex gap-4 mt-4 text-xs text-muted-foreground">
+      <div className="flex gap-4 mt-2 text-xs text-[var(--muted-foreground)]">
         <span className="flex items-center gap-1">
-          <span className="inline-block w-4 h-1 rounded" style={{ backgroundColor: 'var(--color-accent)', opacity: 0.5 }} /> Left
+          <span
+            className="inline-block w-4 h-1 rounded"
+            style={{ backgroundColor: 'var(--color-accent)', opacity: 0.5 }}
+          />{' '}
+          Left
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block w-4 h-1 rounded" style={{ backgroundColor: 'var(--color-accent)' }} /> Right
+          <span
+            className="inline-block w-4 h-1 rounded"
+            style={{ backgroundColor: 'var(--color-accent)' }}
+          />{' '}
+          Right
         </span>
       </div>
-    </div>
+    </section>
   );
 }
-
-// ---------------------------------------------------------------------------
-// CompareMode root component (COMP-01, COMP-04)
-// ---------------------------------------------------------------------------
 
 /**
  * CompareMode — renders two independent input zones with two canvases
@@ -262,32 +343,36 @@ export function CompareMode() {
   const bothHaveVectors = leftPane.vector !== null && rightPane.vector !== null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Compare</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Enter two inputs to see how they differ in artwork and parameters.
-          </p>
-        </header>
-
-        {/* Shared style selector (COMP-04) */}
-        <StyleStrip activeStyle={activeStyle} onStyleChange={setActiveStyle} />
-
-        {/* Two-pane layout (COMP-01) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>{leftPane.pane}</div>
-          <div>{rightPane.pane}</div>
+    <Shell>
+      <section className="editorial-stage space-y-8" aria-labelledby="compare-atelier-title">
+        <div className="space-y-6 max-w-4xl">
+          <div className="editorial-kicker">Route intro</div>
+          <div className="space-y-4">
+            <h1 id="compare-atelier-title" className="editorial-display text-4xl sm:text-5xl lg:text-6xl leading-[0.94]">
+              Compare atelier
+            </h1>
+            <p className="max-w-2xl text-base sm:text-lg text-[var(--foreground)]/88 leading-relaxed">
+              Two proof-safe inputs, one editorial stage, shared style control.
+            </p>
+            <p className="max-w-3xl text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
+              Generate both panes under one renderer family, then inspect the vector deltas without leaving the branded shell language.
+            </p>
+          </div>
+          <div className="editorial-marquee" aria-label="Compare route traits">
+            <span>two-pane contract</span>
+            <span>shared style selector</span>
+            <span>viewer-safe diagnostics</span>
+          </div>
         </div>
 
-        {/* Parameter diff (COMP-02, COMP-03) — only when both have results */}
+        <StyleStrip activeStyle={activeStyle} onStyleChange={setActiveStyle} />
+
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">{leftPane.pane}{rightPane.pane}</div>
+
         {bothHaveVectors && (
-          <ParameterDiffPanel
-            leftVector={leftPane.vector!}
-            rightVector={rightPane.vector!}
-          />
+          <ParameterDiffPanel leftVector={leftPane.vector!} rightVector={rightPane.vector!} />
         )}
-      </div>
-    </div>
+      </section>
+    </Shell>
   );
 }

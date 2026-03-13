@@ -1,4 +1,5 @@
 import { GalleryViewer } from './GalleryViewer';
+import { BrandedUnavailableState } from '@/components/viewers/BrandedViewerScaffold';
 import type { Metadata } from 'next';
 
 interface GalleryDetailPageProps {
@@ -42,12 +43,12 @@ export default async function GalleryDetailPage({ params }: GalleryDetailPagePro
 
     if (!item) {
       return (
-        <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold mb-2">Gallery Item Not Found</h1>
-            <p className="text-muted-foreground">This item may have been removed.</p>
-          </div>
-        </div>
+        <BrandedUnavailableState
+          title="Gallery viewer unavailable"
+          description="This gallery edition may have been removed or is unavailable in the current local proof mode."
+          diagnosticLabel="Missing gallery id"
+          diagnosticMessage={id}
+        />
       );
     }
 
@@ -67,12 +68,12 @@ export default async function GalleryDetailPage({ params }: GalleryDetailPagePro
     const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
 
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center max-w-lg px-6">
-          <h1 className="text-2xl font-semibold mb-2">Gallery Unavailable</h1>
-          <p className="text-muted-foreground">{message}</p>
-        </div>
-      </div>
+      <BrandedUnavailableState
+        title="Gallery viewer unavailable"
+        description="This collector route needs a working database backend in the current environment."
+        diagnosticLabel="Diagnostics"
+        diagnosticMessage={message}
+      />
     );
   }
 }

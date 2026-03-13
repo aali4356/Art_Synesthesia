@@ -1,5 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { ShareViewer } from './ShareViewer';
+import { BrandedUnavailableState } from '@/components/viewers/BrandedViewerScaffold';
 import type { Metadata } from 'next';
 
 interface SharePageProps {
@@ -7,17 +8,12 @@ interface SharePageProps {
 }
 
 async function getShareDb() {
-  const [{ db }, { shareLinks }] = await Promise.all([
-    import('@/db'),
-    import('@/db/schema'),
-  ]);
+  const [{ db }, { shareLinks }] = await Promise.all([import('@/db'), import('@/db/schema')]);
 
   return { db, shareLinks };
 }
 
-export async function generateMetadata({
-  params,
-}: SharePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: SharePageProps): Promise<Metadata> {
   const { id } = await params;
 
   try {
@@ -57,14 +53,12 @@ export default async function SharePage({ params }: SharePageProps) {
 
     if (!link) {
       return (
-        <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold mb-2">Share Link Not Found</h1>
-            <p className="text-muted-foreground">
-              This share link may have been removed or does not exist.
-            </p>
-          </div>
-        </div>
+        <BrandedUnavailableState
+          title="Share viewer unavailable"
+          description="This share link may have expired, been removed, or is unavailable in the current local proof mode."
+          diagnosticLabel="Missing share id"
+          diagnosticMessage={id}
+        />
       );
     }
 
@@ -80,12 +74,12 @@ export default async function SharePage({ params }: SharePageProps) {
     const message = error instanceof Error ? error.message : 'Share backend unavailable';
 
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center max-w-lg px-6">
-          <h1 className="text-2xl font-semibold mb-2">Share Link Unavailable</h1>
-          <p className="text-muted-foreground">{message}</p>
-        </div>
-      </div>
+      <BrandedUnavailableState
+        title="Share viewer unavailable"
+        description="This shared route needs a working database backend in the current environment."
+        diagnosticLabel="Diagnostics"
+        diagnosticMessage={message}
+      />
     );
   }
 }

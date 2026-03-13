@@ -14,6 +14,21 @@ interface GalleryGridProps {
   hasMore: boolean;
 }
 
+function buildGalleryHref(style: string | undefined, sort: string, page: number) {
+  const params = new URLSearchParams();
+  if (style) {
+    params.set('style', style);
+  }
+  if (sort !== 'recent') {
+    params.set('sort', sort);
+  }
+  if (page > 1) {
+    params.set('page', String(page));
+  }
+  const query = params.toString();
+  return query ? `/gallery?${query}` : '/gallery';
+}
+
 /**
  * GalleryGrid — client wrapper for the gallery browse grid.
  *
@@ -28,61 +43,99 @@ export function GalleryGrid({
   hasMore,
 }: GalleryGridProps) {
   return (
-    <div>
-      {/* Filter controls (GAL-05) */}
+    <div className="space-y-8">
       <Suspense fallback={null}>
         <GalleryFilters currentStyle={currentStyle} currentSort={currentSort} />
       </Suspense>
 
-      {/* Grid */}
       {items.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <p>No artwork found.</p>
-          <p className="text-sm mt-1">Generate something and save it to the gallery!</p>
-        </div>
+        <section className="editorial-panel editorial-control-surface" aria-labelledby="gallery-empty-title">
+          <div className="space-y-4 max-w-2xl">
+            <p className="editorial-note-label">Archive status</p>
+            <h2 id="gallery-empty-title" className="text-2xl font-medium text-[var(--foreground)]">
+              No artwork found.
+            </h2>
+            <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
+              Generate something and save it to the gallery to populate this collector view.
+            </p>
+            <div className="editorial-chip-stack" aria-hidden="true">
+              <span className="editorial-chip">empty archive</span>
+              <span className="editorial-chip">routing preserved</span>
+            </div>
+          </div>
+        </section>
       ) : (
-        <div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-          data-testid="gallery-grid"
-        >
-          {items.map((item) => (
-            <GalleryCard
-              key={item.id}
-              id={item.id}
-              styleName={item.styleName}
-              title={item.title ?? null}
-              inputPreview={item.inputPreview ?? null}
-              thumbnailData={item.thumbnailData ?? null}
-              creatorToken={item.creatorToken ?? null}
-              createdAt={item.createdAt.toISOString()}
-              upvoteCount={item.upvoteCount}
-              reportCount={item.reportCount}
-            />
-          ))}
-        </div>
+        <section className="space-y-4" aria-labelledby="gallery-results-title">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="editorial-note-label mb-1">Browse surface</p>
+              <h2 id="gallery-results-title" className="text-2xl font-medium text-[var(--foreground)]">
+                Public archive editions
+              </h2>
+            </div>
+            <div className="editorial-chip-stack" aria-label="Gallery result metadata">
+              <span className="editorial-chip">{items.length} visible</span>
+              <span className="editorial-chip">page {currentPage}</span>
+              <span className="editorial-chip">{currentStyle ?? 'all styles'}</span>
+            </div>
+          </div>
+
+          <div
+            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+            data-testid="gallery-grid"
+          >
+            {items.map((item) => (
+              <GalleryCard
+                key={item.id}
+                id={item.id}
+                styleName={item.styleName}
+                title={item.title ?? null}
+                inputPreview={item.inputPreview ?? null}
+                thumbnailData={item.thumbnailData ?? null}
+                creatorToken={item.creatorToken ?? null}
+                createdAt={item.createdAt.toISOString()}
+                upvoteCount={item.upvoteCount}
+                reportCount={item.reportCount}
+              />
+            ))}
+          </div>
+        </section>
       )}
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between mt-8">
-        {currentPage > 1 ? (
-          <Link
-            href={`/gallery?style=${currentStyle ?? ''}&sort=${currentSort}&page=${currentPage - 1}`}
-            className="text-sm btn-ghost"
-          >
-            Previous
-          </Link>
-        ) : (
-          <span />
-        )}
-        {hasMore && (
-          <Link
-            href={`/gallery?style=${currentStyle ?? ''}&sort=${currentSort}&page=${currentPage + 1}`}
-            className="text-sm btn-ghost ml-auto"
-          >
-            Next
-          </Link>
-        )}
-      </div>
+      <section className="editorial-panel editorial-control-surface" aria-labelledby="gallery-pagination-title">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="editorial-note-label mb-1">Page controls</p>
+            <h2 id="gallery-pagination-title" className="text-lg font-medium text-[var(--foreground)]">
+              Move through the collector archive.
+            </h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 md:justify-end">
+            {currentPage > 1 ? (
+              <Link
+                href={buildGalleryHref(currentStyle, currentSort, currentPage - 1)}
+                className="btn-ghost text-sm"
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="editorial-pagination-placeholder" aria-hidden="true" />
+            )}
+            {hasMore ? (
+              <Link
+                href={buildGalleryHref(currentStyle, currentSort, currentPage + 1)}
+                className="btn-ghost text-sm"
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                End of current proof set
+              </span>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

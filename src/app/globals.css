@@ -429,4 +429,110 @@
     border-color: color-mix(in oklch, var(--color-accent) 66%, white 8%);
     box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-accent) 42%, transparent);
   }
+
+  .editorial-select,
+  .editorial-textarea {
+    width: 100%;
+    border: 1px solid var(--border-soft);
+    border-radius: 1rem;
+    background: color-mix(in oklch, var(--surface) 70%, transparent);
+    color: var(--foreground);
+    transition: var(--transition-color);
+  }
+
+  .editorial-select {
+    min-height: 3rem;
+    padding: 0.8rem 0.95rem;
+    font-size: 0.95rem;
+  }
+
+  .editorial-textarea {
+    min-height: 7.5rem;
+    padding: 0.9rem 0.95rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    resize: vertical;
+    font-family: var(--font-mono);
+  }
+
+  .editorial-select:focus,
+  .editorial-textarea:focus {
+    outline: none;
+    border-color: color-mix(in oklch, var(--color-accent) 66%, white 8%);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-accent) 42%, transparent);
+  }
+
+  .editorial-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .editorial-pagination-placeholder {
+    display: inline-flex;
+    min-width: 6rem;
+    min-height: 2.75rem;
+  }
+
+  .editorial-compare-canvas {
+    overflow: hidden;
+  }
+
+  .editorial-viewer-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1200px) {
+    .editorial-viewer-grid {
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      align-items: start;
+    }
+  }
+
+  .editorial-viewer-canvas {
+    overflow: hidden;
+  }
+
+  .editorial-meta-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .editorial-meta-row {
+    display: grid;
+    gap: 0.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .editorial-meta-row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .editorial-meta-row dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted-foreground);
+  }
+
+  .editorial-meta-row dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--foreground);
+  }
+
+  .editorial-viewer-unavailable-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .editorial-viewer-unavailable-grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+      align-items: start;
+    }
+  }
 }
