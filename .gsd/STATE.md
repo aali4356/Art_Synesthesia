@@ -2,7 +2,7 @@
 
 **Active Milestone:** M003 — Signature Product Experience
 **Active Slice:** S03 — Cohesive gallery, compare, share, and export product family
-**Phase:** planning
+**Phase:** planned
 **Requirements Status:** 10 active · 5 validated · 2 deferred · 2 out of scope
 
 ## Milestone Registry
@@ -13,10 +13,10 @@
 - ⬜ **M005:** M005
 
 ## Recent Decisions
-- None recorded
+- D040 — S03 completion requires one assembled route-family proof contract, passing build, and real browser verification across results → gallery/compare/share-detail or truthful unavailable states.
 
 ## Blockers
 - None
 
 ## Next Action
-Plan slice S03 (Cohesive gallery, compare, share, and export product family).
+Execute S03 starting with T01: wire action-family continuity across results, browse, compare, and detail surfaces.
