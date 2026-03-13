@@ -352,14 +352,14 @@ export function CompareMode() {
               Compare atelier
             </h1>
             <p className="max-w-2xl text-base sm:text-lg text-[var(--foreground)]/88 leading-relaxed">
-              Two proof-safe inputs, one editorial stage, shared style control.
+              Two proof-safe inputs, one collector stage, shared style control.
             </p>
             <p className="max-w-3xl text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
-              Generate both panes under one renderer family, then inspect the vector deltas without leaving the branded shell language.
+              Compare two editions under one renderer family, then inspect the vector deltas without leaving the same editorial language used by results, share, gallery, and export.
             </p>
           </div>
           <div className="editorial-marquee" aria-label="Compare route traits">
-            <span>two-pane contract</span>
+            <span>two collector editions</span>
             <span>shared style selector</span>
             <span>viewer-safe diagnostics</span>
           </div>

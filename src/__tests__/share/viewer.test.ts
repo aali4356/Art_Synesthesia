@@ -94,4 +94,22 @@ describe('ShareViewer — SHARE-02, SHARE-03', () => {
 
     expect(hasStyleDispatch).toBe(true);
   });
+
+  it('share action and viewer copy preserve the parameter-only collector contract', async () => {
+    const shareButtonSource = await readFile(
+      resolve(projectRoot, 'src/components/results/ShareButton.tsx'),
+      'utf-8'
+    );
+    const shareViewerSource = await readFile(
+      resolve(projectRoot, 'src/app/share/[id]/ShareViewer.tsx'),
+      'utf-8'
+    );
+
+    expect(shareButtonSource).toContain('Publish a view-only collector link.');
+    expect(shareButtonSource).toContain('public proof route');
+    expect(shareButtonSource).toContain('parameter-only');
+    expect(shareViewerSource).toContain('parameter-only editions');
+    expect(shareViewerSource).toContain('shared collector viewer');
+    expect(shareViewerSource).toContain('The original input that generated this artwork is not stored or shown.');
+  });
 });

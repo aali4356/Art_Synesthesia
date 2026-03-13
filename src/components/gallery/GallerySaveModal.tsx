@@ -90,7 +90,7 @@ export function GallerySaveModal({
             <p className="editorial-note-label mb-1">Gallery save</p>
             <h2 className="editorial-display text-3xl leading-[0.95]">Save to Gallery</h2>
             <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg leading-relaxed">
-              Preview exactly what will be public before publishing this edition. The full raw source is never included here.
+              Preview exactly what will move from the results desk into the public gallery edition. The full raw source is never included here.
             </p>
           </div>
           <button
@@ -124,7 +124,7 @@ export function GallerySaveModal({
                 <p className="capitalize text-[var(--foreground)]">{styleName}</p>
               </div>
               <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
-                Public saves can include the artwork image, style, title, and an optional short input preview only.
+                Public gallery editions can include the artwork image, style, title, and an optional short input hint only.
               </p>
             </div>
           </div>
@@ -171,7 +171,7 @@ export function GallerySaveModal({
                     maxLength={MAX_PREVIEW_CHARS}
                   />
                   <p className="mt-2 text-xs text-[var(--muted-foreground)] leading-relaxed">
-                    {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is not your full input, only a public-facing hint.
+                    {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is not your full input, only an optional public-facing hint for the gallery edition.
                   </p>
                 </div>
               ) : (
@@ -185,8 +185,8 @@ export function GallerySaveModal({
               <p className="editorial-note-label mb-2">Privacy posture</p>
               <ul className="space-y-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
                 <li>• Raw source text is not sent with share/save metadata from this modal.</li>
-                <li>• You control whether any short public input preview appears on the gallery card.</li>
-                <li>• The saved page reflects the current style and render thumbnail only.</li>
+                <li>• You control whether any short public input hint appears on the gallery card and detail viewer.</li>
+                <li>• The saved page reflects the current collector edition, style, and render thumbnail only.</li>
               </ul>
             </div>
 

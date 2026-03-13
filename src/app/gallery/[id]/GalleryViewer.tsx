@@ -119,7 +119,7 @@ export function GalleryViewer({
       backLabel="Back to Gallery"
       eyebrow="Collector viewer"
       title={title ?? 'Gallery edition'}
-      description="A branded collector surface for public opt-in editions, with route-safe metadata, optional input-hint reveal, and gallery-specific engagement controls."
+      description="A branded collector surface for public opt-in editions, carrying the same results-to-route action family with route-safe metadata, optional input-hint reveal, and gallery-specific engagement controls."
       badges={[
         { label: 'public opt-in archive' },
         { label: 'shared viewer family' },
@@ -134,7 +134,7 @@ export function GalleryViewer({
       canvasLabel="Collector render"
       canvas={scene ? renderCanvas(scene) : <div className="text-[var(--muted-foreground)]">Loading artwork...</div>}
       sidebarTitle="Parameter vector"
-      sidebarDescription="Gallery detail keeps the same shared viewer framing as share links while preserving gallery-only affordances and truthful public metadata."
+      sidebarDescription="Gallery detail keeps the same collector/viewer framing as results and share links while preserving gallery-only affordances and truthful public metadata."
       sidebar={
         <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
           {(Object.entries(parameterVector) as [string, number][])
@@ -154,7 +154,7 @@ export function GalleryViewer({
               <div>
                 <p className="editorial-note-label mb-1">Input hint</p>
                 <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-                  Reveal the optional contributor-approved input hint without exposing raw stored source text.
+                  Reveal the optional contributor-approved hint for this gallery edition without exposing raw stored source text.
                 </p>
               </div>
               {previewRevealed ? (
@@ -175,7 +175,7 @@ export function GalleryViewer({
             <div>
               <p className="editorial-note-label mb-1">Support the edition</p>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-                Public reactions stay route-local and keep the gallery contract lightweight.
+                Public reactions stay route-local and keep this collector edition lightweight.
               </p>
             </div>
             <button

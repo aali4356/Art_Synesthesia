@@ -123,7 +123,7 @@ export function ShareViewer({
     <BrandedViewerScaffold
       eyebrow="Shared viewer"
       title="Shared artwork"
-      description="A privacy-safe collector surface for viewing parameter-only editions outside the original generation session."
+      description="A privacy-safe collector surface for reopening parameter-only editions outside the original generation session while staying in the same results-to-route action family."
       badges={[
         { label: 'parameter-only payload' },
         { label: 'shared viewer family' },
@@ -138,7 +138,7 @@ export function ShareViewer({
       canvasLabel="Shared collector render"
       canvas={scene ? renderCanvas(scene, styleName) : <div className="text-[var(--muted-foreground)]">Loading artwork...</div>}
       sidebarTitle="Parameter vector"
-      sidebarDescription="The share route exposes the stored rendering parameters and version metadata without revealing any original source text."
+      sidebarDescription="The shared collector viewer exposes stored rendering parameters and version metadata without revealing any original source text."
       sidebar={
         <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
           {(Object.entries(parameterVector) as [string, number][])
@@ -153,7 +153,7 @@ export function ShareViewer({
       }
       footerNote={
         <p>
-          The original input that generated this artwork is not stored or shown. Share links store only the parameter vector used to render the artwork.
+          The original input that generated this artwork is not stored or shown. Share links store only the parameter vector, version metadata, and style needed to reopen the public proof viewer.
         </p>
       }
     />

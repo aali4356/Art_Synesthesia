@@ -72,9 +72,9 @@ export function ExportControls({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1">
           <p className="editorial-note-label mb-0">Export</p>
-          <h3 className="text-base font-medium text-[var(--foreground)]">Render a high-resolution edition.</h3>
+          <h3 className="text-base font-medium text-[var(--foreground)]">Download this collector edition.</h3>
           <p className="text-sm text-[var(--muted-foreground)]">
-            High-resolution 4096×4096 server render with deterministic parameters.
+            Export uses the same parameter-safe edition as the results desk: one 4096×4096 server render with the currently supported format options for this style.
           </p>
         </div>
         <button
@@ -112,6 +112,9 @@ export function ExportControls({
         </label>
       </div>
 
+      <p className="mt-3 text-xs text-[var(--muted-foreground)] leading-relaxed">
+        Truth in export: this route currently ships 4096×4096 downloads only, and available formats depend on the active renderer family.
+      </p>
       {state.status === 'success' && state.message && (
         <p className="mt-3 text-xs text-[var(--muted-foreground)]">{state.message}</p>
       )}

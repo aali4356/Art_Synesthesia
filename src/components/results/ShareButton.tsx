@@ -71,7 +71,7 @@ export function ShareButton({
             <p className="editorial-note-label mb-1">Share</p>
             <h3 className="text-base font-medium text-[var(--foreground)]">Create a public proof link.</h3>
             <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              The share payload includes only vector, version, and style metadata — never the raw source.
+              This opens the shared collector viewer with parameter-only data: vector, version, and style metadata — never the raw source.
             </p>
           </div>
           <button
@@ -81,6 +81,10 @@ export function ShareButton({
             Create new link
           </button>
         </div>
+
+        <p className="mt-4 text-xs text-[var(--muted-foreground)] leading-relaxed">
+          Public proof links stay parameter-only and route to the shared collector viewer, so anyone opening the URL sees the artwork family without the original prompt.
+        </p>
 
         <div className="mt-4 editorial-link-strip">
           <span className="flex-1 font-mono text-sm text-[var(--muted-foreground)] break-all">{state.fullUrl}</span>
@@ -101,9 +105,9 @@ export function ShareButton({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1">
           <p className="editorial-note-label mb-0">Share</p>
-          <h3 className="text-base font-medium text-[var(--foreground)]">Publish a view-only edition link.</h3>
+          <h3 className="text-base font-medium text-[var(--foreground)]">Publish a view-only collector link.</h3>
           <p className="text-sm text-[var(--muted-foreground)]">
-            Generate a public route for this artwork without attaching the original prompt or source payload.
+            Generate a public proof route for this artwork so the shared viewer can reopen the same edition family without attaching the original prompt or source payload.
           </p>
         </div>
         <button
