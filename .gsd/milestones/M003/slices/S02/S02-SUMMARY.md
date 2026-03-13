@@ -22,6 +22,11 @@ files_changed:
   - src/components/viewers/BrandedViewerScaffold.tsx
   - src/__tests__/app/shared-brand-surfaces.test.tsx
   - src/__tests__/compare/compare-mode.test.tsx
+observability_surfaces:
+  - Shared editorial shell adopted across /gallery, /compare, /gallery/[id], /share/[id]
+  - BrandedViewerScaffold.tsx as single viewer composition source
+  - Branded unavailable-state messaging on DB-backed routes
+  - globals.css shared token language for route intros, filters, grids, compare, viewers
 ---
 
 # S02 Summary: Shared brand system across shell, actions, and viewer surfaces
@@ -55,6 +60,15 @@ Propagated the S01 editorial gallery-luxe system into all downstream route surfa
 - `npm test -- src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/compare/compare-mode.test.tsx src/__tests__/gallery/gallery-card.test.tsx src/__tests__/share/viewer.test.ts` — 22/22 pass
 - `npm run build` — production build succeeds
 - Browser verification confirms branded continuity across all target routes
+
+### Authoritative diagnostics
+
+- **Test verification:** `npm test -- src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/compare/compare-mode.test.tsx src/__tests__/gallery/gallery-card.test.tsx src/__tests__/share/viewer.test.ts`
+- **Build verification:** `npm run build`
+- **Browser routes:** `/gallery`, `/compare`, `/gallery/[id]`, `/share/[id]`
+- **Viewer scaffold source:** `src/components/viewers/BrandedViewerScaffold.tsx`
+- **Shared tokens:** `src/app/globals.css` — route-intro, filter-bar, gallery-grid, compare-surface, viewer-layout classes
+- **Unavailable-state inspection:** Visit any DB-backed detail route without a running database to confirm branded diagnostic messaging
 
 ## What remains for S03
 

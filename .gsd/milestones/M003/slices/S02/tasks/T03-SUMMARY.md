@@ -13,6 +13,10 @@ files_changed:
   - .gsd/milestones/M003/slices/S02/S02-PLAN.md
 verification:
   - npm test -- src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/share/viewer.test.ts src/__tests__/gallery/gallery-card.test.tsx
+observability_surfaces:
+  - BrandedViewerScaffold.tsx shared by gallery/share detail routes
+  - Branded unavailable-state messaging on /gallery/[id] and /share/[id]
+  - Privacy contract preserved in ShareViewer (no raw input exposure)
 ---
 
 # T03 Summary
@@ -45,6 +49,13 @@ Passed:
 
 - Gallery and share detail pages now visibly read as one branded viewer family with shared framing, metadata posture, and explicit unavailable-state treatment.
 - Share viewer route wiring remains privacy-safe, and gallery-specific actions continue to work inside the shared viewer frame.
+
+## Diagnostics
+
+Future agents can verify viewer unification by running:
+- `npm test -- src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/share/viewer.test.ts src/__tests__/gallery/gallery-card.test.tsx`
+- Browser check on `/gallery/[id]` and `/share/[id]` for shared viewer scaffold framing and explicit unavailable-state messaging.
+- Inspect `src/components/viewers/BrandedViewerScaffold.tsx` for the single source of viewer composition logic.
 
 ## Follow-on for T04
 
