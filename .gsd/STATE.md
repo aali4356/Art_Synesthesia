@@ -13,7 +13,7 @@
 - ⬜ **M005:** M005
 
 ## Recent Decisions
-- D041 (M003/S03/T01): Reuse collector/editorial continuity language across results actions and downstream viewers while preserving explicit route-specific truth boundaries.
+- None recorded
 
 ## Blockers
 - None
