@@ -37,7 +37,7 @@
 
 ## Tasks
 
-- [ ] **T01: Wire action-family continuity across results, browse, compare, and detail surfaces** `est:1h 15m`
+- [x] **T01: Wire action-family continuity across results, browse, compare, and detail surfaces** `est:1h 15m`
   - Why: R004 is still open at the seam between polished action widgets and downstream routes; this task closes the family-language gap before final proof.
   - Files: `src/components/results/ExportControls.tsx`, `src/components/results/ShareButton.tsx`, `src/components/gallery/GallerySaveModal.tsx`, `src/app/compare/CompareMode.tsx`, `src/app/gallery/[id]/GalleryViewer.tsx`, `src/app/share/[id]/ShareViewer.tsx`, `src/app/globals.css`
   - Do: Align the copy posture, section framing, and action labels of export/share/save with the collector/editorial language already used by route shells; add explicit continuity cues that connect results actions to public proof, gallery save, and compare workflows; keep export messaging honest about 4096-only and limited-format behavior; preserve share’s parameter-only privacy contract and gallery detail’s optional hint boundary; keep controls keyboard-usable and semantically labeled instead of introducing decorative-only affordances.

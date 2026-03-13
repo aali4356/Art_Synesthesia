@@ -13,10 +13,10 @@
 - ⬜ **M005:** M005
 
 ## Recent Decisions
-- None recorded
+- D041 (M003/S03/T01): Reuse collector/editorial continuity language across results actions and downstream viewers while preserving explicit route-specific truth boundaries.
 
 ## Blockers
 - None
 
 ## Next Action
-Execute T01: Wire action-family continuity across results, browse, compare, and detail surfaces in slice S03.
+Execute T02: Rebuild gallery cards as editorial collector objects without breaking browse behavior in slice S03.
