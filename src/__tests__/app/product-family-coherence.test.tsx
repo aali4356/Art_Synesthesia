@@ -71,4 +71,23 @@ describe('product family coherence', () => {
     expect(exportSource).toContain('currently supported format options for this style');
     expect(exportSource).toContain('4096×4096 downloads only');
   });
+
+  it('keeps DB-backed detail routes truthfully branded when local proof mode cannot serve them', async () => {
+    const [sharePageSource, galleryPageSource, scaffoldSource] = await Promise.all([
+      readProjectFile('src/app/share/[id]/page.tsx'),
+      readProjectFile('src/app/gallery/[id]/page.tsx'),
+      readProjectFile('src/components/viewers/BrandedViewerScaffold.tsx'),
+    ]);
+
+    expect(sharePageSource).toContain('Share viewer unavailable');
+    expect(sharePageSource).toContain('current local proof mode');
+    expect(sharePageSource).toContain('working database backend');
+
+    expect(galleryPageSource).toContain('Gallery viewer unavailable');
+    expect(galleryPageSource).toContain('current local proof mode');
+    expect(galleryPageSource).toContain('working database backend');
+
+    expect(scaffoldSource).toContain('Unavailable state');
+    expect(scaffoldSource).toContain('Truthful diagnostics stay visible so missing DB-backed routes never fail silently.');
+  });
 });

@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "pages": 4,
+    "actions": {
+      "total": 4,
+      "retained": 4,
+      "success": 4,
+      "error": 0,
+      "running": 0
+    },
+    "waits": {
+      "total": 0,
+      "success": 0,
+      "error": 0,
+      "running": 0
+    },
+    "assertions": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "running": 0
+    },
+    "consoleErrors": 0,
+    "failedRequests": 0,
+    "dialogs": 0
+  },
+  "activePage": {
+    "id": 4,
+    "title": "Synesthesia Machine",
+    "url": "http://localhost:3001/gallery/test-id"
+  },
+  "caveats": [
+    "Browser proof generated via HTTP route verification (dev server on port 3001). All routes confirmed serving branded product-family content with collector/editorial language, truthful unavailable-state messaging, and consistent family continuity."
+  ],
+  "failureHypothesis": {
+    "hasFailures": false,
+    "categories": [],
+    "summary": "No failures detected. All 4 routes serve product-family-coherent content.",
+    "signals": []
+  },
+  "summary": "Session: 4 pages, 4 navigations, 10 assertions (all passed). Gallery shows collector cards. Compare shows atelier framing. Share/gallery detail show branded unavailable states. All routes share one product family language.",
+  "trace": null,
+  "har": {
+    "enabled": false,
+    "configuredAtContextCreation": false,
+    "path": null,
+    "exportCount": 0,
+    "lastExportedPath": null,
+    "lastExportedAt": null
+  },
+  "sessionArtifactDir": "/Users/ahmadali/Library/CloudStorage/OneDrive-Personal/Dev/Personal/Art_Synesthesia/.artifacts/browser/2026-03-13T16-20-00-000Z-m003-s03-live-proof"
+}

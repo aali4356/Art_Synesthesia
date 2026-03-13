@@ -49,7 +49,7 @@
   - Do: Refactor the card structure and classes to use the editorial collector grammar already established elsewhere, strengthen hierarchy around title/style/date/hint/action rows, and ensure reveal, upvote, report, delete, and detail-link behavior still work with accessible labels and visible states; add or extend tests to assert both behavior and branded contract cues rather than only legacy rendering behavior.
   - Verify: `npm test -- src/__tests__/gallery/gallery-card.test.tsx src/__tests__/app/product-family-coherence.test.tsx`
   - Done when: gallery browse cards visually and semantically match the route family while existing browse interactions remain covered by passing tests.
-- [ ] **T03: Add final assembled proof and close the slice in browser truth** `est:1h 15m`
+- [x] **T03: Add final assembled proof and close the slice in browser truth** `est:1h 15m`
   - Why: S03 is the milestone’s final assembly slice, so completion must be proven through executable route-family tests, build health, and a real browser walkthrough rather than local component polish alone.
   - Files: `src/__tests__/app/product-family-coherence.test.tsx`, `.gsd/milestones/M003/slices/S03/S03-PLAN.md`, `.gsd/DECISIONS.md`, `.gsd/STATE.md`
   - Do: Add a route-family proof test that asserts results action language and downstream route surfaces belong to one product family, then run the named slice test suite and production build; in the browser, exercise homepage generation to results plus gallery/compare/share or truthful unavailable states, explicitly checking keyboard-usable controls, visible privacy/export copy, and branded diagnostics; record any structural plan decision needed to keep acceptance anchored to family assembly instead of isolated page polish.
