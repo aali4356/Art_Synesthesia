@@ -13,10 +13,10 @@
 - ⬜ **M005:** M005
 
 ## Recent Decisions
-- Gallery browse cards now use dedicated `gallery-collector-card` editorial tokens so `/gallery` matches the collector family without weakening reveal/report/upvote/delete/detail behavior contracts.
+- None recorded
 
 ## Blockers
 - None
 
 ## Next Action
-Execute T03: Add final assembled proof and close the slice in browser truth for S03.
+Execute T03: Add final assembled proof and close the slice in browser truth in slice S03.
