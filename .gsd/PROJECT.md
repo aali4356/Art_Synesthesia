@@ -10,19 +10,19 @@ Deterministic synesthetic art that feels emotionally rich, visually unforgettabl
 
 ## Current State
 
-M001 and M002 are complete. The product already has:
+M001, M002, and M003 are complete. The product now has:
 - deterministic canonicalization, analysis, normalization, synesthetic mapping, curated palette-family selection, palette realization, and scene-graph rendering
-- text, URL, and data inputs flowing through the shared generation/results pipeline
-- geometric, organic, particle, and typographic renderers, with organic and typographic now consuming shared mapping-driven expressiveness posture
-- a live `ResultsView` proof diagnostics seam exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
-- share links, gallery, moderation, compare mode, export controls, and alt text
-- passing art-system contract coverage plus browser-level acceptance evidence for the upgraded live results experience
-- restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries
+- text, URL, and data inputs flowing through a branded landing → generation → results journey on the real homepage
+- geometric, organic, particle, and typographic renderers, with live `ResultsView` proof diagnostics exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
+- a shared editorial gallery-luxe shell/action/viewer system applied across homepage, results, gallery, compare, gallery detail, and share detail routes
+- share links, gallery, moderation, compare mode, export controls, alt text, and collector/editorial action surfaces that read as one product family
+- passing targeted cross-surface tests, passing production builds, and browser-level acceptance evidence across the real entrypoint and major product routes
+- restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries with truthful unavailable-state messaging
 
-Current gaps are now centered on product polish, coherence, and launch hardening rather than the core art engine:
-- the site shell and primary surfaces are functional but not yet premium or distinct enough for the editorial gallery-luxe brand direction
-- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, even though the failure path is explicit and inspectable
-- shipping surfaces like broader observability, deploy guidance, continuity strategy, and cross-surface coherence still need hardening
+Current gaps are now centered on continuity, accessibility breadth, and launch hardening rather than foundational product identity:
+- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, and the user-facing failure copy still needs stronger explanation
+- broader continuity strategy, onboarding/system persistence decisions, and returning-user flows still belong to M004
+- shipping surfaces like observability, deploy guidance, and public-launch operational hardening still need M005 work
 
 ## Architecture / Key Patterns
 
@@ -41,7 +41,6 @@ See `.gsd/REQUIREMENTS.md` for the explicit capability contract, requirement sta
 
 - [x] M001: Migration — Ship the complete deterministic v1 product foundation across inputs, renderers, gallery/share/compare, export, and privacy-aware infrastructure.
 - [x] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
-- [ ] M003: Signature Product Experience — Redesign the full site into an editorial gallery-luxe product with a stronger brand identity, premium landing/results/gallery surfaces, and memorable UX.
-  - S01 complete: the real homepage now delivers a branded editorial landing → generation → results journey with privacy-safe proof diagnostics and branded export/share/save action surfaces verified in-browser.
+- [x] M003: Signature Product Experience — Completed the editorial gallery-luxe redesign across the real homepage, results, gallery, compare, share, and export-adjacent surfaces with browser-verified continuity and truthful diagnostics.
 - [ ] M004: Product Coherence and Continuity — Strengthen onboarding, primary user loops, saved state, account/identity decisions, analytics, and continuity across sessions and surfaces.
 - [ ] M005: Public Launch Readiness — Harden build/deploy reliability, fix operational gaps, improve observability, document production setup, and make the product ready for public portfolio launch.
