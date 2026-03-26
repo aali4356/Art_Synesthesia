@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "taskId": "T03",
+  "unitId": "M004/S02/T03",
+  "timestamp": 1774545173548,
+  "passed": false,
+  "discoverySource": "task-plan",
+  "checks": [
+    {
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exitCode": 0,
+      "durationMs": 2499,
+      "verdict": "pass"
+    }
+  ],
+  "retryAttempt": 1,
+  "maxRetries": 2,
+  "runtimeErrors": [
+    {
+      "source": "bg-shell",
+      "severity": "crash",
+      "message": "[art-synesthesia-dev] exitCode=1",
+      "blocking": true
+    }
+  ]
+}

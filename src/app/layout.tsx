@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { ObservabilityProvider } from '@/components/observability/ObservabilityProvider';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import './globals.css';
 
@@ -31,7 +32,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ObservabilityProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </ObservabilityProvider>
       </body>
     </html>
   );

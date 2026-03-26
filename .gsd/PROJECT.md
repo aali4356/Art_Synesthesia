@@ -19,9 +19,9 @@ M001, M002, M003, and M004/S01 are complete. The product now has:
 - passing targeted cross-surface tests, passing production builds, and browser-level acceptance evidence across the real entrypoint and major product routes
 - restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries with truthful unavailable-state messaging
 - anonymous-first browser-local continuity for returning users: results can be saved into recent local work, rediscovered from the homepage/header continuity seam, and reopened in the same browser without storing raw source text, full URLs, or dataset bodies
+- adaptive onboarding and repeat-use route discovery across Home, Results, Compare, and Gallery, including first-visit versus returning-user copy, a real shared navigation landmark with semantic active-route state, and explicit results next steps that keep browser-local continuity distinct from public routes
 
-Current gaps are now centered on onboarding, observability breadth, and launch hardening rather than foundational product identity:
-- first-time vs returning-user onboarding/navigation adaptation still belongs to the remaining M004 slices
+Current gaps are now centered on observability breadth and launch hardening rather than foundational product identity:
 - privacy-filtered analytics/error-monitoring integration and broader accessibility breadth still need M004/S03 work
 - URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, and the user-facing failure copy still needs stronger explanation
 - shipping surfaces like deploy guidance and public-launch operational hardening still need M005 work
