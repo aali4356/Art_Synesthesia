@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T03:23:05.464Z",
+  "exported_at": "2026-03-26T04:09:46.356Z",
   "milestones": [
     {
       "id": "M001",
@@ -77,17 +77,62 @@
       "depends_on": [],
       "created_at": "2026-03-26T03:20:46.083Z",
       "completed_at": null,
-      "vision": "",
-      "success_criteria": [],
-      "key_risks": [],
-      "proof_strategy": [],
-      "verification_contract": "",
-      "verification_integration": "",
-      "verification_operational": "",
-      "verification_uat": "",
-      "definition_of_done": [],
-      "requirement_coverage": "",
-      "boundary_map_markdown": ""
+      "vision": "Turn Synesthesia Machine from a premium one-session experience into a repeat-use product by shipping an intentional anonymous-first continuity layer, adaptive onboarding/navigation, and privacy-filtered operational visibility that preserve the app’s existing truthful and private-first product posture.",
+      "success_criteria": [
+        "A returning browser can intentionally recover recent work and re-enter the product through a real continuity surface without needing an account.",
+        "The product clearly explains what is local-only versus public persistence, and no surface implies exact session restoration unless that contract is truly implemented.",
+        "Homepage, results, header, and related route-entry states adapt for first-time and returning users while preserving the branded family coherence established in M003.",
+        "Launch owners can inspect core usage and failure signals through privacy-filtered analytics/error monitoring instead of relying only on local tests.",
+        "New M004 surfaces remain keyboard-usable, semantically legible, and consistent with the existing truthful unavailable-state pattern."
+      ],
+      "key_risks": [
+        {
+          "risk": "Continuity scope can balloon into a full auth/accounts program before anonymous repeat-use value is proven.",
+          "whyItMatters": "That would expand architecture, secrets, and UI scope far beyond the portfolio-launch target and delay user-visible value."
+        },
+        {
+          "risk": "Current public share/gallery reopening does not guarantee pixel-identical restoration, so continuity copy could accidentally overpromise exact recovery.",
+          "whyItMatters": "A misleading restoration contract would create user confusion and force late schema/storage redesign once implementation starts."
+        },
+        {
+          "risk": "Operational visibility tooling can over-collect sensitive text, URLs, or hint content if privacy boundaries are not explicit from the start.",
+          "whyItMatters": "The product’s private-first posture would be weakened by careless instrumentation, undermining trust and creating avoidable cleanup work."
+        },
+        {
+          "risk": "URL analysis still depends on the DB snapshot boundary when DATABASE_URL is missing.",
+          "whyItMatters": "Any continuity or telemetry work that assumes all input types behave the same in local proof mode will hit this seam unless the experience stays truthful about the limitation."
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Whether repeat-use value can be delivered without accounts",
+          "retireIn": "S01",
+          "whatWillBeProven": "A real anonymous-first recent-work/resume loop works through the shipped UI using browser-local continuity artifacts only."
+        },
+        {
+          "riskOrUnknown": "Whether onboarding and navigation can use the new continuity artifact without fragmenting the product family",
+          "retireIn": "S02",
+          "whatWillBeProven": "Homepage, header, results, and empty states all adapt to first-time vs returning users through one coherent continuity contract."
+        },
+        {
+          "riskOrUnknown": "Whether launch operators can inspect usage/failures without violating privacy posture",
+          "retireIn": "S03",
+          "whatWillBeProven": "Privacy-filtered analytics and error monitoring capture core product-loop events and failures while excluding raw source text, raw URLs, and optional hints by default."
+        }
+      ],
+      "verification_contract": "Milestone completion requires executable proof at the real browser entrypoint: first-visit onboarding, generation, local continuity save/resume, and route-family messaging must be covered by app/browser verification and targeted regression tests. Contract proof must state clearly whether restoration is edition-family recall or exact restore, and tests must confirm the shipped wording matches the real persistence behavior.",
+      "verification_integration": "Integration proof must cover the assembled continuity loop across homepage/input/results actions plus links to public share/gallery artifacts when present. Observability proof must confirm that core loop events and failure paths are emitted from the actual app composition rather than mocked helper calls only.",
+      "verification_operational": "Operational verification must show that analytics/error signals are inspectable in a production-like configuration, that unavailable backend states remain branded and visible, and that privacy filters prevent raw source text, canonical URLs, and optional input hints from being captured by default.",
+      "verification_uat": "UAT should walk two real stories: (1) a first-time visitor understands how to generate and what will or will not be saved, and (2) a returning visitor in the same browser can intentionally resume recent work, navigate the product, and encounter truthful messaging if a backend-dependent path is unavailable. Accessibility checks must cover keyboard traversal, visible focus, and semantics across new continuity/onboarding surfaces.",
+      "definition_of_done": [
+        "Anonymous-first continuity is shipped through the real UI with explicit local-vs-public persistence messaging.",
+        "Adaptive onboarding, empty states, and repeat-use navigation are integrated into the existing branded shell without fragmenting route-family coherence.",
+        "Privacy-filtered analytics and error monitoring are wired into the real app with inspectable signals and documented boundaries.",
+        "New M004 surfaces have regression coverage plus browser/UAT evidence for keyboard and semantics.",
+        "R004, R007, R008, and R010 each have a credible delivered path in completed slices, while R005 is advanced but not claimed complete and R006 remains explicitly deferred to M005."
+      ],
+      "requirement_coverage": "Active requirement coverage for M004: R008 is owned by S01 with S02 support via the anonymous-first continuity contract and resume loop; R004 is advanced by S01 and S02 through continuity-aware navigation/copy coherence and supported again in S03 by keeping failure visibility inside the branded product family; R007 is owned by S03 via privacy-filtered analytics/error monitoring; R010 is owned by S03 via keyboard/semantic closure across all new M004 surfaces. R009 is already validated from M003 and is only extended, not reopened, through S02. R005 is partially advanced by S03 but not closed in this milestone. R006 stays out of scope for M004 execution except where truthful no-DB behavior must remain visible.",
+      "boundary_map_markdown": "| Boundary | Current seam | M004 contract |\n|---|---|---|\n| Browser-local continuity | Theme token, creator token, gallery likes already live in browser storage | S01 adds a dedicated recent-work/workbench artifact with safe derived metadata only; no raw source text is stored for continuity by default. |\n| Public persistence | `share_links` and `gallery_items` store parameter-safe public artifacts | M004 must keep public share/gallery separate from private continuity and explicitly message the difference in UI copy. |\n| Restoration semantics | Results rebuild from canonical-derived seeds; share/gallery rebuild from synthetic placeholder seeds | M004 plans edition-family recall by default, not exact pixel-identical restore, unless a later explicit storage contract is added. |\n| App shell and route family | `Shell`, `Header`, `ResultsView`, and `BrandedViewerScaffold` already define the branded product language | S02 extends these same primitives for onboarding, resume, empty states, and repeat-use navigation instead of inventing a second product shell. |\n| Failure truth boundary | `BrandedUnavailableState` keeps backend gaps explicit | Any continuity/telemetry failure surface must stay branded, inspectable, and honest rather than hiding missing dependencies. |\n| Analytics / monitoring | No provider or event taxonomy exists today | S03 introduces privacy-filtered product analytics and error monitoring at layout/app boundaries with explicit exclusions for raw text, URLs, and optional hints. |\n| DB-dependent URL path | `/api/analyze-url` still relies on DB snapshot infrastructure when `DATABASE_URL` is absent | M004 slices must not assume URL continuity behaves like pure local state; they must either keep the limitation truthful or route around it intentionally. |"
     },
     {
       "id": "M005",
@@ -457,6 +502,71 @@
       "proof_level": "",
       "integration_closure": "",
       "observability_impact": "",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S01",
+      "title": "Anonymous-first continuity and return-user seam",
+      "status": "pending",
+      "risk": "high",
+      "depends": [],
+      "demo": "Generate an edition, save it into recent local work through the real product UI, refresh or return in the same browser, and intentionally reopen that work from a visible continuity surface that clearly distinguishes local continuity from public share/gallery persistence.",
+      "created_at": "2026-03-26T03:38:19.064Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Add an anonymous-first continuity seam that lets a returning visitor intentionally reopen recent local work from the real product UI, using browser-local persistence that is clearly separated from public share/gallery publishing and never stores raw source content.",
+      "success_criteria": "**Demo:** Generate an edition, use a results-surface action to keep it as recent local work in the current browser, refresh or revisit the homepage, and reopen that edition family from a visible continuity surface that explicitly says the item is local-only unless shared or saved to the public gallery.\n\n## Must-Haves\n- Persist recent local work in browser storage with enough parameter-safe data to reopen the edition family, while excluding raw source text, raw URLs, and raw datasets.\n- Add a visible return-user continuity surface on the homepage and/or shared shell that lists recent local work, shows freshness metadata, and offers an intentional reopen action.\n- Keep product copy truthful about the seam: local continuity is browser-local/private-first, while share links and gallery saves are separate public surfaces.\n- Handle empty, missing, or corrupt browser-local continuity state without crashing and with branded fallback UI.\n\n## Verification\n- `src/__tests__/continuity/recent-work.test.ts` asserts ordering, storage caps, corrupt-storage fallback, and the no-raw-input persistence contract.\n- `src/__tests__/app/anonymous-continuity.test.tsx` asserts a results-surface local-save action, homepage continuity rendering after reload-like rehydration, and resume/reopen behavior from the continuity surface.\n- `src/__tests__/app/product-family-coherence.test.tsx` is extended to assert copy-level separation between recent local work and the public share/gallery routes.\n- `npm test -- --run src/__tests__/continuity/recent-work.test.ts src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/product-family-coherence.test.tsx` passes.",
+      "proof_level": "This slice proves: integration\n- Real runtime required: yes\n- Human/UAT required: yes",
+      "integration_closure": "- Upstream surfaces consumed: `src/app/page.tsx`, `src/components/results/ResultsView.tsx`, `src/components/results/ShareButton.tsx`, `src/components/gallery/GallerySaveModal.tsx`, `src/components/layout/Header.tsx`, existing Vitest/RTL app proof tests.\n- New wiring introduced in this slice: browser-local recent-work storage helpers, homepage/shared-shell continuity entry points, and result-to-home resume state plumbing.\n- What remains before the milestone is truly usable end-to-end: downstream onboarding/navigation polish in S02 and privacy-filtered analytics/error capture in S03.",
+      "observability_impact": "- Runtime signals: recent-local-work save timestamp, resume target metadata, and storage-fallback status messages rendered in the UI.\n- Inspection surfaces: homepage/shared-shell recent local work panel, results-surface saved state, and the browser localStorage continuity key inspected through tests/devtools.\n- Failure visibility: corrupt or unavailable local storage resolves to an empty/branded continuity state instead of a broken homepage or results flow.\n- Redaction constraints: raw text, raw URLs, raw dataset payloads, and secret-bearing source material must never be persisted in the local continuity record.",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S02",
+      "title": "Adaptive onboarding, empty states, and repeat-use navigation",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "A first-time visitor sees clear guidance, while a returning visitor sees resume/recent-entry cues in the homepage/header/results family and can move through the product without route-discovery guesswork.",
+      "created_at": "2026-03-26T03:38:19.064Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Use the continuity artifact from S01 to turn static marketing-like copy into adaptive product guidance across the real entry and repeat-use surfaces.",
+      "success_criteria": "- Homepage, header, input, and results entry states adapt based on whether the browser has recent work.\n- Repeat-use navigation/resume affordances are integrated into existing branded primitives rather than bolted-on widgets.\n- Empty states, recent-work states, and public-action copy all stay aligned with the actual continuity contract from S01.\n- Route-family coherence from M003 is preserved or improved across landing, results, gallery/share entry points, and any new navigation UI.\n- First-time and returning-user stories both have executable proof through app/browser verification.",
+      "proof_level": "User-facing browser and regression proof across first-visit and returning-visit journeys.",
+      "integration_closure": "Turns the continuity contract into a coherent repeat-use product experience and provides stable UI surfaces for instrumentation in S03.",
+      "observability_impact": "Defines the user-visible product loop stages that analytics can instrument without churn: first visit, resume intent, recent-work open, empty-state CTA, public artifact follow-through.",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M004",
+      "id": "S03",
+      "title": "Privacy-filtered observability and accessibility breadth",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01",
+        "S02"
+      ],
+      "demo": "Core product-loop events and failures are inspectable in configured analytics/error-monitoring tools, and the new continuity/onboarding surfaces remain keyboard-usable with truthful branded fallback behavior.",
+      "created_at": "2026-03-26T03:38:19.064Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Finish the milestone by making the shipped repeat-use loop observable and launch-credible without violating privacy or accessibility quality.",
+      "success_criteria": "- Analytics and error monitoring are integrated into the real app composition with an explicit event taxonomy for the core loop.\n- Privacy filters prevent raw source text, raw URLs, and optional hint content from being captured by default.\n- Failure paths and unavailable states for observability-dependent surfaces remain branded and inspectable.\n- Keyboard traversal, focus treatment, labels, semantics, and live-status messaging are verified across all new M004 surfaces.\n- Operational verification demonstrates that product owners can inspect usage/failure signals beyond local test output.",
+      "proof_level": "Configured runtime instrumentation evidence plus targeted browser/a11y verification and regression tests.",
+      "integration_closure": "Closes the milestone’s launch-confidence gap by making the real continuity/onboarding loop inspectable and accessibility-safe in assembled reality.",
+      "observability_impact": "Owns the milestone’s analytics, error visibility, and privacy-filtering contract; advances launchability without claiming full M005 deployment hardening.",
       "sequence": 0,
       "replan_triggered_at": null
     }
@@ -2240,6 +2350,146 @@
       "observability_impact": "",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M004",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Added a privacy-safe recent-work continuity contract with deterministic local storage behavior and focused redaction/fallback tests.",
+      "status": "complete",
+      "one_liner": "Added a privacy-safe recent-work continuity contract with deterministic local storage behavior and focused redaction/fallback tests.",
+      "narrative": "Created src/lib/continuity/types.ts to define the anonymous same-browser continuity contract and its explicit edition-family recall posture. Implemented src/lib/continuity/recent-work.ts as the only supported browser-local recent-work seam with deterministic recency ordering, six-item cap, safe derived source labels, savedAt/lastOpenedAt metadata, and safe-empty fallback when storage is corrupt or unavailable. Added src/__tests__/continuity/recent-work.test.ts to prove save/list/read/remove behavior, redaction guarantees, cap behavior, corrupt JSON fallback, and unsupported-storage fallback. During verification, an assertion mismatch in the privacy proof test was corrected to match the shipped contract: URL continuity stores hostname-only labels and excludes full URL path/query plus any raw text or dataset body.",
+      "verification_result": "Ran the focused recent-work continuity suite directly with the local Vitest entrypoint, then reran the task-plan verification command. Both runs passed with all five continuity contract tests green, covering ordering, cap, redaction, corrupt JSON fallback, and unavailable-storage fallback.",
+      "duration": "",
+      "completed_at": "2026-03-26T04:09:46.206Z",
+      "blocker_discovered": false,
+      "deviations": "Verification required a minimal environment repair because the workspace was missing Rollup’s optional Windows native package; installed @rollup/rollup-win32-x64-msvc with npm install --no-save before rerunning the planned verification command. No product-scope deviation was made beyond the planned continuity files.",
+      "known_issues": "None.",
+      "key_files": [
+        "src/lib/continuity/types.ts",
+        "src/lib/continuity/recent-work.ts",
+        "src/__tests__/continuity/recent-work.test.ts",
+        ".gsd/milestones/M004/slices/S01/tasks/T01-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Store only derived edition snapshots and redacted source labels in recent browser-local work; never persist raw text, full URLs, dataset bodies, or replay-grade session state."
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M004\nkey_files:\n  - src/lib/continuity/types.ts\n  - src/lib/continuity/recent-work.ts\n  - src/__tests__/continuity/recent-work.test.ts\n  - .gsd/milestones/M004/slices/S01/tasks/T01-SUMMARY.md\nkey_decisions:\n  - Store only derived edition snapshots and redacted source labels in recent browser-local work; never persist raw text, full URLs, dataset bodies, or replay-grade session state.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-26T04:09:46.315Z\nblocker_discovered: false\n---\n\n# T01: Added a privacy-safe recent-work continuity contract with deterministic local storage behavior and focused redaction/fallback tests.\n\n**Added a privacy-safe recent-work continuity contract with deterministic local storage behavior and focused redaction/fallback tests.**\n\n## What Happened\n\nCreated src/lib/continuity/types.ts to define the anonymous same-browser continuity contract and its explicit edition-family recall posture. Implemented src/lib/continuity/recent-work.ts as the only supported browser-local recent-work seam with deterministic recency ordering, six-item cap, safe derived source labels, savedAt/lastOpenedAt metadata, and safe-empty fallback when storage is corrupt or unavailable. Added src/__tests__/continuity/recent-work.test.ts to prove save/list/read/remove behavior, redaction guarantees, cap behavior, corrupt JSON fallback, and unsupported-storage fallback. During verification, an assertion mismatch in the privacy proof test was corrected to match the shipped contract: URL continuity stores hostname-only labels and excludes full URL path/query plus any raw text or dataset body.\n\n## Verification\n\nRan the focused recent-work continuity suite directly with the local Vitest entrypoint, then reran the task-plan verification command. Both runs passed with all five continuity contract tests green, covering ordering, cap, redaction, corrupt JSON fallback, and unavailable-storage fallback.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `node node_modules/vitest/vitest.mjs --run src/__tests__/continuity/recent-work.test.ts` | 0 | ✅ pass | 1040ms |\n| 2 | `npm test -- --run src/__tests__/continuity/recent-work.test.ts` | 0 | ✅ pass | 1030ms |\n\n\n## Deviations\n\nVerification required a minimal environment repair because the workspace was missing Rollup’s optional Windows native package; installed @rollup/rollup-win32-x64-msvc with npm install --no-save before rerunning the planned verification command. No product-scope deviation was made beyond the planned continuity files.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `src/lib/continuity/types.ts`\n- `src/lib/continuity/recent-work.ts`\n- `src/__tests__/continuity/recent-work.test.ts`\n- `.gsd/milestones/M004/slices/S01/tasks/T01-SUMMARY.md`\n",
+      "description": "## Why\nThe highest-risk part of this slice is the persistence contract itself. Executors need a stable, privacy-safe browser-local model before UI wiring begins, otherwise later resume work can accidentally persist raw source text or over-promise full session restoration.\n\n## Steps\n1. Add a dedicated recent-work storage module for browser-local continuity, with typed records for edition-family recall, preferred style, timestamps, and lightweight source labels that do not contain raw source content.\n2. Cap and order the recent list deterministically, and make corrupt/missing storage recover to an empty state instead of throwing.\n3. Encode the explicit continuity posture in the contract/comments: this restores a recent edition family in the same browser, not an exact pixel-identical session snapshot.\n4. Add focused unit tests for save/list/read/remove behavior, redaction guarantees, storage cap behavior, and corrupt JSON fallback.\n\n## Must-Haves\n- No raw text input, raw URL, raw dataset body, or secret-bearing source material is written to browser storage.\n- Stored records contain enough parameter-safe data to reopen a recent edition family from the homepage continuity surface.\n- Corrupt or unavailable storage never crashes callers; it degrades to a safe empty state.\n\n## Done when\n- A single browser-local helper module is the only supported read/write seam for recent local work.\n- Unit tests demonstrate ordering, cap, fallback, and privacy guarantees clearly enough that later tasks can build UI on top without redefining the contract.",
+      "estimate": "45m",
+      "files": [
+        "src/lib/continuity/recent-work.ts",
+        "src/lib/continuity/types.ts",
+        "src/__tests__/continuity/recent-work.test.ts"
+      ],
+      "verify": "npm test -- --run src/__tests__/continuity/recent-work.test.ts",
+      "inputs": [
+        "`src/components/results/ResultsView.tsx`",
+        "`src/app/page.tsx`",
+        "`src/lib/gallery/creator-token.ts`"
+      ],
+      "expected_output": [
+        "`src/lib/continuity/recent-work.ts`",
+        "`src/lib/continuity/types.ts`",
+        "`src/__tests__/continuity/recent-work.test.ts`"
+      ],
+      "observability_impact": "- Signals added/changed: explicit savedAt/lastOpenedAt continuity metadata and safe-empty fallback for invalid storage.\n- How a future agent inspects this: run `npm test -- --run src/__tests__/continuity/recent-work.test.ts` and inspect the recent-work localStorage key in devtools.\n- Failure state exposed: corrupt JSON or unsupported storage yields an empty recent-work result instead of an exception.",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M004",
+      "slice_id": "S01",
+      "id": "T02",
+      "title": "Wire results save and homepage resume around recent local work",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Why\nThis task closes the core user-facing loop for R008: a generated edition must be intentionally kept in the current browser, survive a refresh/return, and reopen from a visible continuity surface rather than disappearing between sessions.\n\n## Steps\n1. Add a results-surface action that saves the current edition family into recent local work with clear browser-local/private-first copy and a visible saved state.\n2. Add homepage continuity UI that reads recent local work on load, shows freshness/context labels, and exposes an intentional reopen/resume action for each saved item.\n3. Plumb page state so reopening a saved local item restores the results view with the stored parameter-safe payload and preferred style, without requiring the original raw source.\n4. Add branded empty/fallback handling so first-time users still see the current homepage, while returning users see continuity cues without route-discovery guesswork.\n5. Add RTL coverage for save, reload-like rehydration, and resume behavior through the real `Home`/`ResultsView` relationship.\n\n## Must-Haves\n- The save action is visibly distinct from Share and Save to Gallery.\n- Reopening recent local work restores a usable results surface from browser-local data only.\n- Returning users can find recent local work from the homepage without needing to rediscover a route.\n\n## Done when\n- A user can save from results, revisit/refresh, and intentionally reopen recent local work from a visible homepage continuity surface.\n- The continuity panel and results state both behave correctly when no recent items exist.",
+      "estimate": "1h15m",
+      "files": [
+        "src/app/page.tsx",
+        "src/components/results/ResultsView.tsx",
+        "src/components/continuity/RecentLocalWorkPanel.tsx",
+        "src/hooks/useRecentWorks.ts",
+        "src/app/globals.css",
+        "src/__tests__/app/anonymous-continuity.test.tsx"
+      ],
+      "verify": "npm test -- --run src/__tests__/app/anonymous-continuity.test.tsx",
+      "inputs": [
+        "`src/app/page.tsx`",
+        "`src/components/results/ResultsView.tsx`",
+        "`src/hooks/useTextAnalysis.ts`",
+        "`src/hooks/useUrlAnalysis.ts`",
+        "`src/hooks/useDataAnalysis.ts`",
+        "`src/lib/continuity/recent-work.ts`",
+        "`src/lib/continuity/types.ts`"
+      ],
+      "expected_output": [
+        "`src/app/page.tsx`",
+        "`src/components/results/ResultsView.tsx`",
+        "`src/components/continuity/RecentLocalWorkPanel.tsx`",
+        "`src/hooks/useRecentWorks.ts`",
+        "`src/app/globals.css`",
+        "`src/__tests__/app/anonymous-continuity.test.tsx`"
+      ],
+      "observability_impact": "- Signals added/changed: visible local-save confirmation, recent-item freshness metadata, and branded empty/fallback continuity states.\n- How a future agent inspects this: load the homepage in the browser after saving an edition, or run `npm test -- --run src/__tests__/app/anonymous-continuity.test.tsx`.\n- Failure state exposed: unavailable/corrupt recent-work data yields an empty continuity panel state instead of hidden or broken resume actions.",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M004",
+      "slice_id": "S01",
+      "id": "T03",
+      "title": "Make the return-user seam legible across header and action copy",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "## Why\nThe slice is not complete if continuity exists technically but still reads like public publishing. This task ensures the shell and action family tell the truth: browser-local continuity is private/local, while share links and gallery saves remain explicit public surfaces.\n\n## Steps\n1. Add a lightweight continuity cue in the shared header or shell so returning users have a predictable way to rediscover recent local work.\n2. Tighten results/share/gallery copy so the new local-save action, share link action, and gallery action clearly describe their different persistence and privacy scopes.\n3. Extend product-family coherence tests to lock the distinction in place and prevent later regressions that blur local continuity with public archive behavior.\n4. Keep branded empty-state and editorial language consistent with the existing collector/product family work from M003.\n\n## Must-Haves\n- Local continuity wording always says browser-local/private-first and never implies public visibility.\n- Share/gallery wording remains explicitly public and parameter-safe/public-opt-in as appropriate.\n- The return-user seam is discoverable from the shared shell, not only after generating a new piece.\n\n## Done when\n- A returning user can identify where recent local work lives and understand, from copy alone, how it differs from Share and Gallery.\n- Coherence tests fail if future edits blur the local/public continuity boundary.",
+      "estimate": "45m",
+      "files": [
+        "src/components/layout/Header.tsx",
+        "src/components/results/ShareButton.tsx",
+        "src/components/gallery/GallerySaveModal.tsx",
+        "src/components/continuity/RecentLocalWorkPanel.tsx",
+        "src/__tests__/app/product-family-coherence.test.tsx"
+      ],
+      "verify": "npm test -- --run src/__tests__/app/product-family-coherence.test.tsx",
+      "inputs": [
+        "`src/components/layout/Header.tsx`",
+        "`src/components/results/ShareButton.tsx`",
+        "`src/components/gallery/GallerySaveModal.tsx`",
+        "`src/components/continuity/RecentLocalWorkPanel.tsx`",
+        "`src/__tests__/app/product-family-coherence.test.tsx`"
+      ],
+      "expected_output": [
+        "`src/components/layout/Header.tsx`",
+        "`src/components/results/ShareButton.tsx`",
+        "`src/components/gallery/GallerySaveModal.tsx`",
+        "`src/components/continuity/RecentLocalWorkPanel.tsx`",
+        "`src/__tests__/app/product-family-coherence.test.tsx`"
+      ],
+      "observability_impact": "",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -2734,7 +2984,90 @@
       "revisable": "Yes — if later brand language evolves",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 44,
+      "id": "D042",
+      "when_context": "M004 planning",
+      "scope": "observability",
+      "decision": "Analytics and error-monitoring stack for M004",
+      "choice": "Use privacy-filtered PostHog for product analytics and Sentry for error monitoring/tracing, with raw source text, raw URLs, and optional hint content excluded by default.",
+      "rationale": "M004 needs real launch-grade usage and failure visibility, but the product’s private-first posture makes capture discipline non-negotiable. PostHog fits the App Router analytics/provider model with masking controls, while Sentry provides the clearest Next.js App Router error and trace path without requiring a heavier backoffice.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 45,
+      "id": "D043",
+      "when_context": "M004 planning",
+      "scope": "persistence",
+      "decision": "Restoration contract for returning work",
+      "choice": "Treat M004 continuity as edition-family recall, not a promise of exact pixel-identical session restoration, unless a later explicit seed-persistence contract is added.",
+      "rationale": "Current share/gallery viewers rebuild from synthetic seeds and do not prove exact restoration. Making the continuity contract explicit avoids misleading copy, unnecessary schema overreach, and late redesign when the product can already deliver useful repeat-use behavior through truthful recall.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 46,
+      "id": "D044",
+      "when_context": "M004 planning",
+      "scope": "observability",
+      "decision": "Analytics and error-monitoring stack for M004",
+      "choice": "Use privacy-filtered PostHog for product analytics and Sentry for error monitoring/tracing, with raw source text, raw URLs, and optional hint content excluded by default.",
+      "rationale": "M004 needs real launch-grade usage and failure visibility, but the product’s private-first posture makes capture discipline non-negotiable. PostHog fits the App Router analytics/provider model with masking controls, while Sentry provides the clearest Next.js App Router error and trace path without requiring a heavier backoffice.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 47,
+      "id": "D045",
+      "when_context": "M004/S01 planning",
+      "scope": "persistence",
+      "decision": "Anonymous-first continuity storage shape for returning users",
+      "choice": "Use a browser-local recent-work store for M004/S01, capped to a small ordered list and containing only parameter-safe edition-family metadata plus preferred style/freshness labels; expose it as 'recent local work' distinct from public share links and gallery saves.",
+      "rationale": "This satisfies R008 without introducing accounts, stays consistent with D043's edition-family recall contract, preserves the private-first posture by excluding raw source content, and gives returning users an intentional reopen seam before any heavier identity/persistence system exists.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 48,
+      "id": "D046",
+      "when_context": "M004 S01 T01",
+      "scope": "architecture",
+      "decision": "Anonymous recent-work browser storage contract for continuity seam",
+      "choice": "Store only a privacy-safe edition snapshot (parameter vector, palette snapshot, preferred style, savedAt/lastOpenedAt, and derived source labels such as hostname-only or dataset shape) behind a single continuity helper module; do not store raw text, full URLs, dataset bodies, or exact-session replay state.",
+      "rationale": "Later UI work needs enough local metadata to intentionally reopen a recent edition family from the homepage, but storing replay-grade source material would violate the slice privacy boundary and over-promise exact restoration. The palette snapshot keeps reopen behavior usable without depending on raw canonical input, while the explicit posture keeps continuity scoped to same-browser edition-family recall.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
-  "verification_evidence": []
+  "verification_evidence": [
+    {
+      "id": 1,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "node node_modules/vitest/vitest.mjs --run src/__tests__/continuity/recent-work.test.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1040,
+      "created_at": "2026-03-26T04:09:46.206Z"
+    },
+    {
+      "id": 2,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/continuity/recent-work.test.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1030,
+      "created_at": "2026-03-26T04:09:46.206Z"
+    }
+  ]
 }
