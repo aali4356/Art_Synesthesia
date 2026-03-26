@@ -43,10 +43,10 @@ export function RecentLocalWorkPanel({ items, isLoaded, onResume }: RecentLocalW
         <div>
           <p className="editorial-note-label mb-1">Recent local work</p>
           <h2 id="recent-local-work-heading" className="text-xl sm:text-2xl font-medium text-[var(--foreground)]">
-            Reopen editions saved in this browser.
+            Reopen private browser-local editions from this device.
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)] leading-relaxed">
-            Browser-local, private-first continuity for the same device only. Share links and Gallery saves stay separate public actions.
+            Private-first browser-local continuity for this device only. Share links are public parameter-only routes, and Gallery saves are public opt-in editions.
           </p>
         </div>
         <div className="editorial-chip">same-browser recall only</div>
@@ -60,7 +60,7 @@ export function RecentLocalWorkPanel({ items, isLoaded, onResume }: RecentLocalW
               {isLoaded ? 'No recent local work saved in this browser yet.' : 'Loading recent local work…'}
             </h3>
             <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-              Generate an edition, then use the browser-local save action on the results surface to keep a private recent-work recall point here.
+              Generate an edition, then use the browser-local save action on the results surface to keep a private recall point here.
             </p>
           </div>
           <div className="continuity-empty-state__meta">
@@ -102,7 +102,7 @@ export function RecentLocalWorkPanel({ items, isLoaded, onResume }: RecentLocalW
 
               <div className="continuity-card__footer">
                 <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-                  Resume from browser-local continuity only. The original raw source was not stored.
+                  Resume from private browser-local continuity only. The original raw source was not stored or published.
                 </p>
                 <button
                   type="button"

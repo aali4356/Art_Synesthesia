@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 export function Header() {
@@ -14,12 +15,15 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="hidden md:block text-right">
             <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--muted-foreground)]">
-              Private-first proofing
+              Browser-local continuity
             </p>
             <p className="text-xs text-[var(--muted-foreground)]">
-              Text, URL, and data enter the same gallery desk.
+              Recent local work lives on the homepage and stays private to this browser.
             </p>
           </div>
+          <Link href="/" className="btn-ghost text-sm" aria-label="Open homepage recent local work panel">
+            Recent local work
+          </Link>
           <ThemeToggle />
         </div>
       </div>

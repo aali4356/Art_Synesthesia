@@ -235,7 +235,8 @@ describe('anonymous continuity seam', () => {
     render(<Home />);
 
     expect(screen.getByText('Recent local work')).toBeDefined();
-    expect(screen.getByText('Reopen editions saved in this browser.')).toBeDefined();
+    expect(screen.getByText('Reopen private browser-local editions from this device.')).toBeDefined();
+    expect(screen.getByText('Private-first browser-local continuity for this device only. Share links are public parameter-only routes, and Gallery saves are public opt-in editions.')).toBeDefined();
     expect(screen.getByText('No recent local work saved in this browser yet.')).toBeDefined();
     expect(screen.getByText('no raw source stored')).toBeDefined();
   });

@@ -13,21 +13,31 @@ async function readProjectFile(relativePath: string) {
 
 describe('product family coherence', () => {
   it('aligns results actions with collector continuity cues', async () => {
-    const [resultsViewSource, exportSource, shareSource, galleryModalSource] = await Promise.all([
+    const [resultsViewSource, exportSource, shareSource, galleryModalSource, continuitySource, headerSource] = await Promise.all([
       readProjectFile('src/components/results/ResultsView.tsx'),
       readProjectFile('src/components/results/ExportControls.tsx'),
       readProjectFile('src/components/results/ShareButton.tsx'),
       readProjectFile('src/components/gallery/GallerySaveModal.tsx'),
+      readProjectFile('src/components/continuity/RecentLocalWorkPanel.tsx'),
+      readProjectFile('src/components/layout/Header.tsx'),
     ]);
 
     expect(resultsViewSource).toContain('Collect, export, or share this edition.');
     expect(resultsViewSource).toContain('public actions remain privacy-safe');
+    expect(resultsViewSource).toContain('Keep a browser-local continuity copy.');
+    expect(resultsViewSource).toContain('private same-browser recall');
     expect(exportSource).toContain('Download this collector edition.');
     expect(exportSource).toContain('Truth in export: this route currently ships 4096×4096 downloads only');
-    expect(shareSource).toContain('Publish a view-only collector link.');
-    expect(shareSource).toContain('parameter-only');
-    expect(galleryModalSource).toContain('public gallery edition');
-    expect(galleryModalSource).toContain('optional public-facing hint for the gallery edition');
+    expect(shareSource).toContain('Publish a public, view-only collector link.');
+    expect(shareSource).toContain('public parameter-only proof route');
+    expect(shareSource).toContain('Anyone with this URL can open the public proof route.');
+    expect(galleryModalSource).toContain('Save a public gallery edition');
+    expect(galleryModalSource).toContain('Recent local work stays browser-local');
+    expect(galleryModalSource).toContain('public opt-in gallery save');
+    expect(continuitySource).toContain('Private-first browser-local continuity for this device only.');
+    expect(continuitySource).toContain('Share links are public parameter-only routes, and Gallery saves are public opt-in editions.');
+    expect(headerSource).toContain('Browser-local continuity');
+    expect(headerSource).toContain('Recent local work lives on the homepage and stays private to this browser.');
   });
 
   it('keeps compare, gallery, and share routes in the same collector/editorial family', async () => {
@@ -59,10 +69,11 @@ describe('product family coherence', () => {
   });
 
   it('preserves privacy and runtime truth boundaries in continuity copy', async () => {
-    const [shareButtonSource, galleryViewerSource, exportSource] = await Promise.all([
+    const [shareButtonSource, galleryViewerSource, exportSource, continuitySource] = await Promise.all([
       readProjectFile('src/components/results/ShareButton.tsx'),
       readProjectFile('src/app/gallery/[id]/GalleryViewer.tsx'),
       readProjectFile('src/components/results/ExportControls.tsx'),
+      readProjectFile('src/components/continuity/RecentLocalWorkPanel.tsx'),
     ]);
 
     expect(shareButtonSource).toContain('never the raw source');
@@ -70,6 +81,8 @@ describe('product family coherence', () => {
     expect(galleryViewerSource).toContain('optional contributor-approved hint');
     expect(exportSource).toContain('currently supported format options for this style');
     expect(exportSource).toContain('4096×4096 downloads only');
+    expect(continuitySource).toContain('private recall point here');
+    expect(continuitySource).toContain('The original raw source was not stored or published.');
   });
 
   it('keeps DB-backed detail routes truthfully branded when local proof mode cannot serve them', async () => {

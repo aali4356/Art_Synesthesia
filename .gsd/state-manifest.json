@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T04:21:27.461Z",
+  "exported_at": "2026-03-26T04:28:02.830Z",
   "milestones": [
     {
       "id": "M001",
@@ -2461,19 +2461,30 @@
       "milestone_id": "M004",
       "slice_id": "S01",
       "id": "T03",
-      "title": "Make the return-user seam legible across header and action copy",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added a shared-shell continuity cue and truthful local/share/gallery copy so returning users can distinguish private browser-local recall from public routes at a glance.",
+      "status": "complete",
+      "one_liner": "Added a shared-shell continuity cue and truthful local/share/gallery copy so returning users can distinguish private browser-local recall from public routes at a glance.",
+      "narrative": "Updated the shared header to surface browser-local continuity in the shell itself, including a homepage-oriented “Recent local work” cue that keeps the return-user seam discoverable even before generating a new piece. Tightened the share action to read as a public, parameter-only collector route, tightened the gallery modal to read as a public opt-in archive path distinct from browser-local continuity, and refined the recent-local panel language so it consistently says private-first, same-browser, and not published. Extended the product-family coherence suite to assert these distinctions across header, continuity, share, and gallery copy. During final slice verification, the broader continuity suite exposed one stale assertion that still expected the pre-T03 continuity headline, so I updated src/__tests__/app/anonymous-continuity.test.tsx and reran the full slice check until recent-work, anonymous continuity, and product-family coherence all passed together.",
+      "verification_result": "Ran the task-plan verification command `npm test -- --run src/__tests__/app/product-family-coherence.test.tsx` and it passed. Then launched the real app with `npm run dev`, verified the header continuity cue on the homepage, generated a live result, confirmed the results desk still separates browser-local save from public Share and Gallery actions, opened the gallery modal, and confirmed the public opt-in wording in the rendered dialog via selector-scoped browser checks and dialog HTML inspection. Because this is the final task in the slice, reran the broader slice suites (`recent-work`, `anonymous-continuity`, and `product-family-coherence`) and achieved a full green pass after updating the stale continuity expectation.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T04:28:02.776Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "The task plan’s expected-output list did not mention `src/__tests__/app/anonymous-continuity.test.tsx`, but the final slice-wide verification surfaced a stale expectation there after the new continuity headline shipped. Updating that existing continuity test was necessary to keep the slice’s earlier verification bar aligned with the now-truthful copy.",
+      "known_issues": "None.",
+      "key_files": [
+        "src/components/layout/Header.tsx",
+        "src/components/results/ShareButton.tsx",
+        "src/components/gallery/GallerySaveModal.tsx",
+        "src/components/continuity/RecentLocalWorkPanel.tsx",
+        "src/__tests__/app/product-family-coherence.test.tsx",
+        "src/__tests__/app/anonymous-continuity.test.tsx",
+        ".gsd/milestones/M004/slices/S01/tasks/T03-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Point returning users back to homepage continuity from the shared header instead of introducing a new route, so recent local work stays explicitly browser-local and private-first.",
+        "Lock the local-vs-public boundary with source-level coherence assertions across header, continuity, share, and gallery surfaces so future copy edits cannot silently blur privacy scope."
+      ],
+      "full_summary_md": "---\nid: T03\nparent: S01\nmilestone: M004\nkey_files:\n  - src/components/layout/Header.tsx\n  - src/components/results/ShareButton.tsx\n  - src/components/gallery/GallerySaveModal.tsx\n  - src/components/continuity/RecentLocalWorkPanel.tsx\n  - src/__tests__/app/product-family-coherence.test.tsx\n  - src/__tests__/app/anonymous-continuity.test.tsx\n  - .gsd/milestones/M004/slices/S01/tasks/T03-SUMMARY.md\nkey_decisions:\n  - Point returning users back to homepage continuity from the shared header instead of introducing a new route, so recent local work stays explicitly browser-local and private-first.\n  - Lock the local-vs-public boundary with source-level coherence assertions across header, continuity, share, and gallery surfaces so future copy edits cannot silently blur privacy scope.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-26T04:28:02.791Z\nblocker_discovered: false\n---\n\n# T03: Added a shared-shell continuity cue and truthful local/share/gallery copy so returning users can distinguish private browser-local recall from public routes at a glance.\n\n**Added a shared-shell continuity cue and truthful local/share/gallery copy so returning users can distinguish private browser-local recall from public routes at a glance.**\n\n## What Happened\n\nUpdated the shared header to surface browser-local continuity in the shell itself, including a homepage-oriented “Recent local work” cue that keeps the return-user seam discoverable even before generating a new piece. Tightened the share action to read as a public, parameter-only collector route, tightened the gallery modal to read as a public opt-in archive path distinct from browser-local continuity, and refined the recent-local panel language so it consistently says private-first, same-browser, and not published. Extended the product-family coherence suite to assert these distinctions across header, continuity, share, and gallery copy. During final slice verification, the broader continuity suite exposed one stale assertion that still expected the pre-T03 continuity headline, so I updated src/__tests__/app/anonymous-continuity.test.tsx and reran the full slice check until recent-work, anonymous continuity, and product-family coherence all passed together.\n\n## Verification\n\nRan the task-plan verification command `npm test -- --run src/__tests__/app/product-family-coherence.test.tsx` and it passed. Then launched the real app with `npm run dev`, verified the header continuity cue on the homepage, generated a live result, confirmed the results desk still separates browser-local save from public Share and Gallery actions, opened the gallery modal, and confirmed the public opt-in wording in the rendered dialog via selector-scoped browser checks and dialog HTML inspection. Because this is the final task in the slice, reran the broader slice suites (`recent-work`, `anonymous-continuity`, and `product-family-coherence`) and achieved a full green pass after updating the stale continuity expectation.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/app/product-family-coherence.test.tsx` | 0 | ✅ pass | 1090ms |\n| 2 | `npm test -- --run src/__tests__/continuity/recent-work.test.ts src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 0 | ✅ pass | 1910ms |\n\n\n## Deviations\n\nThe task plan’s expected-output list did not mention `src/__tests__/app/anonymous-continuity.test.tsx`, but the final slice-wide verification surfaced a stale expectation there after the new continuity headline shipped. Updating that existing continuity test was necessary to keep the slice’s earlier verification bar aligned with the now-truthful copy.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `src/components/layout/Header.tsx`\n- `src/components/results/ShareButton.tsx`\n- `src/components/gallery/GallerySaveModal.tsx`\n- `src/components/continuity/RecentLocalWorkPanel.tsx`\n- `src/__tests__/app/product-family-coherence.test.tsx`\n- `src/__tests__/app/anonymous-continuity.test.tsx`\n- `.gsd/milestones/M004/slices/S01/tasks/T03-SUMMARY.md`\n",
       "description": "## Why\nThe slice is not complete if continuity exists technically but still reads like public publishing. This task ensures the shell and action family tell the truth: browser-local continuity is private/local, while share links and gallery saves remain explicit public surfaces.\n\n## Steps\n1. Add a lightweight continuity cue in the shared header or shell so returning users have a predictable way to rediscover recent local work.\n2. Tighten results/share/gallery copy so the new local-save action, share link action, and gallery action clearly describe their different persistence and privacy scopes.\n3. Extend product-family coherence tests to lock the distinction in place and prevent later regressions that blur local continuity with public archive behavior.\n4. Keep branded empty-state and editorial language consistent with the existing collector/product family work from M003.\n\n## Must-Haves\n- Local continuity wording always says browser-local/private-first and never implies public visibility.\n- Share/gallery wording remains explicitly public and parameter-safe/public-opt-in as appropriate.\n- The return-user seam is discoverable from the shared shell, not only after generating a new piece.\n\n## Done when\n- A returning user can identify where recent local work lives and understand, from copy alone, how it differs from Share and Gallery.\n- Coherence tests fail if future edits blur the local/public continuity boundary.",
       "estimate": "45m",
       "files": [
@@ -3113,6 +3124,28 @@
       "verdict": "✅ pass",
       "duration_ms": 1800,
       "created_at": "2026-03-26T04:21:27.391Z"
+    },
+    {
+      "id": 5,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1090,
+      "created_at": "2026-03-26T04:28:02.776Z"
+    },
+    {
+      "id": 6,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/continuity/recent-work.test.ts src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1910,
+      "created_at": "2026-03-26T04:28:02.776Z"
     }
   ]
 }

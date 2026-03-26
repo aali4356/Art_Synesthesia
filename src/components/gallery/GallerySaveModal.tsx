@@ -88,9 +88,9 @@ export function GallerySaveModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="editorial-note-label mb-1">Gallery save</p>
-            <h2 className="editorial-display text-3xl leading-[0.95]">Save to Gallery</h2>
+            <h2 className="editorial-display text-3xl leading-[0.95]">Save a public gallery edition</h2>
             <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg leading-relaxed">
-              Preview exactly what will move from the results desk into the public gallery edition. The full raw source is never included here.
+              Preview exactly what will move from your private results desk into the public gallery edition. Recent local work stays browser-local, while share links remain separate public parameter-only routes.
             </p>
           </div>
           <button
@@ -184,6 +184,7 @@ export function GallerySaveModal({
             <div className="editorial-action-card">
               <p className="editorial-note-label mb-2">Privacy posture</p>
               <ul className="space-y-2 text-sm text-[var(--muted-foreground)] leading-relaxed">
+                <li>• This is a public opt-in gallery save, not a browser-local continuity action.</li>
                 <li>• Raw source text is not sent with share/save metadata from this modal.</li>
                 <li>• You control whether any short public input hint appears on the gallery card and detail viewer.</li>
                 <li>• The saved page reflects the current collector edition, style, and render thumbnail only.</li>

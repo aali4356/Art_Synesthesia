@@ -45,7 +45,7 @@ This task closes the core user-facing loop for R008: a generated edition must be
   - Estimate: 1h15m
   - Files: src/app/page.tsx, src/components/results/ResultsView.tsx, src/components/continuity/RecentLocalWorkPanel.tsx, src/hooks/useRecentWorks.ts, src/app/globals.css, src/__tests__/app/anonymous-continuity.test.tsx
   - Verify: npm test -- --run src/__tests__/app/anonymous-continuity.test.tsx
-- [ ] **T03: Make the return-user seam legible across header and action copy** — ## Why
+- [x] **T03: Added a shared-shell continuity cue and truthful local/share/gallery copy so returning users can distinguish private browser-local recall from public routes at a glance.** — ## Why
 The slice is not complete if continuity exists technically but still reads like public publishing. This task ensures the shell and action family tell the truth: browser-local continuity is private/local, while share links and gallery saves remain explicit public surfaces.
 
 ## Steps
