@@ -1,73 +1,63 @@
 # S02: Adaptive onboarding, empty states, and repeat-use navigation
 
 **Goal:** Make the homepage, shell, and results family adapt truthfully for first-time versus returning visitors so users can resume local work, discover compare/gallery routes, and move through the product without route-discovery guesswork.
-**Demo:** A first-time visitor sees clear guidance, while a returning visitor sees resume/recent-entry cues in the homepage/header/results family and can move through the product without route-discovery guesswork.
-
-## Must-Haves
-
-- Homepage orchestration derives first-visit, returning, and resumed states from the existing recent-local-work seam and presents distinct onboarding/empty-state guidance for each state without adding new persistence.
-- Shared shell navigation exposes Home/Recent local work, Compare, and Gallery inside a semantic nav landmark with keyboard-usable links and correct `aria-current` state across routes.
-- Results follow-through and continuity copy point users back to homepage continuity and outward to public routes without blurring browser-local private recall versus public share/gallery persistence, directly advancing active requirement `R004`.
-- Regression coverage proves adaptive onboarding, repeat-use navigation, and product-family wording across `src/__tests__/app/home-editorial-flow.test.tsx`, `src/__tests__/app/anonymous-continuity.test.tsx`, `src/__tests__/app/shared-brand-surfaces.test.tsx`, and `src/__tests__/app/product-family-coherence.test.tsx`.
-
-## Proof Level
-
-- This slice proves: integration
-- Real runtime required: yes
-- Human/UAT required: yes
-
-## Verification
-
-- `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx`
-- `npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx`
-- `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx`
-- Live browser verification on `http://localhost:3000`, `http://localhost:3000/gallery`, and `http://localhost:3000/compare` confirms adaptive homepage copy, shared nav discovery, and repeat-use results cues.
-
-## Observability / Diagnostics
-
-- Runtime signals: adaptive homepage/recent-work state, active navigation state via `aria-current`, and repeat-use results guidance remain visible in rendered UI and locked by RTL assertions.
-- Inspection surfaces: `src/__tests__/app/home-editorial-flow.test.tsx`, `src/__tests__/app/anonymous-continuity.test.tsx`, `src/__tests__/app/shared-brand-surfaces.test.tsx`, `src/__tests__/app/product-family-coherence.test.tsx`, plus browser verification against the local app routes.
-- Failure visibility: copy/nav regressions should fail in route-specific tests so a future agent can localize whether the break is homepage orchestration, shared shell navigation, or results follow-through.
-- Redaction constraints: adaptive guidance must preserve the S01 privacy boundary by never exposing raw source content and by keeping browser-local continuity language distinct from public share/gallery routes.
-
-## Integration Closure
-
-- Upstream surfaces consumed: `src/hooks/useRecentWorks.ts`, `src/components/continuity/RecentLocalWorkPanel.tsx`, `src/components/layout/Shell.tsx`, and the existing homepage/results route family.
-- New wiring introduced in this slice: derived visitor-mode onboarding in `src/app/page.tsx`, adaptive guidance props into `src/components/input/InputZone.tsx` and `src/components/results/ResultsView.tsx`, plus shared route navigation and active-route semantics in `src/components/layout/Header.tsx`.
-- What remains before the milestone is truly usable end-to-end: S03 still needs privacy-filtered analytics/error visibility and broader accessibility verification for the new continuity/onboarding surfaces.
+**Demo:** After this: A first-time visitor sees clear guidance, while a returning visitor sees resume/recent-entry cues in the homepage/header/results family and can move through the product without route-discovery guesswork.
 
 ## Tasks
+- [x] **T01: Derived homepage visitor-mode copy from recent local work state and locked it with RTL coverage.** — Why:
+- This task closes the main R004/R009-facing gap in the current product: the homepage still speaks like every visitor is new even when browser-local recent work exists.
 
-- [ ] **T01: Adapt homepage onboarding for first-time, returning, and resumed visitors** `est:50m`
-  - Why: This task closes the main R004-facing gap in the current product: the homepage still speaks like every visitor is new even when browser-local recent work exists.
-  - Files: `src/app/page.tsx`, `src/components/input/InputZone.tsx`, `src/components/continuity/RecentLocalWorkPanel.tsx`, `src/__tests__/app/home-editorial-flow.test.tsx`, `src/__tests__/app/anonymous-continuity.test.tsx`
-  - Do: Derive visitor mode from `recentWorksLoaded`, `recentWorks.length`, and `resumedWork`; adapt hero/support/input guidance for first-time versus returning users; keep the browser-local/private boundary explicit; extend homepage and continuity tests to assert both states.
-  - Verify: `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx`
-  - Done when: Rendering `Home` with and without recent local work produces materially different onboarding language, and the tests prove first-visit and returning-user states.
-- [ ] **T02: Add shared-shell route discovery with active navigation semantics** `est:45m`
-  - Why: S01 made continuity discoverable, but users still have to guess how gallery and compare fit into the product family because the header is not yet a real navigation system.
-  - Files: `src/components/layout/Header.tsx`, `src/components/layout/Shell.tsx`, `src/app/gallery/page.tsx`, `src/app/compare/CompareMode.tsx`, `src/__tests__/app/shared-brand-surfaces.test.tsx`, `src/__tests__/app/product-family-coherence.test.tsx`
-  - Do: Turn the header into a semantic nav landmark with Home/Recent local work, Compare, and Gallery links; expose active-route state with `aria-current`; align route intro copy so the shared shell reads as one truthful family; update route-family/coherence tests.
-  - Verify: `npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx`
-  - Done when: A keyboard user can discover and move among Home, Compare, and Gallery from the shared shell, and route-family tests lock the wording and semantics.
-- [ ] **T03: Carry repeat-use guidance through results and lock the cross-surface contract** `est:40m`
-  - Why: The slice is only truly done once resume-oriented guidance continues from results back to the homepage and out to public routes in language that still reads like one coherent product contract.
-  - Files: `src/components/results/ResultsView.tsx`, `src/__tests__/app/home-editorial-flow.test.tsx`, `src/__tests__/app/anonymous-continuity.test.tsx`, `src/__tests__/app/shared-brand-surfaces.test.tsx`, `src/__tests__/app/product-family-coherence.test.tsx`
-  - Do: Update results guidance for live and reopened recent-local states; tighten any remaining homepage/results/header copy seams; finalize one regression bundle covering homepage, continuity, shared-brand, and product-family behavior; then verify the same flow in the live browser.
-  - Verify: `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx`
-  - Done when: Adaptive homepage guidance, shared nav, and results follow-through all read as one product family in tests and live local verification.
+Steps:
+1. Derive an explicit visitor-mode view in `src/app/page.tsx` from `recentWorksLoaded`, `recentWorks.length`, and `resumedWork` rather than introducing new persisted onboarding state.
+2. Update homepage hero/support copy, note cards, and continuity framing so first-time visitors get clear start guidance while returning visitors get truthful resume/start-fresh cues that still preserve the private-vs-public boundary from S01.
+3. Thread adaptive guidance into `src/components/input/InputZone.tsx` and, if needed, `src/components/continuity/RecentLocalWorkPanel.tsx` so the input narrative and empty/saved states match the visitor mode without leaking raw source material.
+4. Extend homepage and anonymous-continuity tests to assert both first-visit and returning-visitor states, including resume cues and privacy-safe copy.
 
-## Files Likely Touched
+Must-haves:
+- First-time visitors see a clear how-to-start path from the landing surface into the existing input controls.
+- Returning visitors with recent local work see resume-oriented guidance without losing the explicit browser-local/private distinction.
+- No new storage shape, onboarding flag, or continuity route is introduced.
 
-- `src/app/page.tsx`
-- `src/components/input/InputZone.tsx`
-- `src/components/continuity/RecentLocalWorkPanel.tsx`
-- `src/components/layout/Header.tsx`
-- `src/components/layout/Shell.tsx`
-- `src/app/gallery/page.tsx`
-- `src/app/compare/CompareMode.tsx`
-- `src/components/results/ResultsView.tsx`
-- `src/__tests__/app/home-editorial-flow.test.tsx`
-- `src/__tests__/app/anonymous-continuity.test.tsx`
-- `src/__tests__/app/shared-brand-surfaces.test.tsx`
-- `src/__tests__/app/product-family-coherence.test.tsx`
+Done when:
+- Rendering `Home` with and without recent local work produces materially different onboarding language, and the test suite proves both states.
+  - Estimate: 50m
+  - Files: src/app/page.tsx, src/components/input/InputZone.tsx, src/components/continuity/RecentLocalWorkPanel.tsx, src/__tests__/app/home-editorial-flow.test.tsx, src/__tests__/app/anonymous-continuity.test.tsx
+  - Verify: npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx
+- [x] **T02: Added a real shared-shell navigation landmark with semantic active-route state and aligned product-family copy across Home, Compare, and Gallery.** — Why:
+- S01 made continuity discoverable, but users still have to guess how gallery and compare fit into the product family because the header is not yet a real navigation system.
+
+Steps:
+1. Turn `src/components/layout/Header.tsx` into a semantic shared navigation landmark that exposes Home/Recent local work, Compare, and Gallery while keeping the continuity wording explicit about browser-local privacy.
+2. Use the shared shell seam in `src/components/layout/Shell.tsx` and affected route surfaces to provide correct active-route state (`aria-current`) and keyboard-usable route switching without introducing route-local visual drift.
+3. Align route intro copy where needed in `src/app/gallery/page.tsx` and `src/app/compare/CompareMode.tsx` so the shared nav reads as one truthful product family and fixes the currently stale compare wording in test coverage.
+4. Update shared brand/coherence tests to assert the nav landmark, active route cues, and corrected route-family copy.
+
+Must-haves:
+- The header becomes a real, accessible navigation landmark rather than a single continuity CTA.
+- Active-route state is exposed semantically and stays consistent on homepage, gallery, and compare.
+- Public routes remain clearly distinct from browser-local recent work.
+
+Done when:
+- A keyboard user can discover and move among Home, Compare, and Gallery from the shared shell, and route-family tests lock the wording/semantics.
+  - Estimate: 45m
+  - Files: src/components/layout/Header.tsx, src/components/layout/Shell.tsx, src/app/gallery/page.tsx, src/app/compare/CompareMode.tsx, src/__tests__/app/shared-brand-surfaces.test.tsx, src/__tests__/app/product-family-coherence.test.tsx
+  - Verify: npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx
+- [ ] **T03: Carry repeat-use guidance through results and lock the cross-surface contract** — Why:
+- The slice is only truly done once resume-oriented guidance continues from results back to the homepage and out to public routes in language that still reads like one coherent product contract.
+
+Steps:
+1. Update `src/components/results/ResultsView.tsx` so live results and reopened recent-local results both offer clear next-step guidance: resume/start fresh at home, compare when evaluating variants, and gallery/share only with explicit public wording.
+2. Tighten any remaining homepage/results/header wording seams so R004 stays coherent across the landing, shell, and results family after the new onboarding/nav work lands.
+3. Finalize regression coverage across homepage, continuity, shared-brand, and product-family suites so the slice closes with one executable proof bundle.
+4. Run live browser verification against `/`, `/gallery`, and `/compare` after the automated suite to confirm route discovery and repeat-use cues in the real UI.
+
+Must-haves:
+- Results surfaces reinforce the same navigation and continuity story introduced on the homepage/header.
+- Browser-local recall versus public share/gallery persistence remains explicit in every changed surface.
+- The slice ends with one regression bundle that proves the shipped user journey.
+
+Done when:
+- The adaptive homepage, shared nav, and results follow-through all read as one product family in tests and live local verification.
+  - Estimate: 40m
+  - Files: src/components/results/ResultsView.tsx, src/__tests__/app/home-editorial-flow.test.tsx, src/__tests__/app/anonymous-continuity.test.tsx, src/__tests__/app/shared-brand-surfaces.test.tsx, src/__tests__/app/product-family-coherence.test.tsx
+  - Verify: npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx

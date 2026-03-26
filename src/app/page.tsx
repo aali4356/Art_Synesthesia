@@ -377,7 +377,7 @@ export default function Home() {
   );
 
   return (
-    <Shell>
+    <Shell currentRoute="home">
       {!hasResult ? (
         <section className="editorial-stage editorial-grid min-h-[calc(100vh-9rem)] items-start lg:items-center">
           <div className="space-y-8">

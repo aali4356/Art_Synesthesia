@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T04:53:28.624Z",
+  "exported_at": "2026-03-26T17:00:31.096Z",
   "milestones": [
     {
       "id": "M001",
@@ -2517,19 +2517,29 @@
       "milestone_id": "M004",
       "slice_id": "S02",
       "id": "T01",
-      "title": "Adapt homepage onboarding for first-time, returning, and resumed visitors",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Derived homepage visitor-mode copy from recent local work state and locked it with RTL coverage.",
+      "status": "complete",
+      "one_liner": "Derived homepage visitor-mode copy from recent local work state and locked it with RTL coverage.",
+      "narrative": "Implemented adaptive homepage onboarding by deriving visitor mode directly from browser-local continuity state in src/app/page.tsx. The homepage hero, support copy, and note cards now distinguish first-time versus returning visitors, and resumed work still stays privacy-safe. Input guidance in src/components/input/InputZone.tsx now explains truthful first-visit and returning-user paths, while src/components/continuity/RecentLocalWorkPanel.tsx now gives clearer first-time empty-state guidance and preserves browser-local/private wording for saved work. Added RTL coverage in the homepage and anonymous continuity test seams to prove the first-visit versus returning-user contract without introducing new storage shape.",
+      "verification_result": "Task verification passed with npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx. Broader slice verification was also sampled: product-family coherence is green, while shared-brand surfaces still fail on a compare-route wording expectation that belongs to later slice work. A local dev server was started successfully on port 3000, but browser assertions were interrupted by timeout recovery before they were durably recorded.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T05:31:31.579Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Recorded the broader slice verification state in the task summary so later agents can see which slice-level checks already pass versus which still belong to downstream slice work.",
+      "known_issues": "Slice-level shared-brand verification still fails in src/__tests__/app/shared-brand-surfaces.test.tsx due to compare-route wording that belongs to later slice work. Browser assertions were not durably recorded before timeout recovery interrupted the browser step.",
+      "key_files": [
+        "src/app/page.tsx",
+        "src/components/input/InputZone.tsx",
+        "src/components/continuity/RecentLocalWorkPanel.tsx",
+        "src/__tests__/app/home-editorial-flow.test.tsx",
+        "src/__tests__/app/anonymous-continuity.test.tsx",
+        ".gsd/milestones/M004/slices/S02/tasks/T01-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Derived visitor mode from recent-work load state and resumed-work presence instead of introducing any new onboarding flag or storage shape.",
+        "Kept privacy-safe onboarding observable through rendered copy plus route-scoped RTL assertions rather than hidden internal state."
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S02\nmilestone: M004\nkey_files:\n  - src/app/page.tsx\n  - src/components/input/InputZone.tsx\n  - src/components/continuity/RecentLocalWorkPanel.tsx\n  - src/__tests__/app/home-editorial-flow.test.tsx\n  - src/__tests__/app/anonymous-continuity.test.tsx\n  - .gsd/milestones/M004/slices/S02/tasks/T01-SUMMARY.md\nkey_decisions:\n  - Derived visitor mode from recent-work load state and resumed-work presence instead of introducing any new onboarding flag or storage shape.\n  - Kept privacy-safe onboarding observable through rendered copy plus route-scoped RTL assertions rather than hidden internal state.\nduration: \"\"\nverification_result: mixed\ncompleted_at: 2026-03-26T05:31:31.588Z\nblocker_discovered: false\n---\n\n# T01: Derived homepage visitor-mode copy from recent local work state and locked it with RTL coverage.\n\n**Derived homepage visitor-mode copy from recent local work state and locked it with RTL coverage.**\n\n## What Happened\n\nImplemented adaptive homepage onboarding by deriving visitor mode directly from browser-local continuity state in src/app/page.tsx. The homepage hero, support copy, and note cards now distinguish first-time versus returning visitors, and resumed work still stays privacy-safe. Input guidance in src/components/input/InputZone.tsx now explains truthful first-visit and returning-user paths, while src/components/continuity/RecentLocalWorkPanel.tsx now gives clearer first-time empty-state guidance and preserves browser-local/private wording for saved work. Added RTL coverage in the homepage and anonymous continuity test seams to prove the first-visit versus returning-user contract without introducing new storage shape.\n\n## Verification\n\nTask verification passed with npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx. Broader slice verification was also sampled: product-family coherence is green, while shared-brand surfaces still fail on a compare-route wording expectation that belongs to later slice work. A local dev server was started successfully on port 3000, but browser assertions were interrupted by timeout recovery before they were durably recorded.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx` | 1 | ❌ fail | 1530ms |\n| 2 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx` | 1 | ❌ fail | 2620ms |\n| 3 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx` | 0 | ✅ pass | 1950ms |\n| 4 | `npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 1 | ❌ fail | 1810ms |\n| 5 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 1 | ❌ fail | 2120ms |\n| 6 | `npm run dev (bg_shell ready on port 3000)` | 0 | ✅ pass | 0ms |\n\n\n## Deviations\n\nRecorded the broader slice verification state in the task summary so later agents can see which slice-level checks already pass versus which still belong to downstream slice work.\n\n## Known Issues\n\nSlice-level shared-brand verification still fails in src/__tests__/app/shared-brand-surfaces.test.tsx due to compare-route wording that belongs to later slice work. Browser assertions were not durably recorded before timeout recovery interrupted the browser step.\n\n## Files Created/Modified\n\n- `src/app/page.tsx`\n- `src/components/input/InputZone.tsx`\n- `src/components/continuity/RecentLocalWorkPanel.tsx`\n- `src/__tests__/app/home-editorial-flow.test.tsx`\n- `src/__tests__/app/anonymous-continuity.test.tsx`\n- `.gsd/milestones/M004/slices/S02/tasks/T01-SUMMARY.md`\n",
       "description": "Why:\n- This task closes the main R004/R009-facing gap in the current product: the homepage still speaks like every visitor is new even when browser-local recent work exists.\n\nSteps:\n1. Derive an explicit visitor-mode view in `src/app/page.tsx` from `recentWorksLoaded`, `recentWorks.length`, and `resumedWork` rather than introducing new persisted onboarding state.\n2. Update homepage hero/support copy, note cards, and continuity framing so first-time visitors get clear start guidance while returning visitors get truthful resume/start-fresh cues that still preserve the private-vs-public boundary from S01.\n3. Thread adaptive guidance into `src/components/input/InputZone.tsx` and, if needed, `src/components/continuity/RecentLocalWorkPanel.tsx` so the input narrative and empty/saved states match the visitor mode without leaking raw source material.\n4. Extend homepage and anonymous-continuity tests to assert both first-visit and returning-visitor states, including resume cues and privacy-safe copy.\n\nMust-haves:\n- First-time visitors see a clear how-to-start path from the landing surface into the existing input controls.\n- Returning visitors with recent local work see resume-oriented guidance without losing the explicit browser-local/private distinction.\n- No new storage shape, onboarding flag, or continuity route is introduced.\n\nDone when:\n- Rendering `Home` with and without recent local work produces materially different onboarding language, and the test suite proves both states.",
       "estimate": "50m",
       "files": [
@@ -2562,19 +2572,31 @@
       "milestone_id": "M004",
       "slice_id": "S02",
       "id": "T02",
-      "title": "Add shared-shell route discovery with active navigation semantics",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added a real shared-shell navigation landmark with semantic active-route state and aligned product-family copy across Home, Compare, and Gallery.",
+      "status": "complete",
+      "one_liner": "Added a real shared-shell navigation landmark with semantic active-route state and aligned product-family copy across Home, Compare, and Gallery.",
+      "narrative": "Refactored the shared header into a primary navigation landmark with links for Home / Recent local work, Compare, and Gallery, while keeping browser-local continuity explicitly distinct from public routes. Updated the shell to accept an explicit route-family prop and passed it from homepage, compare, and gallery so aria-current stays truthful across surfaces without route-local drift. Aligned compare and gallery route-intro wording with the shared product family and expanded the app regression suites to verify nav semantics, active-route cues, and the corrected family copy.",
+      "verification_result": "Verified with npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx, which passed and covered the shared nav landmark plus active-route semantics on Home, Gallery, and Compare. Attempted a live browser proof after starting npm run dev via bg_shell, but the environment already had a conflicting Next dev lock/port state, so the browser step could not be durably completed in this task session.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T17:00:31.012Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "None.",
+      "known_issues": "Live browser verification could not be durably recorded because an existing local Next dev instance held .next/dev/lock and port 3000 was already occupied. Code and RTL verification for this task passed.",
+      "key_files": [
+        "src/components/layout/Header.tsx",
+        "src/components/layout/Shell.tsx",
+        "src/app/page.tsx",
+        "src/app/gallery/page.tsx",
+        "src/app/compare/CompareMode.tsx",
+        "src/__tests__/app/shared-brand-surfaces.test.tsx",
+        "src/__tests__/app/product-family-coherence.test.tsx",
+        ".gsd/milestones/M004/slices/S02/tasks/T02-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Drove shared-shell active-route semantics from an explicit Shell route-family prop instead of deriving pathname state inside the header.",
+        "Kept homepage continuity language separate from public route discovery by making the nav public-facing and the privacy note explicitly browser-local."
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S02\nmilestone: M004\nkey_files:\n  - src/components/layout/Header.tsx\n  - src/components/layout/Shell.tsx\n  - src/app/page.tsx\n  - src/app/gallery/page.tsx\n  - src/app/compare/CompareMode.tsx\n  - src/__tests__/app/shared-brand-surfaces.test.tsx\n  - src/__tests__/app/product-family-coherence.test.tsx\n  - .gsd/milestones/M004/slices/S02/tasks/T02-SUMMARY.md\nkey_decisions:\n  - Drove shared-shell active-route semantics from an explicit Shell route-family prop instead of deriving pathname state inside the header.\n  - Kept homepage continuity language separate from public route discovery by making the nav public-facing and the privacy note explicitly browser-local.\nduration: \"\"\nverification_result: mixed\ncompleted_at: 2026-03-26T17:00:31.032Z\nblocker_discovered: false\n---\n\n# T02: Added a real shared-shell navigation landmark with semantic active-route state and aligned product-family copy across Home, Compare, and Gallery.\n\n**Added a real shared-shell navigation landmark with semantic active-route state and aligned product-family copy across Home, Compare, and Gallery.**\n\n## What Happened\n\nRefactored the shared header into a primary navigation landmark with links for Home / Recent local work, Compare, and Gallery, while keeping browser-local continuity explicitly distinct from public routes. Updated the shell to accept an explicit route-family prop and passed it from homepage, compare, and gallery so aria-current stays truthful across surfaces without route-local drift. Aligned compare and gallery route-intro wording with the shared product family and expanded the app regression suites to verify nav semantics, active-route cues, and the corrected family copy.\n\n## Verification\n\nVerified with npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx, which passed and covered the shared nav landmark plus active-route semantics on Home, Gallery, and Compare. Attempted a live browser proof after starting npm run dev via bg_shell, but the environment already had a conflicting Next dev lock/port state, so the browser step could not be durably completed in this task session.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 0 | ✅ pass | 1890ms |\n| 2 | `bg_shell start -- npm run dev (ready_port 3000)` | 0 | ✅ pass | 0ms |\n| 3 | `browser_verify http://localhost:3000` | 1 | ❌ fail | 20000ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nLive browser verification could not be durably recorded because an existing local Next dev instance held .next/dev/lock and port 3000 was already occupied. Code and RTL verification for this task passed.\n\n## Files Created/Modified\n\n- `src/components/layout/Header.tsx`\n- `src/components/layout/Shell.tsx`\n- `src/app/page.tsx`\n- `src/app/gallery/page.tsx`\n- `src/app/compare/CompareMode.tsx`\n- `src/__tests__/app/shared-brand-surfaces.test.tsx`\n- `src/__tests__/app/product-family-coherence.test.tsx`\n- `.gsd/milestones/M004/slices/S02/tasks/T02-SUMMARY.md`\n",
       "description": "Why:\n- S01 made continuity discoverable, but users still have to guess how gallery and compare fit into the product family because the header is not yet a real navigation system.\n\nSteps:\n1. Turn `src/components/layout/Header.tsx` into a semantic shared navigation landmark that exposes Home/Recent local work, Compare, and Gallery while keeping the continuity wording explicit about browser-local privacy.\n2. Use the shared shell seam in `src/components/layout/Shell.tsx` and affected route surfaces to provide correct active-route state (`aria-current`) and keyboard-usable route switching without introducing route-local visual drift.\n3. Align route intro copy where needed in `src/app/gallery/page.tsx` and `src/app/compare/CompareMode.tsx` so the shared nav reads as one truthful product family and fixes the currently stale compare wording in test coverage.\n4. Update shared brand/coherence tests to assert the nav landmark, active route cues, and corrected route-family copy.\n\nMust-haves:\n- The header becomes a real, accessible navigation landmark rather than a single continuity CTA.\n- Active-route state is exposed semantically and stays consistent on homepage, gallery, and compare.\n- Public routes remain clearly distinct from browser-local recent work.\n\nDone when:\n- A keyboard user can discover and move among Home, Compare, and Gallery from the shared shell, and route-family tests lock the wording/semantics.",
       "estimate": "45m",
       "files": [
@@ -3254,6 +3276,18 @@
       "revisable": "Yes",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 53,
+      "id": "D051",
+      "when_context": "M004/S02/T01",
+      "scope": "architecture",
+      "decision": "How adaptive onboarding state is determined for the homepage continuity experience",
+      "choice": "Homepage onboarding now derives first-visit vs returning vs resumed guidance from recent-local-work load state and resumed work presence.",
+      "rationale": "This preserves the existing privacy-safe continuity seam, avoids introducing new persisted onboarding flags or storage shape, and keeps first-time versus returning guidance truthful to browser-local state.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -3322,6 +3356,105 @@
       "verdict": "✅ pass",
       "duration_ms": 1910,
       "created_at": "2026-03-26T04:28:02.776Z"
+    },
+    {
+      "id": 7,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 1530,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 8,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 2620,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 9,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1950,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 10,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 1810,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 11,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 2120,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 12,
+      "task_id": "T01",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm run dev (bg_shell ready on port 3000)",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T05:31:31.579Z"
+    },
+    {
+      "id": 13,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1890,
+      "created_at": "2026-03-26T17:00:31.012Z"
+    },
+    {
+      "id": 14,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "bg_shell start -- npm run dev (ready_port 3000)",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T17:00:31.012Z"
+    },
+    {
+      "id": 15,
+      "task_id": "T02",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "browser_verify http://localhost:3000",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 20000,
+      "created_at": "2026-03-26T17:00:31.012Z"
     }
   ]
 }

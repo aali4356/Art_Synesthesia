@@ -1,15 +1,16 @@
 import type { ReactNode } from 'react';
-import { Header } from './Header';
+import { Header, type ShellRouteFamily } from './Header';
 
 interface ShellProps {
   children: ReactNode;
+  currentRoute?: ShellRouteFamily;
 }
 
-export function Shell({ children }: ShellProps) {
+export function Shell({ children, currentRoute = 'detail' }: ShellProps) {
   return (
     <div className="editorial-shell min-h-screen flex flex-col">
       <div className="editorial-shell__ambient" aria-hidden="true" />
-      <Header />
+      <Header currentRoute={currentRoute} />
       <main className="flex-1 gallery-padding relative">
         <div className="mx-auto max-w-7xl w-full">{children}</div>
       </main>

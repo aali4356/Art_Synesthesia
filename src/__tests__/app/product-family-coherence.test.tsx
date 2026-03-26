@@ -37,7 +37,9 @@ describe('product family coherence', () => {
     expect(continuitySource).toContain('Private-first browser-local continuity for this device only.');
     expect(continuitySource).toContain('Share links are public parameter-only routes, and Gallery saves are public opt-in editions.');
     expect(headerSource).toContain('Browser-local continuity');
-    expect(headerSource).toContain('Recent local work lives on the homepage and stays private to this browser.');
+    expect(headerSource).toContain('Recent local work stays private to this browser on Home. Compare and Gallery are public route surfaces, not browser-local recall.');
+    expect(headerSource).toContain('Route discovery stays public and shareable here, while recent local work remains a browser-local privacy boundary on the homepage only.');
+    expect(headerSource).toContain("label: 'Home / Recent local work'");
   });
 
   it('keeps compare, gallery, and share routes in the same collector/editorial family', async () => {
@@ -49,8 +51,8 @@ describe('product family coherence', () => {
       readProjectFile('src/app/globals.css'),
     ]);
 
-    expect(compareSource).toContain('Two proof-safe inputs, one collector stage, shared style control.');
-    expect(compareSource).toContain('results, share, gallery, and export');
+    expect(compareSource).toContain('Two proof-safe inputs, one collector route, shared style control.');
+    expect(compareSource).toContain('Home, Gallery, results, share, and export');
     expect(compareSource).toContain('two collector editions');
 
     expect(galleryViewerSource).toContain('results-to-route action family');
