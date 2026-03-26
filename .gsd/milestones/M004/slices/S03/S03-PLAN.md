@@ -40,7 +40,7 @@
   - Estimate: 1h
   - Files: package.json, src/app/layout.tsx, src/components/observability/ObservabilityProvider.tsx, src/lib/observability/events.ts, src/lib/observability/privacy.ts, src/lib/observability/client.ts, src/lib/observability/server.ts, src/__tests__/observability/privacy-filtering.test.ts
   - Verify: npm test -- --run src/__tests__/observability/privacy-filtering.test.ts
-- [ ] **T02: Instrument generation, continuity, and results-loop client events** — Wire the new helper into the highest-signal client product loop: text/URL/data generation, homepage continuity actions, recent-local save/resume failures, and results-surface style/save interactions. This closes the repeat-use usage story without touching public-route persistence yet.
+- [x] **T02: Added privacy-filtered client telemetry for generation flows, recent-local continuity actions, and results-loop style/save interactions.** — Wire the new helper into the highest-signal client product loop: text/URL/data generation, homepage continuity actions, recent-local save/resume failures, and results-surface style/save interactions. This closes the repeat-use usage story without touching public-route persistence yet.
 
 ## Failure Modes
 

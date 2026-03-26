@@ -30,6 +30,8 @@ import { PipelineProgress } from '@/components/progress';
 import { ShareButton } from './ShareButton';
 import { ExportControls } from './ExportControls';
 import { GallerySaveModal } from '@/components/gallery/GallerySaveModal';
+import { captureClientEvent } from '@/lib/observability/client';
+import { OBSERVABILITY_EVENTS } from '@/lib/observability/events';
 
 interface ResultsViewProps {
   result: PipelineResult;
@@ -149,10 +151,24 @@ export function ResultsView({
   }, [activeStyle, inputType]);
 
   const handleStyleChange = useCallback((style: StyleName) => {
+    if (style === activeStyle) {
+      return;
+    }
+
     setActiveStyle(style);
     setShouldAnimate(true);
     setAnimationKey((k) => k + 1);
-  }, []);
+
+    try {
+      captureClientEvent(OBSERVABILITY_EVENTS.results.styleChanged, {
+        continuityMode,
+        sourceKind: inputType,
+        styleName: style,
+      });
+    } catch {
+      // Observability is non-blocking by contract.
+    }
+  }, [activeStyle, continuityMode, inputType]);
 
   const handleRenderComplete = useCallback(() => {
     setShouldAnimate(false);
@@ -160,8 +176,20 @@ export function ResultsView({
 
   const handleSaveLocal = useCallback(() => {
     if (!onSaveToRecentLocal) return;
+
+    try {
+      captureClientEvent(OBSERVABILITY_EVENTS.results.saveIntent, {
+        continuityMode,
+        sourceKind: inputType,
+        styleName: activeStyle,
+        action: 'recent-local-save',
+      });
+    } catch {
+      // Observability is non-blocking by contract.
+    }
+
     onSaveToRecentLocal(activeStyle);
-  }, [activeStyle, onSaveToRecentLocal]);
+  }, [activeStyle, continuityMode, inputType, onSaveToRecentLocal]);
 
   function captureCurrentThumbnail(): string {
     if (!mainCanvasRef.current) return '';

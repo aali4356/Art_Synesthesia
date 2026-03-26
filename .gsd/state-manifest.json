@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T18:30:49.120Z",
+  "exported_at": "2026-03-26T18:53:56.903Z",
   "milestones": [
     {
       "id": "M001",
@@ -2753,19 +2753,31 @@
       "milestone_id": "M004",
       "slice_id": "S03",
       "id": "T02",
-      "title": "Instrument generation, continuity, and results-loop client events",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added privacy-filtered client telemetry for generation flows, recent-local continuity actions, and results-loop style/save interactions.",
+      "status": "complete",
+      "one_liner": "Added privacy-filtered client telemetry for generation flows, recent-local continuity actions, and results-loop style/save interactions.",
+      "narrative": "Wired the shared observability seam into the text, URL, and data generation hooks so they emit started/completed/failed events with safe source kind, mode, duration, and categorized failure metadata only. Kept continuity event ownership inside useRecentWorks while passing fresh-vs-resumed metadata from the homepage/results seams so recent-local save/resume/remove/failure actions remain single-sourced and privacy-safe. Instrumented ResultsView for high-signal style-change and recent-local save-intent events, then added focused regression coverage for the product-loop taxonomy and reran the existing anonymous continuity/results proof tests.",
+      "verification_result": "Ran `npm test -- --run src/__tests__/observability/product-loop-events.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx` and it passed with 8/8 tests across three files. Confirmed the local dev runtime served the homepage with an HTTP 200 on port 3010. Attempted browser-tool verification, but the browser registry session failed with `registryGetActive: no active page`; the app/runtime check still succeeded.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T18:53:56.806Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Kept the existing dotted event names from the shared T01 taxonomy (`generation.started`, `continuity.saved`, etc.) instead of introducing underscore aliases from the slice prose so the event contract stayed single-sourced.",
+      "known_issues": "Browser-tool live verification could not be completed because the browser session registry returned `registryGetActive: no active page` even after the local app was reachable on port 3010. The focused regression bundle passed and the local server responded successfully.",
+      "key_files": [
+        "src/hooks/useTextAnalysis.ts",
+        "src/hooks/useUrlAnalysis.ts",
+        "src/hooks/useDataAnalysis.ts",
+        "src/hooks/useRecentWorks.ts",
+        "src/app/page.tsx",
+        "src/components/results/ResultsView.tsx",
+        "src/__tests__/observability/product-loop-events.test.tsx",
+        ".gsd/milestones/M004/slices/S03/tasks/T02-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Pass continuity metadata from the homepage/results seams into useRecentWorks so one storage hook owns continuity event emission while ResultsView emits only style/save-intent interaction events.",
+        "Wrap client telemetry calls in local try/catch guards so observability failures cannot block generation, continuity, or results interactions."
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S03\nmilestone: M004\nkey_files:\n  - src/hooks/useTextAnalysis.ts\n  - src/hooks/useUrlAnalysis.ts\n  - src/hooks/useDataAnalysis.ts\n  - src/hooks/useRecentWorks.ts\n  - src/app/page.tsx\n  - src/components/results/ResultsView.tsx\n  - src/__tests__/observability/product-loop-events.test.tsx\n  - .gsd/milestones/M004/slices/S03/tasks/T02-SUMMARY.md\nkey_decisions:\n  - Pass continuity metadata from the homepage/results seams into useRecentWorks so one storage hook owns continuity event emission while ResultsView emits only style/save-intent interaction events.\n  - Wrap client telemetry calls in local try/catch guards so observability failures cannot block generation, continuity, or results interactions.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-26T18:53:56.826Z\nblocker_discovered: false\n---\n\n# T02: Added privacy-filtered client telemetry for generation flows, recent-local continuity actions, and results-loop style/save interactions.\n\n**Added privacy-filtered client telemetry for generation flows, recent-local continuity actions, and results-loop style/save interactions.**\n\n## What Happened\n\nWired the shared observability seam into the text, URL, and data generation hooks so they emit started/completed/failed events with safe source kind, mode, duration, and categorized failure metadata only. Kept continuity event ownership inside useRecentWorks while passing fresh-vs-resumed metadata from the homepage/results seams so recent-local save/resume/remove/failure actions remain single-sourced and privacy-safe. Instrumented ResultsView for high-signal style-change and recent-local save-intent events, then added focused regression coverage for the product-loop taxonomy and reran the existing anonymous continuity/results proof tests.\n\n## Verification\n\nRan `npm test -- --run src/__tests__/observability/product-loop-events.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx` and it passed with 8/8 tests across three files. Confirmed the local dev runtime served the homepage with an HTTP 200 on port 3010. Attempted browser-tool verification, but the browser registry session failed with `registryGetActive: no active page`; the app/runtime check still succeeded.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/observability/product-loop-events.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx` | 0 | ✅ pass | 4800ms |\n| 2 | `python - <<'PY' ... urllib.request.urlopen('http://127.0.0.1:3010/', timeout=20) ... PY` | 0 | ✅ pass | 1000ms |\n\n\n## Deviations\n\nKept the existing dotted event names from the shared T01 taxonomy (`generation.started`, `continuity.saved`, etc.) instead of introducing underscore aliases from the slice prose so the event contract stayed single-sourced.\n\n## Known Issues\n\nBrowser-tool live verification could not be completed because the browser session registry returned `registryGetActive: no active page` even after the local app was reachable on port 3010. The focused regression bundle passed and the local server responded successfully.\n\n## Files Created/Modified\n\n- `src/hooks/useTextAnalysis.ts`\n- `src/hooks/useUrlAnalysis.ts`\n- `src/hooks/useDataAnalysis.ts`\n- `src/hooks/useRecentWorks.ts`\n- `src/app/page.tsx`\n- `src/components/results/ResultsView.tsx`\n- `src/__tests__/observability/product-loop-events.test.tsx`\n- `.gsd/milestones/M004/slices/S03/tasks/T02-SUMMARY.md`\n",
       "description": "Wire the new helper into the highest-signal client product loop: text/URL/data generation, homepage continuity actions, recent-local save/resume failures, and results-surface style/save interactions. This closes the repeat-use usage story without touching public-route persistence yet.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Client observability helpers | Continue the generation/continuity action without blocking the UI. | Drop the event and preserve the existing UX state. | Sanitize and downgrade to a minimal failure category before capture. |\n| URL analysis fetch / localStorage continuity helpers | Surface the existing user-facing error state and add a categorized failure event. | Preserve current timeout/error UI and emit only safe metadata. | Record failure kind plus source kind/status bucket, never the raw body. |\n\n## Load Profile\n\n- **Shared resources**: browser event queue, localStorage continuity seam, and URL-analysis network flow.\n- **Per-operation cost**: one manual event per major user action or failure branch.\n- **10x breakpoint**: repeated generation/style-switch activity could spam analytics if events are not constrained to high-signal transitions only.\n\n## Negative Tests\n\n- **Malformed inputs**: empty text/url/data attempts and unavailable recent-work storage still emit only category-level failures.\n- **Error paths**: rate limit, network failure, and recent-local save failure are captured without leaking the original source payload.\n- **Boundary conditions**: resumed work versus fresh results remain distinguishable in telemetry so browser-local continuity is not flattened into public-route usage.\n\n## Steps\n\n1. Add manual capture calls in `useTextAnalysis`, `useUrlAnalysis`, and `useDataAnalysis` for started/completed/failed generation with safe source-kind, mode, timing, and status metadata only.\n2. Instrument homepage continuity actions in `src/app/page.tsx` and `src/hooks/useRecentWorks.ts` for recent-local save, resume, remove, and failure states while preserving the browser-local/private contract from S01/S02.\n3. Instrument results-surface interactions in `src/components/results/ResultsView.tsx` for style changes and recent-local save intent without turning low-value UI hover state into telemetry noise.\n4. Add focused tests that assert the emitted client event taxonomy and redaction behavior across generation and continuity flows.\n\n## Must-Haves\n\n- [ ] Text, URL, and data generation each emit started/completed/failed events with safe metadata only.\n- [ ] Recent-local save/resume/error actions are visible without exposing stored source content.\n- [ ] Results interactions preserve the distinction between fresh and resumed browser-local continuity.",
       "estimate": "1h 15m",
       "files": [
@@ -3609,6 +3621,18 @@
       "revisable": "Yes",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 58,
+      "id": "D055",
+      "when_context": "M004 S03 T02",
+      "scope": "observability",
+      "decision": "How repeat-use client telemetry should distinguish homepage continuity state from storage-side actions",
+      "choice": "Pass continuity metadata from the homepage/results seams into useRecentWorks so one storage hook emits continuity events while results emits only style/save-intent interactions",
+      "rationale": "This keeps continuity events single-sourced, preserves fresh-vs-resumed context without duplicate captures, and avoids page-level telemetry drift while maintaining the private-first redaction contract.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -3864,6 +3888,28 @@
       "verdict": "✅ pass",
       "duration_ms": 5700,
       "created_at": "2026-03-26T18:30:49.039Z"
+    },
+    {
+      "id": 24,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/observability/product-loop-events.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 4800,
+      "created_at": "2026-03-26T18:53:56.807Z"
+    },
+    {
+      "id": 25,
+      "task_id": "T02",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "python - <<'PY' ... urllib.request.urlopen('http://127.0.0.1:3010/', timeout=20) ... PY",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1000,
+      "created_at": "2026-03-26T18:53:56.807Z"
     }
   ]
 }

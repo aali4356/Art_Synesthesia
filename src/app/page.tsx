@@ -349,22 +349,28 @@ export default function Home() {
         ? buildResumedSourceDescriptor(resumedWork)
         : buildLiveSourceDescriptor(urlResult, dataResult);
 
-      return saveWork({
-        id: resumedWork?.id,
-        preferredStyle,
-        edition: {
-          vector: activeResult.vector,
-          palette: activeResult.palette,
+      return saveWork(
+        {
+          id: resumedWork?.id,
+          preferredStyle,
+          edition: {
+            vector: activeResult.vector,
+            palette: activeResult.palette,
+          },
+          source,
         },
-        source,
-      });
+        {
+          continuityMode: resumedWork ? 'resumed' : 'fresh',
+          sourceKind: source.kind,
+        }
+      );
     },
     [activeResult, resumedWork, urlResult, dataResult, saveWork]
   );
 
   const handleResumeRecentWork = useCallback(
     (id: string) => {
-      const reopened = reopenWork(id);
+      const reopened = reopenWork(id, { continuityMode: 'resumed' });
       if (!reopened) return;
 
       dismissSaveState();
