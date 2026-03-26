@@ -231,13 +231,14 @@ describe('anonymous continuity seam', () => {
     localStorage.clear();
   });
 
-  it('shows a branded empty continuity state when this browser has no saved local work', async () => {
+  it('shows a branded first-visit continuity state when this browser has no saved local work', async () => {
     render(<Home />);
 
     expect(screen.getByText('Recent local work')).toBeDefined();
-    expect(screen.getByText('Reopen private browser-local editions from this device.')).toBeDefined();
+    expect(screen.getByText('Private browser-local continuity will appear here on this device.')).toBeDefined();
     expect(screen.getByText('Private-first browser-local continuity for this device only. Share links are public parameter-only routes, and Gallery saves are public opt-in editions.')).toBeDefined();
     expect(screen.getByText('No recent local work saved in this browser yet.')).toBeDefined();
+    expect(screen.getByText('Generate your first edition from the controls below, then use the browser-local save action on the results surface to keep a private recall point here.')).toBeDefined();
     expect(screen.getByText('no raw source stored')).toBeDefined();
   });
 
@@ -268,8 +269,16 @@ describe('anonymous continuity seam', () => {
       expect(screen.getByText('Resume in results')).toBeDefined();
     });
 
+    expect(
+      screen.getByText(
+        'Resume a recent local edition from this browser or start a fresh text, URL, or dataset study from the same editorial desk.'
+      )
+    ).toBeDefined();
+    expect(screen.getByText('Resume private browser-local editions from this device.')).toBeDefined();
     expect(screen.getByText('Private text source')).toBeDefined();
     expect(screen.getByText('Same-browser continuity only')).toBeDefined();
+    expect(screen.getByText('Resume recent local work or start a fresh edition')).toBeDefined();
+    expect(screen.getByText('Fresh prompts')).toBeDefined();
 
     unmount();
     render(<Home />);

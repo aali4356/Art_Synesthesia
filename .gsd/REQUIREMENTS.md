@@ -48,17 +48,6 @@ This file is the explicit capability and coverage contract for the project.
 - Validation: mapped
 - Notes: Includes analytics and observability, not just test-time signals.
 
-### R008 — The product needs an intentional continuity layer for returning users, whether through lightweight accounts, identity, or another explicit persistence strategy.
-- Class: continuity
-- Status: active
-- Description: The product needs an intentional continuity layer for returning users, whether through lightweight accounts, identity, or another explicit persistence strategy.
-- Why it matters: A full product should not treat every session as entirely disposable if users are expected to return, curate, or build a relationship with the product.
-- Source: user
-- Primary owning slice: M004/S01
-- Supporting slices: M004/S02, M005/S03
-- Validation: mapped
-- Notes: M004 planning tightens R008 around an anonymous-first continuity contract: S01 owns the real local continuity/resume loop, S02 extends it through adaptive onboarding/navigation, and optional future identity remains a later path rather than a prerequisite for M004.
-
 ### R010 — Full keyboard navigation and accessible interaction semantics must be completed across redesigned surfaces.
 - Class: quality-attribute
 - Status: active
@@ -104,6 +93,17 @@ This file is the explicit capability and coverage contract for the project.
 - Supporting slices: M003/S02, M003/S03
 - Validation: validated
 - Notes: S01 shipped and browser-verified the real homepage landing→generation→results journey in an editorial gallery-luxe system, proving the direction works in the actual app rather than only in static mockup-like surfaces.
+
+### R008 — The product needs an intentional continuity layer for returning users, whether through lightweight accounts, identity, or another explicit persistence strategy.
+- Class: continuity
+- Status: validated
+- Description: The product needs an intentional continuity layer for returning users, whether through lightweight accounts, identity, or another explicit persistence strategy.
+- Why it matters: A full product should not treat every session as entirely disposable if users are expected to return, curate, or build a relationship with the product.
+- Source: user
+- Primary owning slice: M004/S01
+- Supporting slices: M004/S02, M005/S03
+- Validation: Validated by M004/S01: recent browser-local work can be saved from results, rediscovered from the homepage/header continuity seam, and reopened in the same browser without persisting raw source text, full URLs, or dataset bodies. Proven by passing recent-work, anonymous-continuity, and product-family-coherence suites plus live browser save/return/resume verification.
+- Notes: Anonymous-first continuity is explicitly scoped to same-browser edition-family recall, not exact session replay or public persistence.
 
 ### R009 — The homepage, onboarding, empty states, and key copy surfaces should communicate what Synesthesia Machine is, why it is special, and why someone should try/share it.
 - Class: primary-user-loop
@@ -230,7 +230,7 @@ This file is the explicit capability and coverage contract for the project.
 | R005 | launchability | active | M005/S03 | M003/S03, M004/S03, M005/S01, M005/S02 | mapped |
 | R006 | operability | active | M005/S01 | M005/S02 | mapped |
 | R007 | failure-visibility | active | M004/S03 | M005/S02 | mapped |
-| R008 | continuity | active | M004/S01 | M004/S02, M005/S03 | mapped |
+| R008 | continuity | validated | M004/S01 | M004/S02, M005/S03 | Validated by M004/S01: recent browser-local work can be saved from results, rediscovered from the homepage/header continuity seam, and reopened in the same browser without persisting raw source text, full URLs, or dataset bodies. Proven by passing recent-work, anonymous-continuity, and product-family-coherence suites plus live browser save/return/resume verification. |
 | R009 | primary-user-loop | validated | M003/S01 | M003/S03, M004/S01 | validated |
 | R010 | quality-attribute | active | M004/S03 | M003/S03, M005/S03 | mapped |
 | R011 | core-capability | validated | M001/S01 | M001/S02, M001/S03, M001/S04, M001/S05, M001/S06 | validated |
@@ -245,7 +245,7 @@ This file is the explicit capability and coverage contract for the project.
 
 ## Coverage Summary
 
-- Active requirements: 6
-- Mapped to slices: 6
-- Validated: 9 (R001, R002, R003, R009, R011, R012, R013, R014, R015)
+- Active requirements: 5
+- Mapped to slices: 5
+- Validated: 10 (R001, R002, R003, R008, R009, R011, R012, R013, R014, R015)
 - Unmapped active requirements: 0

@@ -10,7 +10,7 @@ Deterministic synesthetic art that feels emotionally rich, visually unforgettabl
 
 ## Current State
 
-M001, M002, and M003 are complete. The product now has:
+M001, M002, M003, and M004/S01 are complete. The product now has:
 - deterministic canonicalization, analysis, normalization, synesthetic mapping, curated palette-family selection, palette realization, and scene-graph rendering
 - text, URL, and data inputs flowing through a branded landing → generation → results journey on the real homepage
 - geometric, organic, particle, and typographic renderers, with live `ResultsView` proof diagnostics exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
@@ -18,11 +18,13 @@ M001, M002, and M003 are complete. The product now has:
 - share links, gallery, moderation, compare mode, export controls, alt text, and collector/editorial action surfaces that read as one product family
 - passing targeted cross-surface tests, passing production builds, and browser-level acceptance evidence across the real entrypoint and major product routes
 - restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries with truthful unavailable-state messaging
+- anonymous-first browser-local continuity for returning users: results can be saved into recent local work, rediscovered from the homepage/header continuity seam, and reopened in the same browser without storing raw source text, full URLs, or dataset bodies
 
-Current gaps are now centered on continuity, accessibility breadth, and launch hardening rather than foundational product identity:
+Current gaps are now centered on onboarding, observability breadth, and launch hardening rather than foundational product identity:
+- first-time vs returning-user onboarding/navigation adaptation still belongs to the remaining M004 slices
+- privacy-filtered analytics/error-monitoring integration and broader accessibility breadth still need M004/S03 work
 - URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, and the user-facing failure copy still needs stronger explanation
-- broader continuity strategy, onboarding/system persistence decisions, and returning-user flows still belong to M004
-- shipping surfaces like observability, deploy guidance, and public-launch operational hardening still need M005 work
+- shipping surfaces like deploy guidance and public-launch operational hardening still need M005 work
 
 ## Architecture / Key Patterns
 

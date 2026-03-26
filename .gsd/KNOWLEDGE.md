@@ -6,3 +6,9 @@
 - Shared shell/action/viewer primitives are the leverage point for premium redesign work. The editorial system held because downstream routes consumed the same tokens and scaffold patterns instead of inventing route-local restyles.
 - Truthful diagnostics improve, rather than weaken, premium positioning. Branded unavailable states and inspectable backend limits preserved trust while keeping operational gaps visible.
 - Cross-route aesthetic goals need executable proof. Route-family tests turned subjective coherence claims into regression-resistant acceptance criteria and made later polish safer.
+
+## M004 — Anonymous-first continuity
+
+- Treat returning-user continuity as edition-family recall, not raw-session replay. Persisting parameter-safe snapshots, palette metadata, preferred style, and derived source labels was enough to reopen useful results while preserving the private-first contract.
+- Put continuity where returning users already are: the shared header and homepage. Reusing the existing shell/home seam made recent local work discoverable without inventing a new route or blurring it with public archive surfaces.
+- Lock local-vs-public persistence language with tests, not just copy review. Cross-surface assertions over header, recent-local panel, share action, and gallery modal prevented regressions that would silently misstate privacy scope.

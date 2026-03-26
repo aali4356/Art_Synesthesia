@@ -37,13 +37,17 @@ function formatStyleLabel(style: RecentWorkRecord['preferredStyle']): string {
 }
 
 export function RecentLocalWorkPanel({ items, isLoaded, onResume }: RecentLocalWorkPanelProps) {
+  const hasItems = items.length > 0;
+
   return (
     <section className="continuity-panel" aria-labelledby="recent-local-work-heading">
       <div className="continuity-panel__header">
         <div>
           <p className="editorial-note-label mb-1">Recent local work</p>
           <h2 id="recent-local-work-heading" className="text-xl sm:text-2xl font-medium text-[var(--foreground)]">
-            Reopen private browser-local editions from this device.
+            {hasItems
+              ? 'Resume private browser-local editions from this device.'
+              : 'Private browser-local continuity will appear here on this device.'}
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-[var(--muted-foreground)] leading-relaxed">
             Private-first browser-local continuity for this device only. Share links are public parameter-only routes, and Gallery saves are public opt-in editions.
@@ -60,7 +64,7 @@ export function RecentLocalWorkPanel({ items, isLoaded, onResume }: RecentLocalW
               {isLoaded ? 'No recent local work saved in this browser yet.' : 'Loading recent local work…'}
             </h3>
             <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
-              Generate an edition, then use the browser-local save action on the results surface to keep a private recall point here.
+              Generate your first edition from the controls below, then use the browser-local save action on the results surface to keep a private recall point here.
             </p>
           </div>
           <div className="continuity-empty-state__meta">
