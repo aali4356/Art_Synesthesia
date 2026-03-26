@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T04:09:46.356Z",
+  "exported_at": "2026-03-26T04:21:27.461Z",
   "milestones": [
     {
       "id": "M001",
@@ -2401,19 +2401,30 @@
       "milestone_id": "M004",
       "slice_id": "S01",
       "id": "T02",
-      "title": "Wire results save and homepage resume around recent local work",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added browser-local save and homepage resume flow for recent local work without storing raw source content.",
+      "status": "complete",
+      "one_liner": "Added browser-local save and homepage resume flow for recent local work without storing raw source content.",
+      "narrative": "Added a Home-level recent-work orchestration seam and a new RecentLocalWorkPanel so returning users can see recent browser-local work directly on the homepage. Wired ResultsView with a distinct browser-local save action, visible saved-state confirmation, and preferred-style recall that stays separate from Share and Save to Gallery. Reopening a saved item now reconstructs a usable results surface from the stored parameter vector, palette snapshot, redacted source labels, and preferred style only, preserving the T01 privacy contract that no raw source text, full URLs, or dataset bodies are persisted.",
+      "verification_result": "Ran the task-plan RTL suite for the anonymous continuity seam and adjacent branded home/results regression suites, all passing. Then launched the real app with `npm run dev`, verified the homepage empty continuity state, saved an edition to recent local work through the results UI, returned to the homepage, confirmed the saved recent card with freshness metadata, reopened it from the visible resume action, and confirmed the resumed results surface plus clean console/network diagnostics.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T04:21:27.390Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "None.",
+      "known_issues": "None.",
+      "key_files": [
+        "src/app/page.tsx",
+        "src/components/results/ResultsView.tsx",
+        "src/components/continuity/RecentLocalWorkPanel.tsx",
+        "src/hooks/useRecentWorks.ts",
+        "src/app/globals.css",
+        "src/__tests__/app/anonymous-continuity.test.tsx",
+        ".gsd/milestones/M004/slices/S01/tasks/T02-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Resume recent local work from stored parameter-safe snapshots plus preferred style and source labels, using a continuity-safe canonical seed instead of replaying raw text, URLs, or dataset bodies.",
+        "Keep browser-local save copy and UI distinct from public Share and Save to Gallery actions so the continuity seam stays truthful."
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S01\nmilestone: M004\nkey_files:\n  - src/app/page.tsx\n  - src/components/results/ResultsView.tsx\n  - src/components/continuity/RecentLocalWorkPanel.tsx\n  - src/hooks/useRecentWorks.ts\n  - src/app/globals.css\n  - src/__tests__/app/anonymous-continuity.test.tsx\n  - .gsd/milestones/M004/slices/S01/tasks/T02-SUMMARY.md\nkey_decisions:\n  - Resume recent local work from stored parameter-safe snapshots plus preferred style and source labels, using a continuity-safe canonical seed instead of replaying raw text, URLs, or dataset bodies.\n  - Keep browser-local save copy and UI distinct from public Share and Save to Gallery actions so the continuity seam stays truthful.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-26T04:21:27.415Z\nblocker_discovered: false\n---\n\n# T02: Added browser-local save and homepage resume flow for recent local work without storing raw source content.\n\n**Added browser-local save and homepage resume flow for recent local work without storing raw source content.**\n\n## What Happened\n\nAdded a Home-level recent-work orchestration seam and a new RecentLocalWorkPanel so returning users can see recent browser-local work directly on the homepage. Wired ResultsView with a distinct browser-local save action, visible saved-state confirmation, and preferred-style recall that stays separate from Share and Save to Gallery. Reopening a saved item now reconstructs a usable results surface from the stored parameter vector, palette snapshot, redacted source labels, and preferred style only, preserving the T01 privacy contract that no raw source text, full URLs, or dataset bodies are persisted.\n\n## Verification\n\nRan the task-plan RTL suite for the anonymous continuity seam and adjacent branded home/results regression suites, all passing. Then launched the real app with `npm run dev`, verified the homepage empty continuity state, saved an edition to recent local work through the results UI, returned to the homepage, confirmed the saved recent card with freshness metadata, reopened it from the visible resume action, and confirmed the resumed results surface plus clean console/network diagnostics.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/app/anonymous-continuity.test.tsx` | 0 | ✅ pass | 1860ms |\n| 2 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 0 | ✅ pass | 1800ms |\n\n\n## Deviations\n\nNone.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `src/app/page.tsx`\n- `src/components/results/ResultsView.tsx`\n- `src/components/continuity/RecentLocalWorkPanel.tsx`\n- `src/hooks/useRecentWorks.ts`\n- `src/app/globals.css`\n- `src/__tests__/app/anonymous-continuity.test.tsx`\n- `.gsd/milestones/M004/slices/S01/tasks/T02-SUMMARY.md`\n",
       "description": "## Why\nThis task closes the core user-facing loop for R008: a generated edition must be intentionally kept in the current browser, survive a refresh/return, and reopen from a visible continuity surface rather than disappearing between sessions.\n\n## Steps\n1. Add a results-surface action that saves the current edition family into recent local work with clear browser-local/private-first copy and a visible saved state.\n2. Add homepage continuity UI that reads recent local work on load, shows freshness/context labels, and exposes an intentional reopen/resume action for each saved item.\n3. Plumb page state so reopening a saved local item restores the results view with the stored parameter-safe payload and preferred style, without requiring the original raw source.\n4. Add branded empty/fallback handling so first-time users still see the current homepage, while returning users see continuity cues without route-discovery guesswork.\n5. Add RTL coverage for save, reload-like rehydration, and resume behavior through the real `Home`/`ResultsView` relationship.\n\n## Must-Haves\n- The save action is visibly distinct from Share and Save to Gallery.\n- Reopening recent local work restores a usable results surface from browser-local data only.\n- Returning users can find recent local work from the homepage without needing to rediscover a route.\n\n## Done when\n- A user can save from results, revisit/refresh, and intentionally reopen recent local work from a visible homepage continuity surface.\n- The continuity panel and results state both behave correctly when no recent items exist.",
       "estimate": "1h15m",
       "files": [
@@ -3044,6 +3055,18 @@
       "revisable": "Yes",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 49,
+      "id": "D047",
+      "when_context": "M004 S01 T02",
+      "scope": "continuity",
+      "decision": "How resumed recent local work reconstructs the results surface without stored raw source",
+      "choice": "Resume saved local work from the stored parameter vector, palette snapshot, source labels, and preferred style only; synthesize a continuity-safe canonical seed and placeholder source text instead of replaying original text, URL, or dataset bodies.",
+      "rationale": "The continuity contract from T01 forbids persisting raw source content, but T02 still needs a usable reopened results surface. Reconstructing scenes from parameter-safe snapshots preserves privacy, keeps reopening functional in the same browser, and stays truthful that local continuity is edition-family recall rather than full session replay.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -3068,6 +3091,28 @@
       "verdict": "✅ pass",
       "duration_ms": 1030,
       "created_at": "2026-03-26T04:09:46.206Z"
+    },
+    {
+      "id": 3,
+      "task_id": "T02",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/anonymous-continuity.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1860,
+      "created_at": "2026-03-26T04:21:27.391Z"
+    },
+    {
+      "id": 4,
+      "task_id": "T02",
+      "slice_id": "S01",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1800,
+      "created_at": "2026-03-26T04:21:27.391Z"
     }
   ]
 }

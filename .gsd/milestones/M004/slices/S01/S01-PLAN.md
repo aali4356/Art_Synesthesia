@@ -24,7 +24,7 @@ The highest-risk part of this slice is the persistence contract itself. Executor
   - Estimate: 45m
   - Files: src/lib/continuity/recent-work.ts, src/lib/continuity/types.ts, src/__tests__/continuity/recent-work.test.ts
   - Verify: npm test -- --run src/__tests__/continuity/recent-work.test.ts
-- [ ] **T02: Wire results save and homepage resume around recent local work** — ## Why
+- [x] **T02: Added browser-local save and homepage resume flow for recent local work without storing raw source content.** — ## Why
 This task closes the core user-facing loop for R008: a generated edition must be intentionally kept in the current browser, survive a refresh/return, and reopen from a visible continuity surface rather than disappearing between sessions.
 
 ## Steps

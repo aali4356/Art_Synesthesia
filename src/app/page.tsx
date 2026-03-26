@@ -4,13 +4,17 @@ import { useState, useCallback } from 'react';
 import { Shell } from '@/components/layout/Shell';
 import { InputZone, QuickStart } from '@/components/input';
 import { ResultsView } from '@/components/results';
+import { RecentLocalWorkPanel } from '@/components/continuity/RecentLocalWorkPanel';
 import { PipelineProgress } from '@/components/progress';
 import { useTextAnalysis } from '@/hooks/useTextAnalysis';
 import { useUrlAnalysis } from '@/hooks/useUrlAnalysis';
 import { useDataAnalysis } from '@/hooks/useDataAnalysis';
+import { useRecentWorks } from '@/hooks/useRecentWorks';
 import type { UrlPipelineResult } from '@/hooks/useUrlAnalysis';
 import type { DataPipelineResult } from '@/hooks/useDataAnalysis';
 import type { PipelineResult } from '@/hooks/useTextAnalysis';
+import type { RecentWorkRecord, SaveRecentWorkInput } from '@/lib/continuity/types';
+import type { StyleName } from '@/lib/render/types';
 
 /** Adapt a UrlPipelineResult to the PipelineResult shape for ResultsView. */
 function adaptUrlResult(urlResult: UrlPipelineResult): PipelineResult {
@@ -36,12 +40,67 @@ function adaptDataResult(dataResult: DataPipelineResult): PipelineResult {
   };
 }
 
+function adaptRecentWorkResult(record: RecentWorkRecord): PipelineResult {
+  return {
+    vector: record.edition.vector,
+    provenance: [],
+    palette: record.edition.palette,
+    summaries: {},
+    canonical: `recent-local-work:${record.id}:${record.savedAt}`,
+    changes: ['Resumed from browser-local recent work without replaying the original source.'],
+  };
+}
+
+function buildRecentWorkInputText(record: RecentWorkRecord): string {
+  return [record.sourceLabel.primary, record.sourceLabel.secondary].filter(Boolean).join(' · ');
+}
+
+function buildLiveSourceDescriptor(
+  urlResult: UrlPipelineResult | null,
+  dataResult: DataPipelineResult | null
+): SaveRecentWorkInput['source'] {
+  if (dataResult) {
+    return {
+      kind: 'data',
+      format: dataResult.format,
+      rowCount: dataResult.rowCount,
+      columnCount: dataResult.columnCount,
+    };
+  }
+
+  if (urlResult) {
+    try {
+      return {
+        kind: 'url',
+        hostname: new URL(urlResult.canonical).hostname,
+      };
+    } catch {
+      return { kind: 'url' };
+    }
+  }
+
+  return { kind: 'text' };
+}
+
+function buildResumedSourceDescriptor(record: RecentWorkRecord): SaveRecentWorkInput['source'] {
+  switch (record.sourceLabel.kind) {
+    case 'data':
+      return { kind: 'data' };
+    case 'url':
+      return { kind: 'url' };
+    case 'text':
+    default:
+      return { kind: 'text' };
+  }
+}
+
 export default function Home() {
   const [inputText, setInputText] = useState('');
   const [isPrivate, setIsPrivate] = useState(true);
   const [urlInput, setUrlInput] = useState('');
   const [dataInput, setDataInput] = useState('');
   const [dataFormatHint, setDataFormatHint] = useState<'csv' | 'json' | 'auto'>('auto');
+  const [resumedWork, setResumedWork] = useState<RecentWorkRecord | null>(null);
 
   const { stage, result, generate, reset } = useTextAnalysis();
   const {
@@ -59,25 +118,72 @@ export default function Home() {
     generate: generateData,
     reset: resetData,
   } = useDataAnalysis();
+  const {
+    recentWorks,
+    isLoaded: recentWorksLoaded,
+    saveState: recentWorkSaveState,
+    saveWork,
+    reopenWork,
+    dismissSaveState,
+  } = useRecentWorks();
 
-  const hasResult = result !== null || urlResult !== null || dataResult !== null;
+  const liveResult =
+    result ??
+    (urlResult ? adaptUrlResult(urlResult) : null) ??
+    (dataResult ? adaptDataResult(dataResult) : null);
+  const resumedResult = resumedWork ? adaptRecentWorkResult(resumedWork) : null;
+  const activeResult = liveResult ?? resumedResult;
+
+  const hasResult = activeResult !== null;
   const isGenerating = stage !== 'idle' && stage !== 'complete';
   const isAnalyzingUrl = urlStage !== 'idle' && urlStage !== 'complete';
   const isAnalyzingData = dataStage !== 'idle' && dataStage !== 'complete';
 
+  const activeStage = liveResult
+    ? dataResult && !result && !urlResult
+      ? dataStage
+      : urlResult && !result
+        ? urlStage
+        : stage
+    : resumedWork
+      ? 'complete'
+      : stage;
+  const activeInputType = resumedWork
+    ? resumedWork.sourceLabel.kind
+    : dataResult && !result && !urlResult
+      ? 'data'
+      : urlResult && !result
+        ? 'url'
+        : 'text';
+  const activeInputText = resumedWork
+    ? buildRecentWorkInputText(resumedWork)
+    : dataResult && !result && !urlResult
+      ? `${dataResult.format.toUpperCase()} data (${dataResult.rowCount} rows × ${dataResult.columnCount} columns)`
+      : urlResult && !result
+        ? urlResult.canonical
+        : inputText;
+  const activePreferredStyle = resumedWork?.preferredStyle;
+
+  const clearResumeState = useCallback(() => {
+    setResumedWork(null);
+    dismissSaveState();
+  }, [dismissSaveState]);
+
   const handleGenerate = useCallback(() => {
+    clearResumeState();
     if (inputText.trim().length > 0) {
       generate(inputText);
     }
-  }, [inputText, generate]);
+  }, [clearResumeState, inputText, generate]);
 
   const handleAnalyzeUrl = useCallback(
     (mode: 'snapshot' | 'live') => {
+      clearResumeState();
       if (urlInput.trim().length > 0) {
         generateUrl(urlInput, mode);
       }
     },
-    [urlInput, generateUrl]
+    [clearResumeState, urlInput, generateUrl]
   );
 
   const handleDataChange = useCallback(
@@ -89,58 +195,78 @@ export default function Home() {
   );
 
   const handleAnalyzeData = useCallback(() => {
+    clearResumeState();
     if (dataInput.trim().length > 0) {
       generateData(dataInput, dataFormatHint);
     }
-  }, [dataInput, dataFormatHint, generateData]);
+  }, [clearResumeState, dataInput, dataFormatHint, generateData]);
 
   const handleQuickStart = useCallback(
     (text: string) => {
+      clearResumeState();
       setInputText(text);
       generate(text);
     },
-    [generate]
+    [clearResumeState, generate]
   );
 
   const handleRegenerate = useCallback(
     (text: string) => {
+      clearResumeState();
       setInputText(text);
       generate(text);
     },
-    [generate]
+    [clearResumeState, generate]
   );
 
   const handleBack = useCallback(() => {
+    clearResumeState();
     reset();
     resetUrl();
     resetData();
-  }, [reset, resetUrl, resetData]);
+  }, [clearResumeState, reset, resetUrl, resetData]);
 
-  const activeResult =
-    result ??
-    (urlResult ? adaptUrlResult(urlResult) : null) ??
-    (dataResult ? adaptDataResult(dataResult) : null);
-  const activeStage =
-    dataResult && !result && !urlResult
-      ? dataStage
-      : urlResult && !result
-        ? urlStage
-        : stage;
-  const activeInputType =
-    dataResult && !result && !urlResult ? 'data' : urlResult && !result ? 'url' : 'text';
-  const activeInputText =
-    dataResult && !result && !urlResult
-      ? `${dataResult.format.toUpperCase()} data (${dataResult.rowCount} rows × ${dataResult.columnCount} columns)`
-      : urlResult && !result
-        ? urlResult.canonical
-        : inputText;
+  const handleSaveLocal = useCallback(
+    (preferredStyle: StyleName) => {
+      if (!activeResult) return null;
+
+      const source = resumedWork
+        ? buildResumedSourceDescriptor(resumedWork)
+        : buildLiveSourceDescriptor(urlResult, dataResult);
+
+      return saveWork({
+        id: resumedWork?.id,
+        preferredStyle,
+        edition: {
+          vector: activeResult.vector,
+          palette: activeResult.palette,
+        },
+        source,
+      });
+    },
+    [activeResult, resumedWork, urlResult, dataResult, saveWork]
+  );
+
+  const handleResumeRecentWork = useCallback(
+    (id: string) => {
+      const reopened = reopenWork(id);
+      if (!reopened) return;
+
+      dismissSaveState();
+      reset();
+      resetUrl();
+      resetData();
+      setResumedWork(reopened);
+    },
+    [dismissSaveState, reopenWork, reset, resetUrl, resetData]
+  );
 
   return (
     <Shell>
       {!hasResult ? (
         <section className="editorial-stage editorial-grid min-h-[calc(100vh-9rem)] items-start lg:items-center">
           <div className="space-y-8">
-            <div className="editorial-kicker">Edition M003 · private visual synthesis</div>
+            <div className="editorial-kicker">Edition M004 · browser-local continuity</div>
 
             <div className="space-y-5 max-w-3xl">
               <h1 className="editorial-display text-5xl sm:text-6xl lg:text-7xl leading-[0.9]">
@@ -181,11 +307,17 @@ export default function Home() {
               <span>text essays</span>
               <span>reference URLs</span>
               <span>research tables</span>
-              <span>proof-safe diagnostics</span>
+              <span>browser-local continuity</span>
             </div>
           </div>
 
           <div className="space-y-6 lg:pl-6 xl:pl-10">
+            <RecentLocalWorkPanel
+              items={recentWorks}
+              isLoaded={recentWorksLoaded}
+              onResume={handleResumeRecentWork}
+            />
+
             <InputZone
               text={inputText}
               onTextChange={setInputText}
@@ -240,10 +372,14 @@ export default function Home() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-2">
                 <p className="editorial-note-label">Synesthesia Machine</p>
-                <p className="editorial-note-label">Editorial result</p>
+                <p className="editorial-note-label">
+                  {resumedWork ? 'Recent local reopen' : 'Editorial result'}
+                </p>
                 <h1 className="editorial-display text-3xl sm:text-4xl">From source to proof</h1>
                 <p className="max-w-2xl text-sm sm:text-base text-[var(--muted-foreground)]">
-                  A continuous editorial workspace from intake to render.
+                  {resumedWork
+                    ? 'Reopened from browser-local continuity using saved edition metadata only.'
+                    : 'A continuous editorial workspace from intake to render.'}
                 </p>
               </div>
               <button
@@ -271,6 +407,9 @@ export default function Home() {
               onRegenerate={handleRegenerate}
               stage={activeStage}
               inputType={activeInputType}
+              initialStyle={activePreferredStyle}
+              onSaveToRecentLocal={handleSaveLocal}
+              recentLocalSaveState={recentWorkSaveState}
             />
           )}
         </section>

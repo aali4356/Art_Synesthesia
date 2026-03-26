@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import type { PipelineResult, PipelineStage } from '@/hooks/useTextAnalysis';
+import type { RecentWorkSaveState } from '@/hooks/useRecentWorks';
 import { CURRENT_VERSION } from '@/lib/engine/version';
 import { deriveSeed } from '@/lib/engine/prng';
 import { buildSceneGraph } from '@/lib/render/geometric';
@@ -36,6 +37,9 @@ interface ResultsViewProps {
   stage: PipelineStage;
   /** Input type — typographic style is disabled for 'data' inputs */
   inputType?: 'text' | 'url' | 'data';
+  initialStyle?: StyleName;
+  onSaveToRecentLocal?: (style: StyleName) => unknown;
+  recentLocalSaveState?: RecentWorkSaveState;
 }
 
 interface ProofDiagnosticRow {
@@ -53,6 +57,9 @@ export function ResultsView({
   onRegenerate,
   stage,
   inputType = 'text',
+  initialStyle = 'geometric',
+  onSaveToRecentLocal,
+  recentLocalSaveState = { status: 'idle' },
 }: ResultsViewProps) {
   const { resolvedTheme } = useTheme();
   const theme = (resolvedTheme === 'light' ? 'light' : 'dark') as 'dark' | 'light';
@@ -64,7 +71,7 @@ export function ResultsView({
     particle: null,
     typographic: null,
   });
-  const [activeStyle, setActiveStyle] = useState<StyleName>('geometric');
+  const [activeStyle, setActiveStyle] = useState<StyleName>(initialStyle);
   const [animationKey, setAnimationKey] = useState(0);
   const [shouldAnimate, setShouldAnimate] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -79,6 +86,10 @@ export function ResultsView({
     : false;
 
   const maxParticles = typeof window !== 'undefined' && window.innerWidth < 768 ? 2000 : 10000;
+
+  useEffect(() => {
+    setActiveStyle(inputType === 'data' && initialStyle === 'typographic' ? 'geometric' : initialStyle);
+  }, [initialStyle, inputType, result.canonical]);
 
   useEffect(() => {
     let cancelled = false;
@@ -143,6 +154,11 @@ export function ResultsView({
   const handleRenderComplete = useCallback(() => {
     setShouldAnimate(false);
   }, []);
+
+  const handleSaveLocal = useCallback(() => {
+    if (!onSaveToRecentLocal) return;
+    onSaveToRecentLocal(activeStyle);
+  }, [activeStyle, onSaveToRecentLocal]);
 
   function captureCurrentThumbnail(): string {
     if (!mainCanvasRef.current) return '';
@@ -343,7 +359,12 @@ export function ResultsView({
             <div
               className={`transition-opacity duration-500 ${isGenerating ? 'opacity-40' : 'opacity-100'}`}
             >
-              {renderCanvas()}
+              <div ref={(node) => {
+                const canvas = node?.querySelector('canvas') ?? null;
+                mainCanvasRef.current = canvas;
+              }}>
+                {renderCanvas()}
+              </div>
             </div>
           </section>
         </div>
@@ -435,6 +456,37 @@ export function ResultsView({
             </div>
 
             <div className="space-y-4">
+              <div className="editorial-action-card continuity-save-card">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="space-y-1">
+                    <p className="editorial-note-label mb-0">Recent local work</p>
+                    <h3 className="text-base font-medium text-[var(--foreground)]">Keep a browser-local continuity copy.</h3>
+                    <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                      Save this edition family for private same-browser recall. This is distinct from Share and Save to Gallery, and it never stores the raw source.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveLocal}
+                    className="btn-ghost text-sm"
+                    aria-label="Save this edition to recent local work"
+                  >
+                    {recentLocalSaveState.status === 'saved' ? 'Saved in this browser' : 'Save in this browser'}
+                  </button>
+                </div>
+
+                {recentLocalSaveState.status === 'saved' && (
+                  <p className="mt-3 text-xs text-[var(--muted-foreground)]" role="status">
+                    Saved to recent local work. Reopen it later from the homepage continuity panel.
+                  </p>
+                )}
+                {recentLocalSaveState.status === 'error' && (
+                  <p className="mt-3 text-xs text-[var(--color-accent)]" role="alert">
+                    {recentLocalSaveState.message}
+                  </p>
+                )}
+              </div>
+
               <ExportControls
                 parameterVector={result.vector}
                 versionInfo={CURRENT_VERSION}
