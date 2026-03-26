@@ -271,6 +271,21 @@ describe('S02 editorial homepage onboarding contract', () => {
     expect(screen.getByText('renderer expressiveness')).toBeDefined();
     expect(screen.getByText('Share')).toBeDefined();
     expect(screen.getByText('Save to Gallery')).toBeDefined();
+    expect(screen.getByText('Next steps')).toBeDefined();
+    expect(screen.getByText('Keep the same edition moving without guessing where each route leads.')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Return Home to start fresh or revisit recent local work, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes rather than browser-local recall.'
+      )
+    ).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Home / Recent local work' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Compare side by side' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Browse public gallery' })).toBeDefined();
+    expect(
+      screen.getByText(
+        'Recent local work stays private to this browser, while Compare and Gallery stay route-based and shareable.'
+      )
+    ).toBeDefined();
     expect(screen.queryByText('Cathedral brass and midnight rain')).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: /back to the editorial desk/i }));

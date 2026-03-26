@@ -510,6 +510,7 @@ export default function Home() {
               stage={activeStage}
               inputType={activeInputType}
               initialStyle={activePreferredStyle}
+              continuityMode={resumedWork ? 'resumed' : 'fresh'}
               onSaveToRecentLocal={handleSaveLocal}
               recentLocalSaveState={recentWorkSaveState}
             />

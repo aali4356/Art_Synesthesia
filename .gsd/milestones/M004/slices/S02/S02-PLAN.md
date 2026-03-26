@@ -42,7 +42,7 @@ Done when:
   - Estimate: 45m
   - Files: src/components/layout/Header.tsx, src/components/layout/Shell.tsx, src/app/gallery/page.tsx, src/app/compare/CompareMode.tsx, src/__tests__/app/shared-brand-surfaces.test.tsx, src/__tests__/app/product-family-coherence.test.tsx
   - Verify: npm test -- --run src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx
-- [ ] **T03: Carry repeat-use guidance through results and lock the cross-surface contract** — Why:
+- [x] **T03: Added explicit results next-step guidance for fresh versus resumed editions and locked the cross-surface copy contract.** — Why:
 - The slice is only truly done once resume-oriented guidance continues from results back to the homepage and out to public routes in language that still reads like one coherent product contract.
 
 Steps:

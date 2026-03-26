@@ -296,6 +296,21 @@ describe('anonymous continuity seam', () => {
     expect(screen.getByText('Reopened from browser-local continuity using saved edition metadata only.')).toBeDefined();
     expect(screen.getByText('active style · organic')).toBeDefined();
     expect(screen.getByText('proof diagnostics')).toBeDefined();
+    expect(screen.getByText('Repeat-use guidance')).toBeDefined();
+    expect(screen.getByText('Return home for private browser-local recall, or step into public routes deliberately.')).toBeDefined();
+    expect(
+      screen.getByText(
+        'This reopened edition came from recent local work in this browser. Return Home when you want to resume or start fresh from the editorial desk, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes.'
+      )
+    ).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Home / Recent local work' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Compare side by side' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Browse public gallery' })).toBeDefined();
+    expect(
+      screen.getByText(
+        'Home keeps browser-local recall and fresh-start controls in one place for this device only.'
+      )
+    ).toBeDefined();
     expect(screen.queryByText(/Cathedral brass and midnight rain/)).toBeNull();
   });
 

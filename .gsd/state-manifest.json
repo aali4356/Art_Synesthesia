@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T17:00:31.096Z",
+  "exported_at": "2026-03-26T17:12:34.948Z",
   "milestones": [
     {
       "id": "M001",
@@ -2632,19 +2632,31 @@
       "milestone_id": "M004",
       "slice_id": "S02",
       "id": "T03",
-      "title": "Carry repeat-use guidance through results and lock the cross-surface contract",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added explicit results next-step guidance for fresh versus resumed editions and locked the cross-surface copy contract.",
+      "status": "complete",
+      "one_liner": "Added explicit results next-step guidance for fresh versus resumed editions and locked the cross-surface copy contract.",
+      "narrative": "Updated the results surface so fresh and reopened browser-local editions now carry explicit next-step guidance that matches the homepage and shared header contract. ResultsView renders route links back to Home / Recent local work, Compare, and Gallery, and its copy now distinguishes private browser-local recall from public routes. Home now passes an explicit continuity mode into ResultsView instead of forcing the component to infer resume state from display text. I then extended the existing home, anonymous continuity, product-family, and direct ResultsView tests to lock the new wording and route-discovery cues into the regression contract. Finally, I ran live browser verification against the homepage generation flow plus the Gallery and Compare routes on a clean local dev server.",
+      "verification_result": "Verified the four-file slice regression bundle, a focused ResultsView seam test, and live browser flows for `/`, `/gallery`, and `/compare`. The homepage/browser flow generated a real result and confirmed the new next-step guidance and route links. Gallery and Compare confirmed the shared route-intro copy and active-route semantics.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-26T17:12:34.889Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Used port 3004 for live browser verification because another workspace process already owned port 3000 and a stale local Next listener for this project was non-responsive. This did not change shipped code or the verification target surfaces.",
+      "known_issues": "Live browser console logs surfaced existing hydration-mismatch warnings around textarea caret-color attributes on Home and Compare during dev-mode verification. The task’s shipped guidance and regression contract passed, but that runtime warning remains outside this task’s scope.",
+      "key_files": [
+        "src/components/results/ResultsView.tsx",
+        "src/app/page.tsx",
+        "src/__tests__/app/home-editorial-flow.test.tsx",
+        "src/__tests__/app/anonymous-continuity.test.tsx",
+        "src/__tests__/app/product-family-coherence.test.tsx",
+        "src/__tests__/components/results/ResultsView.live-proof.test.tsx",
+        ".gsd/KNOWLEDGE.md",
+        ".gsd/milestones/M004/slices/S02/tasks/T03-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Passed an explicit continuityMode prop from Home into ResultsView so fresh versus reopened recent-local guidance stays truthful at the results seam.",
+        "Locked the results/home/header wording contract through the existing RTL and source-inspection suites instead of introducing a separate acceptance surface."
+      ],
+      "full_summary_md": "---\nid: T03\nparent: S02\nmilestone: M004\nkey_files:\n  - src/components/results/ResultsView.tsx\n  - src/app/page.tsx\n  - src/__tests__/app/home-editorial-flow.test.tsx\n  - src/__tests__/app/anonymous-continuity.test.tsx\n  - src/__tests__/app/product-family-coherence.test.tsx\n  - src/__tests__/components/results/ResultsView.live-proof.test.tsx\n  - .gsd/KNOWLEDGE.md\n  - .gsd/milestones/M004/slices/S02/tasks/T03-SUMMARY.md\nkey_decisions:\n  - Passed an explicit continuityMode prop from Home into ResultsView so fresh versus reopened recent-local guidance stays truthful at the results seam.\n  - Locked the results/home/header wording contract through the existing RTL and source-inspection suites instead of introducing a separate acceptance surface.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-26T17:12:34.904Z\nblocker_discovered: false\n---\n\n# T03: Added explicit results next-step guidance for fresh versus resumed editions and locked the cross-surface copy contract.\n\n**Added explicit results next-step guidance for fresh versus resumed editions and locked the cross-surface copy contract.**\n\n## What Happened\n\nUpdated the results surface so fresh and reopened browser-local editions now carry explicit next-step guidance that matches the homepage and shared header contract. ResultsView renders route links back to Home / Recent local work, Compare, and Gallery, and its copy now distinguishes private browser-local recall from public routes. Home now passes an explicit continuity mode into ResultsView instead of forcing the component to infer resume state from display text. I then extended the existing home, anonymous continuity, product-family, and direct ResultsView tests to lock the new wording and route-discovery cues into the regression contract. Finally, I ran live browser verification against the homepage generation flow plus the Gallery and Compare routes on a clean local dev server.\n\n## Verification\n\nVerified the four-file slice regression bundle, a focused ResultsView seam test, and live browser flows for `/`, `/gallery`, and `/compare`. The homepage/browser flow generated a real result and confirmed the new next-step guidance and route links. Gallery and Compare confirmed the shared route-intro copy and active-route semantics.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx` | 0 | ✅ pass | 7500ms |\n| 2 | `npm test -- --run src/__tests__/components/results/ResultsView.live-proof.test.tsx` | 0 | ✅ pass | 14800ms |\n| 3 | `npm run dev -- --port 3004` | 0 | ✅ pass | 644ms |\n| 4 | `browser_verify http://localhost:3004` | 0 | ✅ pass | 0ms |\n| 5 | `browser_batch homepage generation + results guidance assertions` | 0 | ✅ pass | 0ms |\n| 6 | `browser_verify http://localhost:3004/gallery` | 0 | ✅ pass | 0ms |\n| 7 | `browser_verify http://localhost:3004/compare` | 0 | ✅ pass | 0ms |\n\n\n## Deviations\n\nUsed port 3004 for live browser verification because another workspace process already owned port 3000 and a stale local Next listener for this project was non-responsive. This did not change shipped code or the verification target surfaces.\n\n## Known Issues\n\nLive browser console logs surfaced existing hydration-mismatch warnings around textarea caret-color attributes on Home and Compare during dev-mode verification. The task’s shipped guidance and regression contract passed, but that runtime warning remains outside this task’s scope.\n\n## Files Created/Modified\n\n- `src/components/results/ResultsView.tsx`\n- `src/app/page.tsx`\n- `src/__tests__/app/home-editorial-flow.test.tsx`\n- `src/__tests__/app/anonymous-continuity.test.tsx`\n- `src/__tests__/app/product-family-coherence.test.tsx`\n- `src/__tests__/components/results/ResultsView.live-proof.test.tsx`\n- `.gsd/KNOWLEDGE.md`\n- `.gsd/milestones/M004/slices/S02/tasks/T03-SUMMARY.md`\n",
       "description": "Why:\n- The slice is only truly done once resume-oriented guidance continues from results back to the homepage and out to public routes in language that still reads like one coherent product contract.\n\nSteps:\n1. Update `src/components/results/ResultsView.tsx` so live results and reopened recent-local results both offer clear next-step guidance: resume/start fresh at home, compare when evaluating variants, and gallery/share only with explicit public wording.\n2. Tighten any remaining homepage/results/header wording seams so R004 stays coherent across the landing, shell, and results family after the new onboarding/nav work lands.\n3. Finalize regression coverage across homepage, continuity, shared-brand, and product-family suites so the slice closes with one executable proof bundle.\n4. Run live browser verification against `/`, `/gallery`, and `/compare` after the automated suite to confirm route discovery and repeat-use cues in the real UI.\n\nMust-haves:\n- Results surfaces reinforce the same navigation and continuity story introduced on the homepage/header.\n- Browser-local recall versus public share/gallery persistence remains explicit in every changed surface.\n- The slice ends with one regression bundle that proves the shipped user journey.\n\nDone when:\n- The adaptive homepage, shared nav, and results follow-through all read as one product family in tests and live local verification.",
       "estimate": "40m",
       "files": [
@@ -3288,6 +3300,18 @@
       "revisable": "Yes",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 54,
+      "id": "D052",
+      "when_context": "M004 S02 T03",
+      "scope": "pattern",
+      "decision": "How results surfaces distinguish fresh results from reopened recent-local results",
+      "choice": "Pass an explicit continuityMode prop from Home into ResultsView and render route-next-step guidance from that state.",
+      "rationale": "Resume-versus-fresh guidance is part of the cross-surface product contract. Driving it from Home's existing continuity state keeps the results copy truthful, avoids brittle inference from input labels or storage text, and preserves the browser-local versus public-route boundary in one place.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -3455,6 +3479,83 @@
       "verdict": "❌ fail",
       "duration_ms": 20000,
       "created_at": "2026-03-26T17:00:31.012Z"
+    },
+    {
+      "id": 16,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 7500,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 17,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/components/results/ResultsView.live-proof.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 14800,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 18,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "npm run dev -- --port 3004",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 644,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 19,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "browser_verify http://localhost:3004",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 20,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "browser_batch homepage generation + results guidance assertions",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 21,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "browser_verify http://localhost:3004/gallery",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T17:12:34.889Z"
+    },
+    {
+      "id": 22,
+      "task_id": "T03",
+      "slice_id": "S02",
+      "milestone_id": "M004",
+      "command": "browser_verify http://localhost:3004/compare",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 0,
+      "created_at": "2026-03-26T17:12:34.889Z"
     }
   ]
 }

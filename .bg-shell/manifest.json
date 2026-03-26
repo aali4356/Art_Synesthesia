@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "d1a36b04",
+    "label": "art-synesthesia-dev-3004",
+    "command": "npm run dev -- --port 3004",
+    "cwd": "Z:\\Ahmad - Personal BeeStation\\Dev\\Personal\\Art_Synesthesia",
+    "ownerSessionFile": "C:\\Users\\ahmad\\.gsd\\sessions\\--Z--Ahmad - Personal BeeStation-Dev-Personal-Art_Synesthesia--\\2026-03-26T17-00-37-729Z_14b4604e-213e-4415-a25f-a4dcf47216b0.jsonl",
+    "persistAcrossSessions": false,
+    "startedAt": 1774544938232,
+    "processType": "server",
+    "group": "art-synesthesia",
+    "readyPattern": null,
+    "readyPort": 3004,
+    "pid": 38632
+  }
+]

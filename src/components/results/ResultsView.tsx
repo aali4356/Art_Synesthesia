@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import type { PipelineResult, PipelineStage } from '@/hooks/useTextAnalysis';
@@ -38,6 +39,7 @@ interface ResultsViewProps {
   /** Input type — typographic style is disabled for 'data' inputs */
   inputType?: 'text' | 'url' | 'data';
   initialStyle?: StyleName;
+  continuityMode?: 'fresh' | 'resumed';
   onSaveToRecentLocal?: (style: StyleName) => unknown;
   recentLocalSaveState?: RecentWorkSaveState;
 }
@@ -58,6 +60,7 @@ export function ResultsView({
   stage,
   inputType = 'text',
   initialStyle = 'geometric',
+  continuityMode = 'fresh',
   onSaveToRecentLocal,
   recentLocalSaveState = { status: 'idle' },
 }: ResultsViewProps) {
@@ -244,6 +247,24 @@ export function ResultsView({
 
     return rows;
   }, [scenes.organic, scenes.typographic]);
+
+  const nextStepContent = useMemo(() => {
+    if (continuityMode === 'resumed') {
+      return {
+        label: 'Repeat-use guidance',
+        title: 'Return home for private browser-local recall, or step into public routes deliberately.',
+        body: 'This reopened edition came from recent local work in this browser. Return Home when you want to resume or start fresh from the editorial desk, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes.',
+        localCue: 'Home keeps browser-local recall and fresh-start controls in one place for this device only.',
+      };
+    }
+
+    return {
+      label: 'Next steps',
+      title: 'Keep the same edition moving without guessing where each route leads.',
+      body: 'Return Home to start fresh or revisit recent local work, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes rather than browser-local recall.',
+      localCue: 'Recent local work stays private to this browser, while Compare and Gallery stay route-based and shareable.',
+    };
+  }, [continuityMode]);
 
   function renderCanvas() {
     const key = `${activeStyle}-${animationKey}`;
@@ -452,6 +473,32 @@ export function ResultsView({
               </div>
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
                 public actions remain privacy-safe
+              </p>
+            </div>
+
+            <div className="editorial-action-card mb-4 space-y-4">
+              <div className="space-y-2">
+                <p className="editorial-note-label mb-0">{nextStepContent.label}</p>
+                <h3 className="text-base font-medium text-[var(--foreground)]">{nextStepContent.title}</h3>
+                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                  {nextStepContent.body}
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3" aria-label="Results next-step routes">
+                <Link href="/" className="btn-ghost text-sm text-center">
+                  Home / Recent local work
+                </Link>
+                <Link href="/compare" className="btn-ghost text-sm text-center">
+                  Compare side by side
+                </Link>
+                <Link href="/gallery" className="btn-ghost text-sm text-center">
+                  Browse public gallery
+                </Link>
+              </div>
+
+              <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                {nextStepContent.localCue}
               </p>
             </div>
 

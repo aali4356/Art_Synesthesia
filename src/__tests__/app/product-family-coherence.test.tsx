@@ -26,6 +26,12 @@ describe('product family coherence', () => {
     expect(resultsViewSource).toContain('public actions remain privacy-safe');
     expect(resultsViewSource).toContain('Keep a browser-local continuity copy.');
     expect(resultsViewSource).toContain('private same-browser recall');
+    expect(resultsViewSource).toContain('Keep the same edition moving without guessing where each route leads.');
+    expect(resultsViewSource).toContain('Return Home to start fresh or revisit recent local work');
+    expect(resultsViewSource).toContain('Compare side by side');
+    expect(resultsViewSource).toContain('Browse public gallery');
+    expect(resultsViewSource).toContain('Return home for private browser-local recall, or step into public routes deliberately.');
+    expect(resultsViewSource).toContain('explicit public routes');
     expect(exportSource).toContain('Download this collector edition.');
     expect(exportSource).toContain('Truth in export: this route currently ships 4096×4096 downloads only');
     expect(shareSource).toContain('Publish a public, view-only collector link.');
