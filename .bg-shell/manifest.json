@@ -1,16 +1,1 @@
-[
-  {
-    "id": "c44ba1a1",
-    "label": "next-dev-3010",
-    "command": "npm run dev -- --port 3010",
-    "cwd": "Z:\\Ahmad - Personal BeeStation\\Dev\\Personal\\Art_Synesthesia",
-    "ownerSessionFile": "C:\\Users\\ahmad\\.gsd\\sessions\\--Z--Ahmad - Personal BeeStation-Dev-Personal-Art_Synesthesia--\\2026-03-26T18-31-01-312Z_64ebafad-2017-4e14-b12c-f056f0576c7c.jsonl",
-    "persistAcrossSessions": false,
-    "startedAt": 1774550627974,
-    "processType": "server",
-    "group": "m004-s03",
-    "readyPattern": null,
-    "readyPort": 3010,
-    "pid": 74932
-  }
-]
+[]

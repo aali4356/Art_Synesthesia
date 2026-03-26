@@ -566,11 +566,13 @@ export function ResultsView({
                 parameterVector={result.vector}
                 versionInfo={CURRENT_VERSION}
                 styleName={activeStyle}
+                continuityMode={continuityMode}
               />
               <ShareButton
                 parameterVector={result.vector}
                 versionInfo={CURRENT_VERSION}
                 styleName={activeStyle}
+                continuityMode={continuityMode}
               />
 
               <div className="editorial-action-card">
@@ -620,6 +622,7 @@ export function ResultsView({
           parameterVector={result.vector}
           versionInfo={CURRENT_VERSION}
           styleName={activeStyle}
+          continuityMode={continuityMode}
           inputTextPreview={inputText.slice(0, 50)}
           thumbnailDataUrl={captureCurrentThumbnail()}
           onClose={() => setShowSaveModal(false)}

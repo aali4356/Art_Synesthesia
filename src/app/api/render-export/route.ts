@@ -2,6 +2,7 @@ import { performance } from 'node:perf_hooks';
 import type { StyleName } from '@/lib/render/types';
 import { getSupportedExportFormats, isSvgExportSupported, type ExportFormat } from '@/lib/export/formats';
 import { generateArtworkAltText } from '@/lib/accessibility/alt-text';
+import { captureRouteFailure } from '@/lib/observability/server';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 
 export const dynamic = 'force-dynamic';
@@ -74,16 +75,34 @@ export async function POST(request: Request): Promise<Response> {
   let body: ExportRequestBody;
   try {
     body = await request.json() as ExportRequestBody;
-  } catch {
+  } catch (error) {
+    captureRouteFailure(error, {
+      routeFamily: 'render-export',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'malformed-payload',
+    });
     return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
   if (!body?.parameters || !body?.version || !body?.style || !body?.format) {
+    captureRouteFailure(new Error('Missing required export fields'), {
+      routeFamily: 'render-export',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return Response.json({ error: 'Missing required export fields' }, { status: 400 });
   }
 
   const supported = getSupportedExportFormats(body.style);
   if (!supported.includes(body.format)) {
+    captureRouteFailure(new Error(`${body.format.toUpperCase()} export is not supported for ${body.style} style`), {
+      routeFamily: 'render-export',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'unsupported-format',
+    });
     return Response.json(
       { error: `${body.format.toUpperCase()} export is not supported for ${body.style} style` },
       { status: 400 },
@@ -92,6 +111,12 @@ export async function POST(request: Request): Promise<Response> {
 
   const resolution = body.resolution ?? 4096;
   if (resolution !== 4096) {
+    captureRouteFailure(new Error('Only 4096x4096 exports are supported'), {
+      routeFamily: 'render-export',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return Response.json({ error: 'Only 4096x4096 exports are supported' }, { status: 400 });
   }
 
@@ -99,6 +124,12 @@ export async function POST(request: Request): Promise<Response> {
 
   if (body.format === 'svg') {
     if (!isSvgExportSupported(body.style)) {
+      captureRouteFailure(new Error('SVG export is not supported for this style'), {
+        routeFamily: 'render-export',
+        method: 'POST',
+        statusBucket: '4xx',
+        failureCategory: 'unsupported-format',
+      });
       return Response.json({ error: 'SVG export is not supported for this style' }, { status: 400 });
     }
     const svg = buildSvg(body);

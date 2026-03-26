@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { ShareViewer } from './ShareViewer';
 import { BrandedUnavailableState } from '@/components/viewers/BrandedViewerScaffold';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { Metadata } from 'next';
 
 interface SharePageProps {
@@ -58,6 +59,12 @@ export default async function SharePage({ params }: SharePageProps) {
           description="This share link may have expired, been removed, or is unavailable in the current local proof mode."
           diagnosticLabel="Missing share id"
           diagnosticMessage={id}
+          observability={{
+            routeFamily: 'share',
+            unavailableCategory: 'missing-resource',
+            statusBucket: '4xx',
+            viewerSurface: 'detail',
+          }}
         />
       );
     }
@@ -72,6 +79,7 @@ export default async function SharePage({ params }: SharePageProps) {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Share backend unavailable';
+    const category = classifyObservabilityError(error);
 
     return (
       <BrandedUnavailableState
@@ -79,6 +87,14 @@ export default async function SharePage({ params }: SharePageProps) {
         description="This shared route needs a working database backend in the current environment."
         diagnosticLabel="Diagnostics"
         diagnosticMessage={message}
+        observability={{
+          routeFamily: 'share',
+          unavailableCategory:
+            category === 'local-proof-unavailable' ? 'local-proof-unavailable' : 'backend-unavailable',
+          statusBucket: '5xx',
+          localProofMode: category === 'local-proof-unavailable',
+          viewerSurface: 'detail',
+        }}
       />
     );
   }

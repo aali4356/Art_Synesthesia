@@ -1,6 +1,13 @@
 import * as Sentry from '@sentry/nextjs';
-import type { ObservabilityEventName } from '@/lib/observability/events';
-import { buildObservabilityEvent } from '@/lib/observability/events';
+import {
+  OBSERVABILITY_EVENTS,
+  buildObservabilityEvent,
+  buildRouteFailureProperties,
+  buildUnavailableStateEventProperties,
+  type ObservabilityEventName,
+  type RouteFamily,
+  type StatusBucket,
+} from '@/lib/observability/events';
 import {
   buildSafeErrorContext,
   filterTags,
@@ -47,7 +54,15 @@ export function getDefaultServerAdapter(
   config: ServerObservabilityConfig = getServerObservabilityConfig()
 ): ServerObservabilityAdapter {
   return {
-    captureEvent: undefined,
+    captureEvent: config.sentryDsn
+      ? (eventName, properties) => {
+          Sentry.withScope((scope) => {
+            scope.setTag('observability_event', eventName);
+            scope.setExtras(properties);
+            Sentry.captureMessage(eventName, 'info');
+          });
+        }
+      : undefined,
     captureError: config.sentryDsn
       ? (error, payload) => {
           Sentry.withScope((scope) => {
@@ -137,4 +152,55 @@ export function captureServerError(
     properties: safeContext.extra,
     category: safeContext.category,
   };
+}
+
+export function captureRouteFailure(
+  error: unknown,
+  input: {
+    routeFamily: RouteFamily;
+    failureCategory: string;
+    statusBucket?: Exclude<StatusBucket, '2xx'>;
+    method?: 'GET' | 'POST';
+    localProofMode?: boolean;
+  },
+  options?: {
+    adapter?: ServerObservabilityAdapter;
+    config?: ServerObservabilityConfig;
+  }
+): ServerCaptureResult & { category: string } {
+  const properties = buildRouteFailureProperties(input);
+
+  return captureServerError(
+    error,
+    {
+      tags: {
+        route_family: input.routeFamily,
+        method: input.method,
+        status_bucket: input.statusBucket,
+        local_proof_mode: input.localProofMode ? 'true' : undefined,
+      },
+      extra: properties,
+    },
+    options,
+  );
+}
+
+export function captureUnavailableState(
+  input: {
+    routeFamily: Extract<RouteFamily, 'share' | 'gallery' | 'unknown'>;
+    unavailableCategory: string;
+    statusBucket?: '4xx' | '5xx';
+    localProofMode?: boolean;
+    viewerSurface?: 'detail' | 'viewer';
+  },
+  options?: {
+    adapter?: ServerObservabilityAdapter;
+    config?: ServerObservabilityConfig;
+  }
+): ServerCaptureResult {
+  return captureServerEvent(
+    OBSERVABILITY_EVENTS.route.unavailable,
+    buildUnavailableStateEventProperties(input),
+    options,
+  );
 }

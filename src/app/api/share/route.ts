@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
+import { captureRouteFailure } from '@/lib/observability/server';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 
 async function getShareDb() {
@@ -27,12 +29,24 @@ export async function POST(request: Request): Promise<Response> {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
-  } catch {
+  } catch (error) {
+    captureRouteFailure(error, {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'malformed-payload',
+    });
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
   // Privacy gate: reject if caller accidentally sends raw input fields
   if ('rawInput' in body || 'inputText' in body || 'raw_input' in body) {
+    captureRouteFailure(new Error('Share links must not contain raw input text'), {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Share links must not contain raw input text' },
       { status: 400 }
@@ -42,18 +56,36 @@ export async function POST(request: Request): Promise<Response> {
   const { vector, version, style } = body;
 
   if (!vector || typeof vector !== 'object') {
+    captureRouteFailure(new Error('Missing or invalid parameter vector'), {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing or invalid parameter vector' },
       { status: 400 }
     );
   }
   if (!version || typeof version !== 'object') {
+    captureRouteFailure(new Error('Missing or invalid version info'), {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing or invalid version info' },
       { status: 400 }
     );
   }
   if (!style || typeof style !== 'string') {
+    captureRouteFailure(new Error('Missing or invalid style name'), {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing or invalid style name' },
       { status: 400 }
@@ -77,6 +109,14 @@ export async function POST(request: Request): Promise<Response> {
       { status: 201 }
     );
   } catch (error) {
+    const category = classifyObservabilityError(error);
+    captureRouteFailure(error, {
+      routeFamily: 'share',
+      method: 'POST',
+      statusBucket: '5xx',
+      failureCategory: 'share-backend-unavailable',
+      localProofMode: category === 'local-proof-unavailable',
+    });
     const message = error instanceof Error ? error.message : 'Share backend unavailable';
     return NextResponse.json({ error: message }, { status: 503 });
   }

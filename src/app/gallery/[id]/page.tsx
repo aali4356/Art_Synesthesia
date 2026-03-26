@@ -1,5 +1,6 @@
 import { GalleryViewer } from './GalleryViewer';
 import { BrandedUnavailableState } from '@/components/viewers/BrandedViewerScaffold';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { Metadata } from 'next';
 
 interface GalleryDetailPageProps {
@@ -48,6 +49,12 @@ export default async function GalleryDetailPage({ params }: GalleryDetailPagePro
           description="This gallery edition may have been removed or is unavailable in the current local proof mode."
           diagnosticLabel="Missing gallery id"
           diagnosticMessage={id}
+          observability={{
+            routeFamily: 'gallery',
+            unavailableCategory: 'missing-resource',
+            statusBucket: '4xx',
+            viewerSurface: 'detail',
+          }}
         />
       );
     }
@@ -66,6 +73,7 @@ export default async function GalleryDetailPage({ params }: GalleryDetailPagePro
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
+    const category = classifyObservabilityError(error);
 
     return (
       <BrandedUnavailableState
@@ -73,6 +81,14 @@ export default async function GalleryDetailPage({ params }: GalleryDetailPagePro
         description="This collector route needs a working database backend in the current environment."
         diagnosticLabel="Diagnostics"
         diagnosticMessage={message}
+        observability={{
+          routeFamily: 'gallery',
+          unavailableCategory:
+            category === 'local-proof-unavailable' ? 'local-proof-unavailable' : 'backend-unavailable',
+          statusBucket: '5xx',
+          localProofMode: category === 'local-proof-unavailable',
+          viewerSurface: 'detail',
+        }}
       />
     );
   }

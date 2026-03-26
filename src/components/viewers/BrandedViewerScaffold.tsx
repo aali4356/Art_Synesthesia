@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Shell } from '@/components/layout/Shell';
+import { captureUnavailableState } from '@/lib/observability/server';
 
 interface ViewerBadge {
   label: string;
@@ -155,6 +156,13 @@ interface BrandedUnavailableStateProps {
   description: string;
   diagnosticLabel: string;
   diagnosticMessage: string;
+  observability?: {
+    routeFamily: 'share' | 'gallery' | 'unknown';
+    unavailableCategory: string;
+    statusBucket?: '4xx' | '5xx';
+    localProofMode?: boolean;
+    viewerSurface?: 'detail' | 'viewer';
+  };
 }
 
 export function BrandedUnavailableState({
@@ -162,7 +170,12 @@ export function BrandedUnavailableState({
   description,
   diagnosticLabel,
   diagnosticMessage,
+  observability,
 }: BrandedUnavailableStateProps) {
+  if (observability) {
+    captureUnavailableState(observability);
+  }
+
   return (
     <Shell>
       <section className="editorial-stage max-w-4xl" aria-labelledby="viewer-unavailable-title">

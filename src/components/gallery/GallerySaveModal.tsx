@@ -1,6 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { captureClientEvent } from '@/lib/observability/client';
+import {
+  OBSERVABILITY_EVENTS,
+  buildPublicActionEventProperties,
+  getStatusBucket,
+  type StatusBucket,
+} from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 import { getOrCreateCreatorToken } from '@/lib/gallery/creator-token';
 
@@ -8,6 +16,7 @@ interface GallerySaveModalProps {
   parameterVector: ParameterVector;
   versionInfo: VersionInfo;
   styleName: string;
+  continuityMode?: 'fresh' | 'resumed';
   /** First 50 chars of user input — provided by ResultsView. NOT sent to server. */
   inputTextPreview: string;
   /** Base64 data URL captured from current canvas */
@@ -17,6 +26,32 @@ interface GallerySaveModalProps {
 }
 
 const MAX_PREVIEW_CHARS = 50;
+
+function captureGalleryEvent(
+  eventName:
+    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveRequested
+    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveCompleted
+    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveFailed,
+  properties: Record<string, unknown>,
+) {
+  try {
+    captureClientEvent(eventName, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function classifyResponseFailure(statusBucket: StatusBucket, hasBody: boolean): string {
+  if (statusBucket === '4xx') {
+    return hasBody ? 'invalid-request' : 'malformed-payload';
+  }
+
+  if (statusBucket === '5xx') {
+    return 'gallery-backend-unavailable';
+  }
+
+  return hasBody ? 'request-failed' : 'malformed-payload';
+}
 
 /**
  * GallerySaveModal — opt-in gallery save dialog (GAL-01, GAL-02).
@@ -28,6 +63,7 @@ export function GallerySaveModal({
   parameterVector,
   versionInfo,
   styleName,
+  continuityMode = 'fresh',
   inputTextPreview,
   thumbnailDataUrl,
   onClose,
@@ -58,22 +94,77 @@ export function GallerySaveModal({
       body.inputPreview = inputPreview.trim().slice(0, MAX_PREVIEW_CHARS);
     }
 
+    captureGalleryEvent(
+      OBSERVABILITY_EVENTS.publicActions.gallerySaveRequested,
+      buildPublicActionEventProperties({
+        routeFamily: 'gallery',
+        publicMode: 'gallery-save',
+        continuityMode,
+        styleName,
+        action: 'requested',
+        includePreview,
+      }),
+    );
+
     try {
       const response = await fetch('/api/gallery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      const data = (await response.json()) as { saved?: boolean; id?: string; error?: string };
-      if (!response.ok) {
-        setError(data.error ?? 'Save failed. Please try again.');
+      const data = (await response.json().catch(() => null)) as { saved?: boolean; id?: string; error?: string } | null;
+      if (!response.ok || !data?.saved || !data.id) {
+        setError(data?.error ?? 'Save failed. Please try again.');
         setSaving(false);
+        const statusBucket = response.ok ? '2xx' : getStatusBucket(response.status);
+        captureGalleryEvent(
+          OBSERVABILITY_EVENTS.publicActions.gallerySaveFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'gallery',
+            publicMode: 'gallery-save',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            includePreview,
+            statusBucket,
+            failureCategory: response.ok
+              ? 'malformed-payload'
+              : classifyResponseFailure(statusBucket, Boolean(data)),
+          }),
+        );
         return;
       }
-      onSaved(data.id!);
-    } catch {
+
+      captureGalleryEvent(
+        OBSERVABILITY_EVENTS.publicActions.gallerySaveCompleted,
+        buildPublicActionEventProperties({
+          routeFamily: 'gallery',
+          publicMode: 'gallery-save',
+          continuityMode,
+          styleName,
+          action: 'completed',
+          includePreview,
+          statusBucket: '2xx',
+        }),
+      );
+      onSaved(data.id);
+    } catch (caughtError) {
       setError('Network error. Please try again.');
       setSaving(false);
+      const category = classifyObservabilityError(caughtError);
+      captureGalleryEvent(
+        OBSERVABILITY_EVENTS.publicActions.gallerySaveFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'gallery',
+          publicMode: 'gallery-save',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          includePreview,
+          statusBucket: category === 'timeout' ? 'timeout' : 'network',
+          failureCategory: category,
+        }),
+      );
     }
   }
 

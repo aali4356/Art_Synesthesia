@@ -1,6 +1,14 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { captureClientEvent } from '@/lib/observability/client';
+import {
+  OBSERVABILITY_EVENTS,
+  buildPublicActionEventProperties,
+  getStatusBucket,
+  type StatusBucket,
+} from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 import type { StyleName } from '@/lib/render/types';
 import { getSupportedExportFormats, type ExportFormat } from '@/lib/export/formats';
@@ -9,6 +17,7 @@ interface ExportControlsProps {
   parameterVector: ParameterVector;
   versionInfo: VersionInfo;
   styleName: StyleName;
+  continuityMode?: 'fresh' | 'resumed';
   className?: string;
 }
 
@@ -17,10 +26,37 @@ interface ExportState {
   message?: string;
 }
 
+function captureExportEvent(
+  eventName:
+    | typeof OBSERVABILITY_EVENTS.publicActions.exportRequested
+    | typeof OBSERVABILITY_EVENTS.publicActions.exportCompleted
+    | typeof OBSERVABILITY_EVENTS.publicActions.exportFailed,
+  properties: Record<string, unknown>,
+) {
+  try {
+    captureClientEvent(eventName, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function classifyResponseFailure(statusBucket: StatusBucket, hasBody: boolean): string {
+  if (statusBucket === '4xx') {
+    return hasBody ? 'invalid-request' : 'malformed-payload';
+  }
+
+  if (statusBucket === '5xx') {
+    return 'export-backend-unavailable';
+  }
+
+  return hasBody ? 'request-failed' : 'malformed-payload';
+}
+
 export function ExportControls({
   parameterVector,
   versionInfo,
   styleName,
+  continuityMode = 'fresh',
   className = '',
 }: ExportControlsProps) {
   const supportedFormats = useMemo(() => getSupportedExportFormats(styleName), [styleName]);
@@ -30,6 +66,19 @@ export function ExportControls({
 
   async function handleExport() {
     setState({ status: 'loading' });
+    captureExportEvent(
+      OBSERVABILITY_EVENTS.publicActions.exportRequested,
+      buildPublicActionEventProperties({
+        routeFamily: 'render-export',
+        publicMode: 'export',
+        continuityMode,
+        styleName,
+        action: 'requested',
+        format,
+        frame,
+      }),
+    );
+
     try {
       const response = await fetch('/api/render-export', {
         method: 'POST',
@@ -45,8 +94,23 @@ export function ExportControls({
       });
 
       if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: 'Export failed' }));
-        setState({ status: 'error', message: err.error ?? 'Export failed' });
+        const err = await response.json().catch(() => null) as { error?: string } | null;
+        setState({ status: 'error', message: err?.error ?? 'Export failed' });
+        const statusBucket = getStatusBucket(response.status);
+        captureExportEvent(
+          OBSERVABILITY_EVENTS.publicActions.exportFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'render-export',
+            publicMode: 'export',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            format,
+            frame,
+            statusBucket,
+            failureCategory: classifyResponseFailure(statusBucket, Boolean(err)),
+          }),
+        );
         return;
       }
 
@@ -62,8 +126,36 @@ export function ExportControls({
       URL.revokeObjectURL(url);
 
       setState({ status: 'success', message: `Downloaded ${fileName}` });
-    } catch {
+      captureExportEvent(
+        OBSERVABILITY_EVENTS.publicActions.exportCompleted,
+        buildPublicActionEventProperties({
+          routeFamily: 'render-export',
+          publicMode: 'export',
+          continuityMode,
+          styleName,
+          action: 'completed',
+          format,
+          frame,
+          statusBucket: '2xx',
+        }),
+      );
+    } catch (error) {
       setState({ status: 'error', message: 'Network error. Please try again.' });
+      const category = classifyObservabilityError(error);
+      captureExportEvent(
+        OBSERVABILITY_EVENTS.publicActions.exportFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'render-export',
+          publicMode: 'export',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          format,
+          frame,
+          statusBucket: category === 'timeout' ? 'timeout' : 'network',
+          failureCategory: category,
+        }),
+      );
     }
   }
 

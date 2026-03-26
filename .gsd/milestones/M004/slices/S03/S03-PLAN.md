@@ -76,7 +76,7 @@
   - Estimate: 1h 15m
   - Files: src/hooks/useTextAnalysis.ts, src/hooks/useUrlAnalysis.ts, src/hooks/useDataAnalysis.ts, src/app/page.tsx, src/hooks/useRecentWorks.ts, src/components/results/ResultsView.tsx, src/__tests__/observability/product-loop-events.test.tsx, src/__tests__/app/anonymous-continuity.test.tsx
   - Verify: npm test -- --run src/__tests__/observability/product-loop-events.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx
-- [ ] **T03: Instrument public-route actions, route-handler failures, and truthful unavailable states** — Extend the observability contract to public actions and server boundaries: share creation/copy, gallery save, export, URL-analysis route failures, and branded unavailable states for no-DB proof mode. This task closes the inspectable failure story for R007.
+- [x] **T03: Added privacy-filtered public-route telemetry and categorized server failure capture for share, gallery, export, and unavailable-state flows.** — Extend the observability contract to public actions and server boundaries: share creation/copy, gallery save, export, URL-analysis route failures, and branded unavailable states for no-DB proof mode. This task closes the inspectable failure story for R007.
 
 ## Failure Modes
 

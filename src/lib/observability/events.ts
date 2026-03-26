@@ -37,6 +37,10 @@ export const OBSERVABILITY_EVENTS = {
 export type ObservabilityEventName =
   (typeof OBSERVABILITY_EVENTS)[keyof typeof OBSERVABILITY_EVENTS][keyof (typeof OBSERVABILITY_EVENTS)[keyof typeof OBSERVABILITY_EVENTS]];
 
+export type RouteFamily = 'analyze-url' | 'share' | 'gallery' | 'render-export' | 'unknown';
+export type StatusBucket = '2xx' | '4xx' | '5xx' | 'timeout' | 'network';
+export type PublicMode = 'share-link' | 'gallery-save' | 'export';
+
 export interface ObservabilityEventPayload {
   name: ObservabilityEventName;
   properties: SafeObservabilityProperties;
@@ -81,12 +85,49 @@ export function buildContinuityEventProperties(input: {
   return buildObservabilityEvent(OBSERVABILITY_EVENTS.continuity.saved, input).properties;
 }
 
+export function buildPublicActionEventProperties(input: {
+  routeFamily: Extract<RouteFamily, 'share' | 'gallery' | 'render-export'>;
+  publicMode: PublicMode;
+  continuityMode?: 'fresh' | 'resumed';
+  styleName?: string;
+  action?: 'requested' | 'completed' | 'copied' | 'failed';
+  statusBucket?: StatusBucket;
+  failureCategory?: string;
+  format?: string;
+  frame?: boolean;
+  includePreview?: boolean;
+}): SafeObservabilityProperties {
+  return buildObservabilityEvent(OBSERVABILITY_EVENTS.publicActions.shareRequested, input).properties;
+}
+
 export function buildRouteFailureProperties(input: {
-  routeFamily: 'analyze-url' | 'share' | 'gallery' | 'render-export' | 'unknown';
-  statusBucket?: '4xx' | '5xx' | 'timeout' | 'network';
+  routeFamily: RouteFamily;
+  statusBucket?: StatusBucket;
   failureCategory: string;
   method?: 'GET' | 'POST';
   localProofMode?: boolean;
 }): SafeObservabilityProperties {
   return buildObservabilityEvent(OBSERVABILITY_EVENTS.route.failure, input).properties;
+}
+
+export function buildUnavailableStateEventProperties(input: {
+  routeFamily: Extract<RouteFamily, 'share' | 'gallery' | 'unknown'>;
+  unavailableCategory: string;
+  statusBucket?: Extract<StatusBucket, '4xx' | '5xx'>;
+  localProofMode?: boolean;
+  viewerSurface?: 'detail' | 'viewer';
+}): SafeObservabilityProperties {
+  return buildObservabilityEvent(OBSERVABILITY_EVENTS.route.unavailable, input).properties;
+}
+
+export function getStatusBucket(status: number): Extract<StatusBucket, '2xx' | '4xx' | '5xx'> {
+  if (status >= 500) {
+    return '5xx';
+  }
+
+  if (status >= 400) {
+    return '4xx';
+  }
+
+  return '2xx';
 }

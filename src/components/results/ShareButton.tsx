@@ -1,12 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import { captureClientEvent } from '@/lib/observability/client';
+import {
+  OBSERVABILITY_EVENTS,
+  buildPublicActionEventProperties,
+  getStatusBucket,
+} from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 
 interface ShareButtonProps {
   parameterVector: ParameterVector;
   versionInfo: VersionInfo;
   styleName: string;
+  continuityMode?: 'fresh' | 'resumed';
   className?: string;
 }
 
@@ -15,6 +23,21 @@ type ShareState =
   | { status: 'loading' }
   | { status: 'success'; shareId: string; shareUrl: string; fullUrl: string }
   | { status: 'error'; message: string };
+
+function captureShareEvent(
+  eventName:
+    | typeof OBSERVABILITY_EVENTS.publicActions.shareRequested
+    | typeof OBSERVABILITY_EVENTS.publicActions.shareCompleted
+    | typeof OBSERVABILITY_EVENTS.publicActions.shareCopied
+    | typeof OBSERVABILITY_EVENTS.publicActions.shareFailed,
+  properties: Record<string, unknown>,
+) {
+  try {
+    captureClientEvent(eventName, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
 
 /**
  * ShareButton creates a share link for the current artwork.
@@ -27,12 +50,24 @@ export function ShareButton({
   parameterVector,
   versionInfo,
   styleName,
+  continuityMode = 'fresh',
   className = '',
 }: ShareButtonProps) {
   const [state, setState] = useState<ShareState>({ status: 'idle' });
 
   async function handleShare() {
     setState({ status: 'loading' });
+    captureShareEvent(
+      OBSERVABILITY_EVENTS.publicActions.shareRequested,
+      buildPublicActionEventProperties({
+        routeFamily: 'share',
+        publicMode: 'share-link',
+        continuityMode,
+        styleName,
+        action: 'requested',
+      }),
+    );
+
     try {
       const response = await fetch('/api/share', {
         method: 'POST',
@@ -41,16 +76,69 @@ export function ShareButton({
       });
 
       if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: 'Share failed' }));
-        setState({ status: 'error', message: err.error ?? 'Share failed' });
+        const err = await response.json().catch(() => null) as { error?: string } | null;
+        setState({ status: 'error', message: err?.error ?? 'Share failed' });
+        captureShareEvent(
+          OBSERVABILITY_EVENTS.publicActions.shareFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'share',
+            publicMode: 'share-link',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            statusBucket: getStatusBucket(response.status),
+            failureCategory: err ? 'request-failed' : 'malformed-payload',
+          }),
+        );
         return;
       }
 
-      const { shareId, url } = await response.json();
-      const fullUrl = `${window.location.origin}${url}`;
-      setState({ status: 'success', shareId, shareUrl: url, fullUrl });
-    } catch {
+      const data = await response.json().catch(() => null) as { shareId?: string; url?: string } | null;
+      if (!data?.shareId || !data?.url) {
+        setState({ status: 'error', message: 'Share failed' });
+        captureShareEvent(
+          OBSERVABILITY_EVENTS.publicActions.shareFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'share',
+            publicMode: 'share-link',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            statusBucket: '2xx',
+            failureCategory: 'malformed-payload',
+          }),
+        );
+        return;
+      }
+
+      const fullUrl = `${window.location.origin}${data.url}`;
+      setState({ status: 'success', shareId: data.shareId, shareUrl: data.url, fullUrl });
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareCompleted,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'completed',
+          statusBucket: '2xx',
+        }),
+      );
+    } catch (error) {
       setState({ status: 'error', message: 'Network error. Please try again.' });
+      const category = classifyObservabilityError(error);
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          statusBucket: category === 'timeout' ? 'timeout' : 'network',
+          failureCategory: category,
+        }),
+      );
     }
   }
 
@@ -58,7 +146,30 @@ export function ShareButton({
     if (state.status !== 'success') return;
     try {
       await navigator.clipboard.writeText(state.fullUrl);
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareCopied,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'copied',
+          statusBucket: '2xx',
+        }),
+      );
     } catch {
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          statusBucket: 'network',
+          failureCategory: 'clipboard-unavailable',
+        }),
+      );
       // Clipboard API unavailable -- user can copy manually
     }
   }
