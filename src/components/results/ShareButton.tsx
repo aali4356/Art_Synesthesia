@@ -25,15 +25,11 @@ type ShareState =
   | { status: 'error'; message: string };
 
 function captureShareEvent(
-  eventName:
-    | typeof OBSERVABILITY_EVENTS.publicActions.shareRequested
-    | typeof OBSERVABILITY_EVENTS.publicActions.shareCompleted
-    | typeof OBSERVABILITY_EVENTS.publicActions.shareCopied
-    | typeof OBSERVABILITY_EVENTS.publicActions.shareFailed,
+  eventName: string,
   properties: Record<string, unknown>,
 ) {
   try {
-    captureClientEvent(eventName, properties);
+    captureClientEvent(eventName as Parameters<typeof captureClientEvent>[0], properties);
   } catch {
     // Observability is non-blocking by contract.
   }

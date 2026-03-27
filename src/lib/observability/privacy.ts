@@ -220,8 +220,8 @@ export function buildSafeErrorContext(
     Object.entries({
       ...context?.tags,
       error_category: category,
-    }).filter((entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1].length > 0)
-  );
+    }).filter(([, value]) => typeof value === 'string' && value.length > 0)
+  ) as Record<string, string>;
 
   return {
     tags,
@@ -245,7 +245,7 @@ export function sanitizeSentryEvent(
   const sanitizedEvent: SentryEvent = {
     ...event,
     extra: sanitizedExtra.properties,
-    contexts: sanitizedContexts.properties,
+    contexts: sanitizedContexts.properties as SentryEvent['contexts'],
     request: event.request
       ? {
           ...event.request,

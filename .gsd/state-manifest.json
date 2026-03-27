@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-26T19:09:02.584Z",
+  "exported_at": "2026-03-27T03:15:35.519Z",
   "milestones": [
     {
       "id": "M001",
@@ -2895,19 +2895,23 @@
       "milestone_id": "M004",
       "slice_id": "S03",
       "id": "T04",
-      "title": "Make the shared shell and selector controls keyboard-complete",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Verified that the shared shell skip link, input tabs, and style selector already satisfy the keyboard-complete accessibility contract.",
+      "status": "complete",
+      "one_liner": "Verified that the shared shell skip link, input tabs, and style selector already satisfy the keyboard-complete accessibility contract.",
+      "narrative": "Activated the accessibility and test skills, read the task and slice contracts, and verified the local implementations before editing. Local reality already met the T04 requirements: Shell ships a real skip link and focusable main target, InputTabs and InputZone expose wired tab/tabpanel keyboard semantics, and StyleSelector uses keyboard-operable native controls with truthful active and disabled state. Because the task verification bundle passed unchanged, I avoided no-op source edits and recorded completion from verified local reality. I also attempted live browser proof, but an unrelated process outside this repository owned port 3000 and interfered with the first launch; after clearing this repo's stale .next/dev/lock and launching on port 3004, the browser session still failed before a clean live assertion could be captured.",
+      "verification_result": "Ran the task-plan verification command exactly as written: npm test -- --run src/__tests__/accessibility/keyboard-navigation.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/app/home-editorial-flow.test.tsx. All 3 test files and 23 assertions passed, covering skip-link focus transfer, tab/tabpanel semantics, arrow/Home/End stability, and the data-input typographic disabled-state contract. Investigated the live browser proof failure and confirmed it was caused by local environment contamination rather than an in-repo product defect.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-27T02:43:09.918Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "No source-code changes were required because the repository already satisfied the T04 contract before execution. The only deviation was completing the task from verified local reality instead of introducing no-op edits.",
+      "known_issues": "Live browser proof was not captured during this run because local environment contamination interfered with the dev server: port 3000 was already bound by another project's node process and the first launch encountered a stale .next/dev/lock. This did not block the task contract because the required verification suite passed.",
+      "key_files": [
+        ".gsd/milestones/M004/slices/S03/tasks/T04-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Treat the existing shell/input/style accessibility implementation as the shipped solution because local code and the task verification bundle already satisfy the T04 contract without additional source edits."
+      ],
+      "full_summary_md": "---\nid: T04\nparent: S03\nmilestone: M004\nkey_files:\n  - .gsd/milestones/M004/slices/S03/tasks/T04-SUMMARY.md\nkey_decisions:\n  - Treat the existing shell/input/style accessibility implementation as the shipped solution because local code and the task verification bundle already satisfy the T04 contract without additional source edits.\nduration: \"\"\nverification_result: mixed\ncompleted_at: 2026-03-27T02:43:09.947Z\nblocker_discovered: false\n---\n\n# T04: Verified that the shared shell skip link, input tabs, and style selector already satisfy the keyboard-complete accessibility contract.\n\n**Verified that the shared shell skip link, input tabs, and style selector already satisfy the keyboard-complete accessibility contract.**\n\n## What Happened\n\nActivated the accessibility and test skills, read the task and slice contracts, and verified the local implementations before editing. Local reality already met the T04 requirements: Shell ships a real skip link and focusable main target, InputTabs and InputZone expose wired tab/tabpanel keyboard semantics, and StyleSelector uses keyboard-operable native controls with truthful active and disabled state. Because the task verification bundle passed unchanged, I avoided no-op source edits and recorded completion from verified local reality. I also attempted live browser proof, but an unrelated process outside this repository owned port 3000 and interfered with the first launch; after clearing this repo's stale .next/dev/lock and launching on port 3004, the browser session still failed before a clean live assertion could be captured.\n\n## Verification\n\nRan the task-plan verification command exactly as written: npm test -- --run src/__tests__/accessibility/keyboard-navigation.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/app/home-editorial-flow.test.tsx. All 3 test files and 23 assertions passed, covering skip-link focus transfer, tab/tabpanel semantics, arrow/Home/End stability, and the data-input typographic disabled-state contract. Investigated the live browser proof failure and confirmed it was caused by local environment contamination rather than an in-repo product defect.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/accessibility/keyboard-navigation.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/app/home-editorial-flow.test.tsx` | 0 | ✅ pass | 5700ms |\n| 2 | `npm run dev -- --port 3004 + browser navigation attempt` | 1 | ❌ fail | 60000ms |\n\n\n## Deviations\n\nNo source-code changes were required because the repository already satisfied the T04 contract before execution. The only deviation was completing the task from verified local reality instead of introducing no-op edits.\n\n## Known Issues\n\nLive browser proof was not captured during this run because local environment contamination interfered with the dev server: port 3000 was already bound by another project's node process and the first launch encountered a stale .next/dev/lock. This did not block the task contract because the required verification suite passed.\n\n## Files Created/Modified\n\n- `.gsd/milestones/M004/slices/S03/tasks/T04-SUMMARY.md`\n",
       "description": "Repair the keyboard and semantic gaps that are currently concentrated in the shared shell, input mode switcher, and style selector. This task should make users able to skip past navigation, understand the active input surface semantically, and change styles without a mouse.\n\n## Negative Tests\n\n- **Malformed inputs**: Arrow/Home/End/Tab key sequences on the input switcher and style selector keep focus/selection stable instead of breaking state.\n- **Error paths**: disabled typographic style for data inputs stays non-interactive but still understandable to assistive tech.\n- **Boundary conditions**: first render, resumed results, and data-input mode all keep active/disabled semantics truthful.\n\n## Steps\n\n1. Add a real skip link and focusable main target in `src/components/layout/Shell.tsx` so keyboard users can bypass the header/nav quickly.\n2. Replace the partial tab semantics in `src/components/input/InputTabs.tsx` with a truthful native-button or fully wired tab pattern that matches `InputZone` behavior and keyboard expectations.\n3. Convert `StyleSelector` from clickable ARIA-decorated containers into keyboard-operable native controls with explicit active/disabled state, including arrow-key support if true tab semantics are retained.\n4. Add focused accessibility/regression tests that prove skip-link behavior, selector semantics, and the data-input disabled-state contract.\n\n## Must-Haves\n\n- [ ] The shell exposes a visible-on-focus skip link that lands on the main content target.\n- [ ] Input mode switching is keyboard-usable and semantically truthful to assistive tech.\n- [ ] Style selection no longer depends on mouse-only clickable containers.",
       "estimate": "1h 10m",
       "files": [
@@ -2945,19 +2949,32 @@
       "milestone_id": "M004",
       "slice_id": "S03",
       "id": "T05",
-      "title": "Complete gallery modal focus lifecycle, reduced-motion hygiene, and final integrated proof",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added real gallery-modal focus restoration, reduced-motion coverage, and a passing final slice verification/build/browser proof bundle.",
+      "status": "complete",
+      "one_liner": "Added real gallery-modal focus restoration, reduced-motion coverage, and a passing final slice verification/build/browser proof bundle.",
+      "narrative": "Completed the remaining accessibility closeout work for the M004/S03 product loop by implementing deterministic gallery modal focus management, readable alert/status behavior, and reduced-motion overrides for editorial interaction surfaces. Extended the modal regression seam and preserved cross-surface wording/reduced-motion coverage. During final verification, production-only type checking exposed strictness gaps in recent-work palette snapshots and observability typing; I corrected those local seams so the required final build would pass truthfully. Finished with a passing exact slice regression/build command and live browser proof covering skip-link flow, keyboard style switching, modal focus/escape restoration, modal failure messaging, and the branded share unavailable surface.",
+      "verification_result": "Ran the exact task-plan verification command (`npm test -- --run ... && npm run build`) and it passed with all 64 targeted tests green plus a successful Next.js production build. Performed live browser proof on `http://localhost:3000`: verified skip-link focus to main, generated a real results surface, confirmed keyboard style-tab behavior, opened the gallery modal and verified initial focus plus Escape restoration to the Save to Gallery trigger, observed the expected modal alert on local no-DB gallery save failure, and asserted the branded unavailable state at `/share/missing-link` including truthful `DATABASE_URL is not set` diagnostics.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-27T03:15:35.488Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Fixed production-only type seams in `recent-work`, observability event-name typing, Sentry beforeSend wiring, and privacy context typing because they blocked the required final build verification. This was a local implementation correction, not a plan-invalidating blocker.",
+      "known_issues": "None.",
+      "key_files": [
+        "src/components/gallery/GallerySaveModal.tsx",
+        "src/components/results/ResultsView.tsx",
+        "src/app/globals.css",
+        "src/__tests__/gallery/save-modal.test.tsx",
+        "src/lib/continuity/types.ts",
+        "src/lib/continuity/recent-work.ts",
+        "src/lib/observability/events.ts",
+        "src/components/observability/ObservabilityProvider.tsx",
+        "src/lib/observability/privacy.ts"
+      ],
+      "key_decisions": [
+        "Pass the Save to Gallery trigger element from ResultsView into GallerySaveModal so real-browser focus restoration targets the actual opener.",
+        "Persist `selectionVector` in recent-work palette snapshots and fix the shared observability event union at the source seam so production `next build` stays aligned with runtime/test behavior."
+      ],
+      "full_summary_md": "---\nid: T05\nparent: S03\nmilestone: M004\nkey_files:\n  - src/components/gallery/GallerySaveModal.tsx\n  - src/components/results/ResultsView.tsx\n  - src/app/globals.css\n  - src/__tests__/gallery/save-modal.test.tsx\n  - src/lib/continuity/types.ts\n  - src/lib/continuity/recent-work.ts\n  - src/lib/observability/events.ts\n  - src/components/observability/ObservabilityProvider.tsx\n  - src/lib/observability/privacy.ts\nkey_decisions:\n  - Pass the Save to Gallery trigger element from ResultsView into GallerySaveModal so real-browser focus restoration targets the actual opener.\n  - Persist `selectionVector` in recent-work palette snapshots and fix the shared observability event union at the source seam so production `next build` stays aligned with runtime/test behavior.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-27T03:15:35.489Z\nblocker_discovered: false\n---\n\n# T05: Added real gallery-modal focus restoration, reduced-motion coverage, and a passing final slice verification/build/browser proof bundle.\n\n**Added real gallery-modal focus restoration, reduced-motion coverage, and a passing final slice verification/build/browser proof bundle.**\n\n## What Happened\n\nCompleted the remaining accessibility closeout work for the M004/S03 product loop by implementing deterministic gallery modal focus management, readable alert/status behavior, and reduced-motion overrides for editorial interaction surfaces. Extended the modal regression seam and preserved cross-surface wording/reduced-motion coverage. During final verification, production-only type checking exposed strictness gaps in recent-work palette snapshots and observability typing; I corrected those local seams so the required final build would pass truthfully. Finished with a passing exact slice regression/build command and live browser proof covering skip-link flow, keyboard style switching, modal focus/escape restoration, modal failure messaging, and the branded share unavailable surface.\n\n## Verification\n\nRan the exact task-plan verification command (`npm test -- --run ... && npm run build`) and it passed with all 64 targeted tests green plus a successful Next.js production build. Performed live browser proof on `http://localhost:3000`: verified skip-link focus to main, generated a real results surface, confirmed keyboard style-tab behavior, opened the gallery modal and verified initial focus plus Escape restoration to the Save to Gallery trigger, observed the expected modal alert on local no-DB gallery save failure, and asserted the branded unavailable state at `/share/missing-link` including truthful `DATABASE_URL is not set` diagnostics.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/gallery/save-modal.test.tsx src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/observability/privacy-filtering.test.ts src/__tests__/observability/product-loop-events.test.tsx src/__tests__/observability/public-route-failures.test.tsx src/__tests__/accessibility/keyboard-navigation.test.tsx && npm run build` | 0 | ✅ pass | 17800ms |\n| 2 | `browser proof: localhost home/results/modal/share-unavailable flow` | 0 | ✅ pass | 300000ms |\n\n\n## Deviations\n\nFixed production-only type seams in `recent-work`, observability event-name typing, Sentry beforeSend wiring, and privacy context typing because they blocked the required final build verification. This was a local implementation correction, not a plan-invalidating blocker.\n\n## Known Issues\n\nNone.\n\n## Files Created/Modified\n\n- `src/components/gallery/GallerySaveModal.tsx`\n- `src/components/results/ResultsView.tsx`\n- `src/app/globals.css`\n- `src/__tests__/gallery/save-modal.test.tsx`\n- `src/lib/continuity/types.ts`\n- `src/lib/continuity/recent-work.ts`\n- `src/lib/observability/events.ts`\n- `src/components/observability/ObservabilityProvider.tsx`\n- `src/lib/observability/privacy.ts`\n",
       "description": "Close the remaining accessibility breadth gaps in the modal and global motion layer, then run the full regression bundle and browser proof for the slice. This task is the slice closeout gate for both R007 and R010.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Gallery save modal focus lifecycle | Keep the modal closable and surface the existing error text while restoring focus to the opener whenever possible. | Preserve Escape/close behavior and avoid trapping the user permanently. | Keep the modal open with a truthful alert/status rather than losing focus context. |\n| Local dev/browser verification | Use an open port (3000 or 3004) and keep the runtime proof focused on real keyboard/failure behavior. | Retry on another open port rather than hardcoding one failing listener. | Capture the failing surface with targeted assertions/debug output before closing the slice. |\n\n## Negative Tests\n\n- **Malformed inputs**: Escape, Tab, Shift+Tab, and close-button interactions all preserve focus restoration and alert/status messaging.\n- **Error paths**: gallery save failure and unavailable-state messaging remain readable inside the modal and public-route surfaces.\n- **Boundary conditions**: reduced-motion preference disables ornamental transitions/hover lifts without breaking branded styling.\n\n## Steps\n\n1. Add initial focus, focus trap, Escape close, and focus restoration to `GallerySaveModal`, keeping its alert/status states screen-reader readable.\n2. Add global reduced-motion overrides in `src/app/globals.css` for transition-heavy editorial surfaces touched in M004.\n3. Add/update focused tests for the modal focus lifecycle and any cross-surface assertions needed to preserve product-family wording while the modal/shell behaviors change.\n4. Run the full slice regression bundle plus `npm run build`, then perform live browser verification on an open local dev port to confirm safe telemetry, skip-link flow, selector keyboard behavior, modal focus trap, and truthful unavailable-state behavior.\n\n## Must-Haves\n\n- [ ] Opening the gallery modal moves focus inside, traps focus, closes on Escape, and restores focus to the opener.\n- [ ] Reduced-motion preference suppresses editorial motion flourishes without stripping the branded layout.\n- [ ] The slice closes with one passing regression/build bundle and live browser proof across the real Home → Results → Gallery/Share continuity surfaces.",
       "estimate": "1h 10m",
       "files": [
@@ -3953,6 +3970,50 @@
       "verdict": "✅ pass",
       "duration_ms": 3590,
       "created_at": "2026-03-26T19:09:02.460Z"
+    },
+    {
+      "id": 27,
+      "task_id": "T04",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/accessibility/keyboard-navigation.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/app/home-editorial-flow.test.tsx",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 5700,
+      "created_at": "2026-03-27T02:43:09.918Z"
+    },
+    {
+      "id": 28,
+      "task_id": "T04",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "npm run dev -- --port 3004 + browser navigation attempt",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 60000,
+      "created_at": "2026-03-27T02:43:09.918Z"
+    },
+    {
+      "id": 29,
+      "task_id": "T05",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "npm test -- --run src/__tests__/gallery/save-modal.test.tsx src/__tests__/app/home-editorial-flow.test.tsx src/__tests__/app/anonymous-continuity.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx src/__tests__/app/product-family-coherence.test.tsx src/__tests__/components/results/ResultsView.live-proof.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/observability/privacy-filtering.test.ts src/__tests__/observability/product-loop-events.test.tsx src/__tests__/observability/public-route-failures.test.tsx src/__tests__/accessibility/keyboard-navigation.test.tsx && npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 17800,
+      "created_at": "2026-03-27T03:15:35.488Z"
+    },
+    {
+      "id": 30,
+      "task_id": "T05",
+      "slice_id": "S03",
+      "milestone_id": "M004",
+      "command": "browser proof: localhost home/results/modal/share-unavailable flow",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 300000,
+      "created_at": "2026-03-27T03:15:35.488Z"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import type { PaletteResult } from '@/lib/color/palette';
+import type { PaletteSelectionVector } from '@/lib/color/palette-family-selection';
 import type { StyleName } from '@/lib/render/types';
 import type { ParameterVector } from '@/types/engine';
 
@@ -26,6 +27,7 @@ export interface RecentWorkPaletteSnapshot {
   harmony: PaletteResult['harmony'];
   count: PaletteResult['count'];
   selectionKey: PaletteResult['selectionKey'];
+  selectionVector: PaletteSelectionVector;
   mapping: PaletteResult['mapping'];
   dark: PaletteResult['dark'];
   light: PaletteResult['light'];

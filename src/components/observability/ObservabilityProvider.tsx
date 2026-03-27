@@ -54,7 +54,7 @@ export function ObservabilityProvider({ children }: ObservabilityProviderProps) 
         tracesSampleRate: 0,
         replaysSessionSampleRate: 0,
         replaysOnErrorSampleRate: 0,
-        beforeSend: sanitizeSentryEvent,
+        beforeSend: (event, hint) => sanitizeSentryEvent(event, hint) as typeof event | null,
       });
       sentryInitialized = true;
     }

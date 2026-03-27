@@ -84,6 +84,7 @@ export function ResultsView({
   const styleTabsId = useId();
   const stylePanelId = `${styleTabsId}-panel`;
   const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const gallerySaveButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const prevCanonicalRef = useRef<string>('');
   const prevThemeRef = useRef<string>(theme);
@@ -598,6 +599,7 @@ export function ResultsView({
                     </a>
                   ) : (
                     <button
+                      ref={gallerySaveButtonRef}
                       type="button"
                       onClick={() => setShowSaveModal(true)}
                       className="btn-accent text-sm"
@@ -634,6 +636,7 @@ export function ResultsView({
           continuityMode={continuityMode}
           inputTextPreview={inputText.slice(0, 50)}
           thumbnailDataUrl={captureCurrentThumbnail()}
+          openerElement={gallerySaveButtonRef.current}
           onClose={() => setShowSaveModal(false)}
           onSaved={(id) => {
             setSavedGalleryId(id);

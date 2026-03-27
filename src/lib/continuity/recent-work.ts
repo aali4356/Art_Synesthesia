@@ -1,4 +1,5 @@
 import type { PaletteResult } from '@/lib/color/palette';
+import type { PaletteSelectionVector } from '@/lib/color/palette-family-selection';
 import type {
   BrowserStorageLike,
   RecentWorkPaletteSnapshot,
@@ -30,7 +31,20 @@ function isIsoDate(value: unknown): value is string {
   return !Number.isNaN(Date.parse(value));
 }
 
-function clonePaletteSnapshot(palette: PaletteResult | RecentWorkPaletteSnapshot): RecentWorkPaletteSnapshot {
+function normalizeSelectionVector(
+  selectionVector: PaletteSelectionVector | undefined,
+): PaletteSelectionVector {
+  return {
+    warmthBucket: selectionVector?.warmthBucket ?? 0,
+    energyBucket: selectionVector?.energyBucket ?? 0,
+    contrastBucket: selectionVector?.contrastBucket ?? 0,
+    seedInfluence: selectionVector?.seedInfluence ?? 0,
+  };
+}
+
+function clonePaletteSnapshot(
+  palette: (PaletteResult | RecentWorkPaletteSnapshot) & { selectionVector?: PaletteSelectionVector },
+): RecentWorkPaletteSnapshot {
   return {
     familyId: palette.familyId,
     familyName: palette.familyName,
@@ -38,6 +52,7 @@ function clonePaletteSnapshot(palette: PaletteResult | RecentWorkPaletteSnapshot
     harmony: palette.harmony,
     count: palette.count,
     selectionKey: palette.selectionKey,
+    selectionVector: normalizeSelectionVector(palette.selectionVector),
     mapping: palette.mapping,
     dark: palette.dark,
     light: palette.light,

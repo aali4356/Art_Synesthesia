@@ -113,7 +113,7 @@
   - Estimate: 1h 30m
   - Files: src/components/results/ShareButton.tsx, src/components/results/ExportControls.tsx, src/components/gallery/GallerySaveModal.tsx, src/app/api/analyze-url/route.ts, src/app/api/share/route.ts, src/app/api/gallery/route.ts, src/app/api/render-export/route.ts, src/components/viewers/BrandedViewerScaffold.tsx, src/__tests__/observability/public-route-failures.test.tsx
   - Verify: npm test -- --run src/__tests__/observability/public-route-failures.test.tsx src/__tests__/app/shared-brand-surfaces.test.tsx
-- [ ] **T04: Make the shared shell and selector controls keyboard-complete** — Repair the keyboard and semantic gaps that are currently concentrated in the shared shell, input mode switcher, and style selector. This task should make users able to skip past navigation, understand the active input surface semantically, and change styles without a mouse.
+- [x] **T04: Verified that the shared shell skip link, input tabs, and style selector already satisfy the keyboard-complete accessibility contract.** — Repair the keyboard and semantic gaps that are currently concentrated in the shared shell, input mode switcher, and style selector. This task should make users able to skip past navigation, understand the active input surface semantically, and change styles without a mouse.
 
 ## Negative Tests
 
@@ -136,7 +136,7 @@
   - Estimate: 1h 10m
   - Files: src/components/layout/Shell.tsx, src/components/input/InputTabs.tsx, src/components/input/InputZone.tsx, src/components/results/StyleSelector.tsx, src/__tests__/accessibility/keyboard-navigation.test.tsx, src/__tests__/components/StyleSelector.test.tsx, src/__tests__/app/home-editorial-flow.test.tsx
   - Verify: npm test -- --run src/__tests__/accessibility/keyboard-navigation.test.tsx src/__tests__/components/StyleSelector.test.tsx src/__tests__/app/home-editorial-flow.test.tsx
-- [ ] **T05: Complete gallery modal focus lifecycle, reduced-motion hygiene, and final integrated proof** — Close the remaining accessibility breadth gaps in the modal and global motion layer, then run the full regression bundle and browser proof for the slice. This task is the slice closeout gate for both R007 and R010.
+- [x] **T05: Added real gallery-modal focus restoration, reduced-motion coverage, and a passing final slice verification/build/browser proof bundle.** — Close the remaining accessibility breadth gaps in the modal and global motion layer, then run the full regression bundle and browser proof for the slice. This task is the slice closeout gate for both R007 and R010.
 
 ## Failure Modes
 

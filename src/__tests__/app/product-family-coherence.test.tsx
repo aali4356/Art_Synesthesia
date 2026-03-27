@@ -74,6 +74,9 @@ describe('product family coherence', () => {
     expect(galleryCardSource).toContain('Public archive card with route-safe detail access, lightweight reactions, and no raw input exposure.');
     expect(globalsSource).toContain('.gallery-collector-card');
     expect(globalsSource).toContain('.gallery-collector-card__detail-link');
+    expect(globalsSource).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(globalsSource).toContain('.gallery-collector-card:hover');
+    expect(globalsSource).toContain('.btn-accent:hover');
   });
 
   it('preserves privacy and runtime truth boundaries in continuity copy', async () => {

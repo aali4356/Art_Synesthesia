@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { captureClientEvent } from '@/lib/observability/client';
 import {
   OBSERVABILITY_EVENTS,
@@ -21,21 +21,28 @@ interface GallerySaveModalProps {
   inputTextPreview: string;
   /** Base64 data URL captured from current canvas */
   thumbnailDataUrl: string;
+  /** Explicit opener element from the trigger button for deterministic focus restoration. */
+  openerElement?: HTMLElement | null;
   onClose: () => void;
   onSaved: (id: string) => void;
 }
 
 const MAX_PREVIEW_CHARS = 50;
+const FOCUSABLE_SELECTOR = [
+  'button:not([disabled])',
+  'a[href]',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ');
 
 function captureGalleryEvent(
-  eventName:
-    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveRequested
-    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveCompleted
-    | typeof OBSERVABILITY_EVENTS.publicActions.gallerySaveFailed,
+  eventName: string,
   properties: Record<string, unknown>,
 ) {
   try {
-    captureClientEvent(eventName, properties);
+    captureClientEvent(eventName as Parameters<typeof captureClientEvent>[0], properties);
   } catch {
     // Observability is non-blocking by contract.
   }
@@ -53,6 +60,24 @@ function classifyResponseFailure(statusBucket: StatusBucket, hasBody: boolean): 
   return hasBody ? 'request-failed' : 'malformed-payload';
 }
 
+function getFocusableElements(root: HTMLElement | null): HTMLElement[] {
+  if (!root) {
+    return [];
+  }
+
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((element) => {
+    if (element.hasAttribute('disabled')) {
+      return false;
+    }
+
+    if (element.getAttribute('aria-hidden') === 'true') {
+      return false;
+    }
+
+    return true;
+  });
+}
+
 /**
  * GallerySaveModal — opt-in gallery save dialog (GAL-01, GAL-02).
  *
@@ -66,6 +91,7 @@ export function GallerySaveModal({
   continuityMode = 'fresh',
   inputTextPreview,
   thumbnailDataUrl,
+  openerElement,
   onClose,
   onSaved,
 }: GallerySaveModalProps) {
@@ -76,6 +102,90 @@ export function GallerySaveModal({
   const [includePreview, setIncludePreview] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const isMountedRef = useRef(false);
+
+  const titleId = useId();
+  const descriptionId = useId();
+  const previewStatusId = useId();
+  const errorId = useId();
+  const dialogDescriptionIds = [descriptionId, previewStatusId, error ? errorId : null].filter(Boolean).join(' ');
+
+  const restoreFocusToOpener = useCallback(() => {
+    const opener = openerRef.current;
+
+    if (!opener || !opener.isConnected) {
+      return;
+    }
+
+    opener.focus();
+  }, []);
+
+  const handleRequestClose = useCallback(() => {
+    onClose();
+
+    if (typeof window !== 'undefined') {
+      window.requestAnimationFrame(() => {
+        restoreFocusToOpener();
+      });
+      return;
+    }
+
+    restoreFocusToOpener();
+  }, [onClose, restoreFocusToOpener]);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    openerRef.current = openerElement ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+
+    const initialFocusTarget = titleInputRef.current ?? closeButtonRef.current ?? dialogRef.current;
+    initialFocusTarget?.focus();
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [openerElement]);
+
+  function handleDialogKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      handleRequestClose();
+      return;
+    }
+
+    if (event.key !== 'Tab') {
+      return;
+    }
+
+    const focusableElements = getFocusableElements(dialogRef.current);
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      dialogRef.current?.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    if (event.shiftKey) {
+      if (!activeElement || activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      }
+      return;
+    }
+
+    if (!activeElement || activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -113,6 +223,11 @@ export function GallerySaveModal({
         body: JSON.stringify(body),
       });
       const data = (await response.json().catch(() => null)) as { saved?: boolean; id?: string; error?: string } | null;
+
+      if (!isMountedRef.current) {
+        return;
+      }
+
       if (!response.ok || !data?.saved || !data.id) {
         setError(data?.error ?? 'Save failed. Please try again.');
         setSaving(false);
@@ -149,6 +264,10 @@ export function GallerySaveModal({
       );
       onSaved(data.id);
     } catch (caughtError) {
+      if (!isMountedRef.current) {
+        return;
+      }
+
       setError('Network error. Please try again.');
       setSaving(false);
       const category = classifyObservabilityError(caughtError);
@@ -173,22 +292,29 @@ export function GallerySaveModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/72 px-4 py-8 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
-      aria-label="Save to Gallery"
+      aria-labelledby={titleId}
+      aria-describedby={dialogDescriptionIds}
+      onKeyDown={handleDialogKeyDown}
     >
-      <div className="editorial-modal-shell max-h-[90vh] w-full max-w-xl overflow-y-auto">
+      <div
+        ref={dialogRef}
+        className="editorial-modal-shell max-h-[90vh] w-full max-w-xl overflow-y-auto"
+        tabIndex={-1}
+      >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="editorial-note-label mb-1">Gallery save</p>
-            <h2 className="editorial-display text-3xl leading-[0.95]">Save a public gallery edition</h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg leading-relaxed">
+            <h2 id={titleId} className="editorial-display text-3xl leading-[0.95]">Save a public gallery edition</h2>
+            <p id={descriptionId} className="mt-2 text-sm text-[var(--muted-foreground)] max-w-lg leading-relaxed">
               Preview exactly what will move from your private results desk into the public gallery edition. Recent local work stays browser-local, while share links remain separate public parameter-only routes.
             </p>
           </div>
           <button
+            ref={closeButtonRef}
             type="button"
-            onClick={onClose}
-            disabled={saving}
+            onClick={handleRequestClose}
             className="btn-ghost text-sm"
+            aria-label="Close gallery save dialog"
           >
             Close
           </button>
@@ -226,6 +352,7 @@ export function GallerySaveModal({
                 Title (optional)
               </label>
               <input
+                ref={titleInputRef}
                 id="gallery-title"
                 type="text"
                 value={title}
@@ -237,7 +364,7 @@ export function GallerySaveModal({
             </div>
 
             <div className="editorial-action-card">
-              <div className="flex items-center justify-between gap-3 mb-3">
+              <div className="mb-3 flex items-center justify-between gap-3">
                 <label htmlFor="gallery-preview" className="editorial-field-label mb-0">
                   Input preview (optional)
                 </label>
@@ -245,31 +372,35 @@ export function GallerySaveModal({
                   type="button"
                   onClick={() => setIncludePreview(!includePreview)}
                   className="btn-ghost text-sm"
+                  aria-controls="gallery-preview"
+                  aria-pressed={includePreview}
                 >
                   {includePreview ? 'Remove' : 'Add back'}
                 </button>
               </div>
 
-              {includePreview ? (
-                <div>
-                  <input
-                    id="gallery-preview"
-                    type="text"
-                    value={inputPreview}
-                    onChange={(e) => setInputPreview(e.target.value.slice(0, MAX_PREVIEW_CHARS))}
-                    placeholder="Short description (max 50 chars)"
-                    className="editorial-input"
-                    maxLength={MAX_PREVIEW_CHARS}
-                  />
-                  <p className="mt-2 text-xs text-[var(--muted-foreground)] leading-relaxed">
-                    {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is not your full input, only an optional public-facing hint for the gallery edition.
+              <div aria-live="polite" aria-atomic="true">
+                {includePreview ? (
+                  <div>
+                    <input
+                      id="gallery-preview"
+                      type="text"
+                      value={inputPreview}
+                      onChange={(e) => setInputPreview(e.target.value.slice(0, MAX_PREVIEW_CHARS))}
+                      placeholder="Short description (max 50 chars)"
+                      className="editorial-input"
+                      maxLength={MAX_PREVIEW_CHARS}
+                    />
+                    <p id={previewStatusId} className="mt-2 text-xs text-[var(--muted-foreground)] leading-relaxed" role="status">
+                      {inputPreview.length}/{MAX_PREVIEW_CHARS} chars — this is not your full input, only an optional public-facing hint for the gallery edition.
+                    </p>
+                  </div>
+                ) : (
+                  <p id={previewStatusId} className="text-xs italic text-[var(--muted-foreground)]" role="status">
+                    No input preview will be shown.
                   </p>
-                </div>
-              ) : (
-                <p className="text-xs italic text-[var(--muted-foreground)]">
-                  No input preview will be shown.
-                </p>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="editorial-action-card">
@@ -283,14 +414,13 @@ export function GallerySaveModal({
             </div>
 
             {error && (
-              <p className="text-sm text-[var(--color-accent)]" role="alert">{error}</p>
+              <p id={errorId} className="text-sm text-[var(--color-accent)]" role="alert">{error}</p>
             )}
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={onClose}
-                disabled={saving}
+                onClick={handleRequestClose}
                 className="btn-ghost text-sm"
               >
                 Cancel

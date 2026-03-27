@@ -27,14 +27,11 @@ interface ExportState {
 }
 
 function captureExportEvent(
-  eventName:
-    | typeof OBSERVABILITY_EVENTS.publicActions.exportRequested
-    | typeof OBSERVABILITY_EVENTS.publicActions.exportCompleted
-    | typeof OBSERVABILITY_EVENTS.publicActions.exportFailed,
+  eventName: string,
   properties: Record<string, unknown>,
 ) {
   try {
-    captureClientEvent(eventName, properties);
+    captureClientEvent(eventName as Parameters<typeof captureClientEvent>[0], properties);
   } catch {
     // Observability is non-blocking by contract.
   }

@@ -34,8 +34,9 @@ export const OBSERVABILITY_EVENTS = {
   },
 } as const;
 
-export type ObservabilityEventName =
-  (typeof OBSERVABILITY_EVENTS)[keyof typeof OBSERVABILITY_EVENTS][keyof (typeof OBSERVABILITY_EVENTS)[keyof typeof OBSERVABILITY_EVENTS]];
+type ValueOf<T> = T extends unknown ? T[keyof T] : never;
+
+export type ObservabilityEventName = ValueOf<ValueOf<typeof OBSERVABILITY_EVENTS>>;
 
 export type RouteFamily = 'analyze-url' | 'share' | 'gallery' | 'render-export' | 'unknown';
 export type StatusBucket = '2xx' | '4xx' | '5xx' | 'timeout' | 'network';
