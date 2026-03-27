@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, useId } from 'react';
 import { useTheme } from 'next-themes';
 import type { PipelineResult, PipelineStage } from '@/hooks/useTextAnalysis';
 import type { RecentWorkSaveState } from '@/hooks/useRecentWorks';
@@ -81,6 +81,8 @@ export function ResultsView({
   const [shouldAnimate, setShouldAnimate] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [savedGalleryId, setSavedGalleryId] = useState<string | null>(null);
+  const styleTabsId = useId();
+  const stylePanelId = `${styleTabsId}-panel`;
   const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const prevCanonicalRef = useRef<string>('');
@@ -400,11 +402,18 @@ export function ResultsView({
                 activeStyle={activeStyle}
                 onStyleChange={handleStyleChange}
                 inputType={inputType}
+                idPrefix={styleTabsId}
+                panelId={stylePanelId}
               />
             </div>
           </section>
 
-          <section className="editorial-panel editorial-canvas-frame overflow-hidden">
+          <section
+            id={stylePanelId}
+            role="tabpanel"
+            aria-labelledby={`${styleTabsId}-${activeStyle}-tab`}
+            className="editorial-panel editorial-canvas-frame overflow-hidden"
+          >
             <div
               className={`transition-opacity duration-500 ${isGenerating ? 'opacity-40' : 'opacity-100'}`}
             >

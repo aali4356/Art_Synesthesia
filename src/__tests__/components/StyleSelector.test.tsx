@@ -262,6 +262,53 @@ describe('StyleSelector', () => {
     expect(onStyleChange).toHaveBeenCalledWith('geometric');
   });
 
+  it('keeps truthful tab semantics for the active style', () => {
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="organic"
+        onStyleChange={vi.fn()}
+        panelId="results-style-panel"
+      />,
+    );
+
+    expect(screen.getByRole('tablist', { name: 'Rendering styles' })).toBeDefined();
+    expect(screen.getByRole('tab', { name: 'Organic' }).getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tab', { name: 'Organic' }).getAttribute('aria-controls')).toBe('results-style-panel');
+    expect(screen.getByRole('tab', { name: 'Geometric' }).getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('supports arrow, home, and end keys without breaking selection state', () => {
+    const onStyleChange = vi.fn();
+    render(
+      <StyleSelector
+        scenes={nullScenes}
+        activeStyle="geometric"
+        onStyleChange={onStyleChange}
+      />,
+    );
+
+    const geometricTab = screen.getByRole('tab', { name: 'Geometric' });
+    const organicTab = screen.getByRole('tab', { name: 'Organic' });
+    const typographicTab = screen.getByRole('tab', { name: 'Typographic' });
+
+    geometricTab.focus();
+    fireEvent.keyDown(geometricTab, { key: 'ArrowRight' });
+    expect(onStyleChange).toHaveBeenLastCalledWith('organic');
+    expect(document.activeElement).toBe(organicTab);
+
+    fireEvent.keyDown(organicTab, { key: 'End' });
+    expect(onStyleChange).toHaveBeenLastCalledWith('typographic');
+    expect(document.activeElement).toBe(typographicTab);
+
+    fireEvent.keyDown(typographicTab, { key: 'Home' });
+    expect(onStyleChange).toHaveBeenLastCalledWith('geometric');
+    expect(document.activeElement).toBe(geometricTab);
+
+    fireEvent.keyDown(geometricTab, { key: 'Tab' });
+    expect(onStyleChange).toHaveBeenLastCalledWith('geometric');
+  });
+
   it('typographic is not clickable (no onStyleChange call) when inputType="data"', () => {
     const onStyleChange = vi.fn();
     render(

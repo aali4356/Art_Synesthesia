@@ -246,6 +246,18 @@ describe('S02 editorial homepage onboarding contract', () => {
     expect(screen.getByText('Curated prompts')).toBeDefined();
     expect(screen.getByRole('button', { name: 'a haiku' })).toBeDefined();
 
+    const textTab = screen.getByRole('tab', { name: 'Text' });
+    const urlTab = screen.getByRole('tab', { name: 'URL' });
+    expect(textTab.getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tabpanel', { name: 'Text' })).toBeDefined();
+
+    fireEvent.keyDown(textTab, { key: 'ArrowRight' });
+    expect(urlTab.getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tabpanel', { name: 'URL' })).toBeDefined();
+
+    fireEvent.keyDown(urlTab, { key: 'Home' });
+    expect(textTab.getAttribute('aria-selected')).toBe('true');
+
     fireEvent.change(screen.getByLabelText('Text input for artwork generation'), {
       target: { value: 'Cathedral brass and midnight rain' },
     });
@@ -269,6 +281,8 @@ describe('S02 editorial homepage onboarding contract', () => {
     expect(screen.getByText('palette family')).toBeDefined();
     expect(screen.getByText('orchid-nocturne')).toBeDefined();
     expect(screen.getByText('renderer expressiveness')).toBeDefined();
+    expect(screen.getByRole('tablist', { name: 'Rendering styles' })).toBeDefined();
+    expect(screen.getByRole('tab', { name: 'Geometric' }).getAttribute('aria-selected')).toBe('true');
     expect(screen.getByText('Share')).toBeDefined();
     expect(screen.getByText('Save to Gallery')).toBeDefined();
     expect(screen.getByText('Next steps')).toBeDefined();

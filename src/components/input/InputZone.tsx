@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useId } from 'react';
 import { InputTabs } from './InputTabs';
 import type { TabKey } from './InputTabs';
 import { TextInput } from './TextInput';
@@ -54,6 +54,9 @@ export function InputZone({
   visitorMode = 'first-visit',
 }: InputZoneProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('text');
+  const tabsId = useId();
+  const tabIdPrefix = `${tabsId}-tab`;
+  const panelIdPrefix = `${tabsId}-panel`;
 
   const handleTabChange = useCallback((tab: TabKey) => {
     setActiveTab(tab);
@@ -167,10 +170,20 @@ export function InputZone({
         </div>
 
         <div className="space-y-5">
-          <InputTabs activeTab={activeTab} onTabChange={handleTabChange} />
+          <InputTabs
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            tabIdPrefix={tabIdPrefix}
+            panelIdPrefix={panelIdPrefix}
+          />
 
           {activeTab === 'text' && (
-            <div className="space-y-4">
+            <div
+              role="tabpanel"
+              id={`${panelIdPrefix}-text`}
+              aria-labelledby={`${tabIdPrefix}-text`}
+              className="space-y-4"
+            >
               <TextInput
                 value={text}
                 onChange={onTextChange}
@@ -187,25 +200,37 @@ export function InputZone({
           )}
 
           {activeTab === 'url' && (
-            <UrlInput
-              url={url}
-              onUrlChange={onUrlChange}
-              onAnalyze={onAnalyzeUrl}
-              disabled={isAnalyzingUrl}
-              remainingQuota={urlRemainingQuota}
-              error={urlError}
-            />
+            <div
+              role="tabpanel"
+              id={`${panelIdPrefix}-url`}
+              aria-labelledby={`${tabIdPrefix}-url`}
+            >
+              <UrlInput
+                url={url}
+                onUrlChange={onUrlChange}
+                onAnalyze={onAnalyzeUrl}
+                disabled={isAnalyzingUrl}
+                remainingQuota={urlRemainingQuota}
+                error={urlError}
+              />
+            </div>
           )}
 
           {activeTab === 'data' && (
-            <DataInput
-              data={data}
-              onDataChange={onDataChange}
-              onAnalyze={onAnalyzeData}
-              disabled={isAnalyzingData}
-              error={dataError}
-              formatHint={dataFormatHint}
-            />
+            <div
+              role="tabpanel"
+              id={`${panelIdPrefix}-data`}
+              aria-labelledby={`${tabIdPrefix}-data`}
+            >
+              <DataInput
+                data={data}
+                onDataChange={onDataChange}
+                onAnalyze={onAnalyzeData}
+                disabled={isAnalyzingData}
+                error={dataError}
+                formatHint={dataFormatHint}
+              />
+            </div>
           )}
         </div>
       </div>
