@@ -77,7 +77,7 @@
   - Estimate: 1h 15m
   - Files: package.json, scripts/verify-deployment.mjs, src/lib/deployment/smoke.ts, src/__tests__/deployment/smoke.test.ts
   - Verify: npm test -- --run src/__tests__/deployment/smoke.test.ts
-- [ ] **T03: Publish the canonical Vercel + Neon runbook and capture live deployment proof** — Close the slice by using the checked-in contract and smoke tooling against the real provisioned stack. This task should document the exact setup order, collect any required secrets through the secure env flow, run migrations, deploy/update the Vercel app, execute the deployed smoke command, and record the resulting URL plus proof outcomes in durable markdown artifacts that downstream slices can trust.
+- [x] **T03: Published the canonical Vercel + Neon runbook and a truthful blocked live-proof artifact because the project cannot currently be deployed to Vercel.** — Close the slice by using the checked-in contract and smoke tooling against the real provisioned stack. This task should document the exact setup order, collect any required secrets through the secure env flow, run migrations, deploy/update the Vercel app, execute the deployed smoke command, and record the resulting URL plus proof outcomes in durable markdown artifacts that downstream slices can trust.
 
 ## Failure Modes
 
@@ -114,3 +114,4 @@
   - Estimate: 1h 30m
   - Files: docs/deployment/vercel-neon-launch.md, docs/deployment/live-proof.md, .gsd/milestones/M005/M005-SECRETS.md, package.json, scripts/verify-deployment.mjs
   - Verify: npm run db:migrate && node scripts/verify-deployment.mjs --base-url "$SYNESTHESIA_PUBLIC_BASE_URL" --cron-secret "$CRON_SECRET" --admin-secret "$ADMIN_SECRET" && grep -q "## Deployment order" docs/deployment/vercel-neon-launch.md && grep -q "## Live proof" docs/deployment/live-proof.md
+  - Blocker: Live deployment proof for S01 is still missing. DATABASE_URL and SYNESTHESIA_PUBLIC_BASE_URL remain unavailable, there is no local .vercel project binding, and the vercel CLI is not installed. The slice cannot honestly claim launch-ready Vercel + Neon proof until those external constraints are resolved or the roadmap is replanned to a different deployment target.

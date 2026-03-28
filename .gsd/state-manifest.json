@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-28T19:14:06.072Z",
+  "exported_at": "2026-03-28T19:41:07.432Z",
   "milestones": [
     {
       "id": "M001",
@@ -3232,19 +3232,27 @@
       "milestone_id": "M005",
       "slice_id": "S01",
       "id": "T03",
-      "title": "Publish the canonical Vercel + Neon runbook and capture live deployment proof",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Published the canonical Vercel + Neon runbook and a truthful blocked live-proof artifact because the project cannot currently be deployed to Vercel.",
+      "status": "complete",
+      "one_liner": "Published the canonical Vercel + Neon runbook and a truthful blocked live-proof artifact because the project cannot currently be deployed to Vercel.",
+      "narrative": "Created docs/deployment/vercel-neon-launch.md as the canonical checked-in runbook for the intended Vercel + Neon launch path, including environment contract, migration/build/smoke order, degraded-mode interpretation, failure handling, rollback hooks, and artifact expectations. Created docs/deployment/live-proof.md as the durable proof artifact for this execution and recorded the real blocked state instead of fabricating success: the repo is not on GitHub, the app cannot be put on Vercel from the current project situation, no local .vercel/project.json binding exists, the vercel CLI is unavailable in the shell, DATABASE_URL is still missing for migrations, and SYNESTHESIA_PUBLIC_BASE_URL is still missing for smoke verification. Updated .gsd/milestones/M005/M005-SECRETS.md so downstream work can see which launch-critical secrets were collected locally and which deploy-critical secrets/bindings are still absent. This execution revealed a plan-invalidating external blocker for the remainder of the slice contract: live Vercel proof cannot be completed from the current project state.",
+      "verification_result": "Ran npm test -- --run src/__tests__/deployment/smoke.test.ts and confirmed the checked-in smoke harness still passes locally. Ran npm run db:migrate and confirmed it fails fast on the correct named prerequisite with [deployment-env] mode=migrate status=failed kind=missing key=DATABASE_URL. Ran node scripts/verify-deployment.mjs and confirmed it fails fast on the correct named prerequisite with Missing required base URL. Provide --base-url or SYNESTHESIA_PUBLIC_BASE_URL. Verified docs/deployment/vercel-neon-launch.md contains the Deployment order section and docs/deployment/live-proof.md contains the live-proof heading. Ran vercel --version and confirmed the CLI is unavailable, then checked for .vercel/project.json and confirmed no local Vercel project binding exists.",
       "duration": "",
-      "completed_at": null,
-      "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "completed_at": "2026-03-28T19:41:07.366Z",
+      "blocker_discovered": true,
+      "deviations": "The task plan assumed a real Vercel + Neon deploy/update path could be executed from this workspace. During execution the user clarified that the repo is not on GitHub and cannot be put on Vercel, so the live-proof artifact was converted into a truthful blocked-proof record rather than a fake success artifact.",
+      "known_issues": "Live deployment proof for S01 is still missing. DATABASE_URL and SYNESTHESIA_PUBLIC_BASE_URL remain unavailable, there is no local .vercel project binding, and the vercel CLI is not installed. The slice cannot honestly claim launch-ready Vercel + Neon proof until those external constraints are resolved or the roadmap is replanned to a different deployment target.",
+      "key_files": [
+        "docs/deployment/vercel-neon-launch.md",
+        "docs/deployment/live-proof.md",
+        ".gsd/milestones/M005/M005-SECRETS.md",
+        ".gsd/milestones/M005/slices/S01/tasks/T03-SUMMARY.md"
+      ],
+      "key_decisions": [
+        "Treated the absence of a real GitHub/Vercel deployment path as a plan-invalidating external blocker and recorded blocked proof explicitly instead of fabricating live deployment success.",
+        "Kept one canonical live-proof artifact at docs/deployment/live-proof.md that distinguishes verified code/tooling behavior from missing external platform prerequisites."
+      ],
+      "full_summary_md": "---\nid: T03\nparent: S01\nmilestone: M005\nkey_files:\n  - docs/deployment/vercel-neon-launch.md\n  - docs/deployment/live-proof.md\n  - .gsd/milestones/M005/M005-SECRETS.md\n  - .gsd/milestones/M005/slices/S01/tasks/T03-SUMMARY.md\nkey_decisions:\n  - Treated the absence of a real GitHub/Vercel deployment path as a plan-invalidating external blocker and recorded blocked proof explicitly instead of fabricating live deployment success.\n  - Kept one canonical live-proof artifact at docs/deployment/live-proof.md that distinguishes verified code/tooling behavior from missing external platform prerequisites.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-28T19:41:07.390Z\nblocker_discovered: true\n---\n\n# T03: Published the canonical Vercel + Neon runbook and a truthful blocked live-proof artifact because the project cannot currently be deployed to Vercel.\n\n**Published the canonical Vercel + Neon runbook and a truthful blocked live-proof artifact because the project cannot currently be deployed to Vercel.**\n\n## What Happened\n\nCreated docs/deployment/vercel-neon-launch.md as the canonical checked-in runbook for the intended Vercel + Neon launch path, including environment contract, migration/build/smoke order, degraded-mode interpretation, failure handling, rollback hooks, and artifact expectations. Created docs/deployment/live-proof.md as the durable proof artifact for this execution and recorded the real blocked state instead of fabricating success: the repo is not on GitHub, the app cannot be put on Vercel from the current project situation, no local .vercel/project.json binding exists, the vercel CLI is unavailable in the shell, DATABASE_URL is still missing for migrations, and SYNESTHESIA_PUBLIC_BASE_URL is still missing for smoke verification. Updated .gsd/milestones/M005/M005-SECRETS.md so downstream work can see which launch-critical secrets were collected locally and which deploy-critical secrets/bindings are still absent. This execution revealed a plan-invalidating external blocker for the remainder of the slice contract: live Vercel proof cannot be completed from the current project state.\n\n## Verification\n\nRan npm test -- --run src/__tests__/deployment/smoke.test.ts and confirmed the checked-in smoke harness still passes locally. Ran npm run db:migrate and confirmed it fails fast on the correct named prerequisite with [deployment-env] mode=migrate status=failed kind=missing key=DATABASE_URL. Ran node scripts/verify-deployment.mjs and confirmed it fails fast on the correct named prerequisite with Missing required base URL. Provide --base-url or SYNESTHESIA_PUBLIC_BASE_URL. Verified docs/deployment/vercel-neon-launch.md contains the Deployment order section and docs/deployment/live-proof.md contains the live-proof heading. Ran vercel --version and confirmed the CLI is unavailable, then checked for .vercel/project.json and confirmed no local Vercel project binding exists.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/deployment/smoke.test.ts` | 0 | ✅ pass | 962ms |\n| 2 | `npm run db:migrate` | 1 | ✅ pass | 899ms |\n| 3 | `node scripts/verify-deployment.mjs` | 1 | ✅ pass | 157ms |\n| 4 | `grep -q \"## Deployment order\" docs/deployment/vercel-neon-launch.md` | 0 | ✅ pass | 20ms |\n| 5 | `grep -q \"# Live proof\\|## Live proof\" docs/deployment/live-proof.md` | 0 | ✅ pass | 20ms |\n| 6 | `vercel --version` | 127 | ✅ pass | 28ms |\n| 7 | `find . -path '*/.vercel/project.json' -print` | 0 | ✅ pass | 20ms |\n\n\n## Deviations\n\nThe task plan assumed a real Vercel + Neon deploy/update path could be executed from this workspace. During execution the user clarified that the repo is not on GitHub and cannot be put on Vercel, so the live-proof artifact was converted into a truthful blocked-proof record rather than a fake success artifact.\n\n## Known Issues\n\nLive deployment proof for S01 is still missing. DATABASE_URL and SYNESTHESIA_PUBLIC_BASE_URL remain unavailable, there is no local .vercel project binding, and the vercel CLI is not installed. The slice cannot honestly claim launch-ready Vercel + Neon proof until those external constraints are resolved or the roadmap is replanned to a different deployment target.\n\n## Files Created/Modified\n\n- `docs/deployment/vercel-neon-launch.md`\n- `docs/deployment/live-proof.md`\n- `.gsd/milestones/M005/M005-SECRETS.md`\n- `.gsd/milestones/M005/slices/S01/tasks/T03-SUMMARY.md`\n",
       "description": "Close the slice by using the checked-in contract and smoke tooling against the real provisioned stack. This task should document the exact setup order, collect any required secrets through the secure env flow, run migrations, deploy/update the Vercel app, execute the deployed smoke command, and record the resulting URL plus proof outcomes in durable markdown artifacts that downstream slices can trust.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Secret collection / platform configuration | Stop before deploy and record which required secret or project binding is still missing. | Retry only after the missing external step is confirmed, not in a blind loop. | Reject malformed project URLs/IDs and fix the config source before deployment continues. |\n| Vercel build/deploy pipeline | Fail the task with the named build/deploy stage and link the runbook to the remediation point. | Treat as deployment failure and do not continue to smoke verification on a partial rollout. | Record the unexpected platform response in the live-proof artifact for follow-up. |\n| Live smoke verification | Treat any failing step as a launch blocker and capture the exact failing route/step in the proof artifact. | Abort with timeout classification and timestamp. | Record the malformed response/fallback marker so the next slice knows the deployment is not yet trustworthy. |\n\n## Load Profile\n\n- **Shared resources**: Vercel build pipeline, Neon migrations, and the live deployed public/operator routes.\n- **Per-operation cost**: one migration run, one deploy/update, and one bounded smoke pass against the live URL.\n- **10x breakpoint**: repeated redeploy/smoke loops can create proof noise and stale artifacts; the task should overwrite/update one canonical proof artifact per run.\n\n## Negative Tests\n\n- **Malformed inputs**: missing deployment URL, wrong project binding, or absent secrets block the run before false proof is recorded.\n- **Error paths**: build failure, migration failure, 401/503 operator responses, and branded unavailable states on share/gallery routes are captured as explicit blockers.\n- **Boundary conditions**: the same runbook must distinguish local-proof allowances from deployed-runtime requirements so later operators do not conflate them.\n\n## Steps\n\n1. Write a checked-in runbook that spells out environment setup, migration order, deploy/update steps, smoke commands, rollback hooks, and known degraded-mode interpretations.\n2. Use secure secret collection for any missing launch keys, then run the canonical migrate + deploy steps against the real Vercel + Neon environment.\n3. Execute `scripts/verify-deployment.mjs` against the resulting public URL and capture the exact output/results in a durable live-proof markdown artifact.\n4. Cross-check the runbook so every command and artifact path matches the implemented package scripts and smoke tooling from T01/T02.\n\n## Must-Haves\n\n- [ ] The repo contains one canonical Vercel + Neon runbook with exact command order and secret expectations.\n- [ ] A live deployed URL is recorded alongside passing migration/smoke proof for DB-backed share/gallery routes and protected cron/admin endpoints.\n- [ ] The proof artifact makes any blocker or degraded fallback unmistakable to downstream slices.",
       "estimate": "1h 30m",
       "files": [
@@ -4462,6 +4470,83 @@
       "verdict": "✅ pass",
       "duration_ms": 2,
       "created_at": "2026-03-28T19:14:06.043Z"
+    },
+    {
+      "id": 39,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm test -- --run src/__tests__/deployment/smoke.test.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 962,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 40,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm run db:migrate",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 899,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 41,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "node scripts/verify-deployment.mjs",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 157,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 42,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "grep -q \"## Deployment order\" docs/deployment/vercel-neon-launch.md",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 20,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 43,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "grep -q \"# Live proof\\|## Live proof\" docs/deployment/live-proof.md",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 20,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 44,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "vercel --version",
+      "exit_code": 127,
+      "verdict": "✅ pass",
+      "duration_ms": 28,
+      "created_at": "2026-03-28T19:41:07.366Z"
+    },
+    {
+      "id": 45,
+      "task_id": "T03",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "find . -path '*/.vercel/project.json' -print",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 20,
+      "created_at": "2026-03-28T19:41:07.366Z"
     }
   ]
 }
