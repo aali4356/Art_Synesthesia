@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-28T19:03:23.982Z",
+  "exported_at": "2026-03-28T19:14:06.072Z",
   "milestones": [
     {
       "id": "M001",
@@ -3176,19 +3176,29 @@
       "milestone_id": "M005",
       "slice_id": "S01",
       "id": "T02",
-      "title": "Add executable migration and deployed smoke verification tooling",
-      "status": "pending",
-      "one_liner": "",
-      "narrative": "",
-      "verification_result": "",
+      "title": "Added a reusable deployment smoke verifier plus a canonical CLI that proves DB-backed share/gallery routes and cron/admin auth boundaries with named, redacted step output.",
+      "status": "complete",
+      "one_liner": "Added a reusable deployment smoke verifier plus a canonical CLI that proves DB-backed share/gallery routes and cron/admin auth boundaries with named, redacted step output.",
+      "narrative": "Implemented `src/lib/deployment/smoke.ts` as the reusable deployment-proof library for the canonical Vercel + Neon path. The helper validates CLI/runtime inputs, creates one real share record and one real gallery record through the app’s public APIs, verifies the share read API, verifies gallery browse/detail behavior, detects branded unavailable-state fallback markers on public share/gallery routes, and checks both unauthorized and authorized behavior for `/api/cron/cleanup` and `/api/admin/review`. Added `scripts/verify-deployment.mjs` as the canonical executable wrapper so `node scripts/verify-deployment.mjs ...` remains the operator-facing command while the implementation stays in TypeScript. Updated `package.json` with `deploy:migrate` and `deploy:smoke`, added focused Vitest coverage for happy-path and failure-classification behavior, recorded the runtime-structure decision in `.gsd/DECISIONS.md`, and documented the wrapper pattern in `.gsd/KNOWLEDGE.md`.",
+      "verification_result": "Ran `npm test -- --run src/__tests__/deployment/smoke.test.ts` and it passed all six deployment smoke tests. Ran `node scripts/verify-deployment.mjs` with no args and confirmed the real executable wrapper emits a clean named `cli.args` failure with no secret leakage or wrapper-noise warnings. Ran `npm run deploy:smoke` and confirmed the new package alias resolves to the same canonical CLI behavior. Slice-level live smoke against a real deployed URL remains intentionally pending for T03.",
       "duration": "",
-      "completed_at": null,
+      "completed_at": "2026-03-28T19:14:06.043Z",
       "blocker_discovered": false,
-      "deviations": "",
-      "known_issues": "",
-      "key_files": [],
-      "key_decisions": [],
-      "full_summary_md": "",
+      "deviations": "Touched `.gsd/DECISIONS.md` and `.gsd/KNOWLEDGE.md` in addition to the planner's explicit output files so the non-obvious Node wrapper/runtime pattern is durable for downstream deployment work.",
+      "known_issues": "Live proof against a provisioned Vercel + Neon URL was not run in this task because T02 establishes the executable tooling only; T03 still needs real deployment secrets, migrations, and a public URL to produce launch proof.",
+      "key_files": [
+        "package.json",
+        "scripts/verify-deployment.mjs",
+        "src/lib/deployment/smoke.ts",
+        "src/__tests__/deployment/smoke.test.ts",
+        ".gsd/KNOWLEDGE.md",
+        ".gsd/DECISIONS.md"
+      ],
+      "key_decisions": [
+        "Kept `scripts/verify-deployment.mjs` as the canonical operator command and delegated the real implementation to `src/lib/deployment/smoke.ts` through a Node strip-types wrapper so T03 can run a plain `node` command without duplicating logic.",
+        "Made the smoke helper fail fast on the first named step with structured per-step results, timeout classification, fallback-marker detection, contract validation, and redacted response snippets so degraded public/runtime states cannot masquerade as launch proof."
+      ],
+      "full_summary_md": "---\nid: T02\nparent: S01\nmilestone: M005\nkey_files:\n  - package.json\n  - scripts/verify-deployment.mjs\n  - src/lib/deployment/smoke.ts\n  - src/__tests__/deployment/smoke.test.ts\n  - .gsd/KNOWLEDGE.md\n  - .gsd/DECISIONS.md\nkey_decisions:\n  - Kept `scripts/verify-deployment.mjs` as the canonical operator command and delegated the real implementation to `src/lib/deployment/smoke.ts` through a Node strip-types wrapper so T03 can run a plain `node` command without duplicating logic.\n  - Made the smoke helper fail fast on the first named step with structured per-step results, timeout classification, fallback-marker detection, contract validation, and redacted response snippets so degraded public/runtime states cannot masquerade as launch proof.\nduration: \"\"\nverification_result: passed\ncompleted_at: 2026-03-28T19:14:06.043Z\nblocker_discovered: false\n---\n\n# T02: Added a reusable deployment smoke verifier plus a canonical CLI that proves DB-backed share/gallery routes and cron/admin auth boundaries with named, redacted step output.\n\n**Added a reusable deployment smoke verifier plus a canonical CLI that proves DB-backed share/gallery routes and cron/admin auth boundaries with named, redacted step output.**\n\n## What Happened\n\nImplemented `src/lib/deployment/smoke.ts` as the reusable deployment-proof library for the canonical Vercel + Neon path. The helper validates CLI/runtime inputs, creates one real share record and one real gallery record through the app’s public APIs, verifies the share read API, verifies gallery browse/detail behavior, detects branded unavailable-state fallback markers on public share/gallery routes, and checks both unauthorized and authorized behavior for `/api/cron/cleanup` and `/api/admin/review`. Added `scripts/verify-deployment.mjs` as the canonical executable wrapper so `node scripts/verify-deployment.mjs ...` remains the operator-facing command while the implementation stays in TypeScript. Updated `package.json` with `deploy:migrate` and `deploy:smoke`, added focused Vitest coverage for happy-path and failure-classification behavior, recorded the runtime-structure decision in `.gsd/DECISIONS.md`, and documented the wrapper pattern in `.gsd/KNOWLEDGE.md`.\n\n## Verification\n\nRan `npm test -- --run src/__tests__/deployment/smoke.test.ts` and it passed all six deployment smoke tests. Ran `node scripts/verify-deployment.mjs` with no args and confirmed the real executable wrapper emits a clean named `cli.args` failure with no secret leakage or wrapper-noise warnings. Ran `npm run deploy:smoke` and confirmed the new package alias resolves to the same canonical CLI behavior. Slice-level live smoke against a real deployed URL remains intentionally pending for T03.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm test -- --run src/__tests__/deployment/smoke.test.ts` | 0 | ✅ pass | 1000ms |\n| 2 | `node scripts/verify-deployment.mjs` | 1 | ✅ pass | 1ms |\n| 3 | `npm run deploy:smoke` | 1 | ✅ pass | 2ms |\n\n\n## Deviations\n\nTouched `.gsd/DECISIONS.md` and `.gsd/KNOWLEDGE.md` in addition to the planner's explicit output files so the non-obvious Node wrapper/runtime pattern is durable for downstream deployment work.\n\n## Known Issues\n\nLive proof against a provisioned Vercel + Neon URL was not run in this task because T02 establishes the executable tooling only; T03 still needs real deployment secrets, migrations, and a public URL to produce launch proof.\n\n## Files Created/Modified\n\n- `package.json`\n- `scripts/verify-deployment.mjs`\n- `src/lib/deployment/smoke.ts`\n- `src/__tests__/deployment/smoke.test.ts`\n- `.gsd/KNOWLEDGE.md`\n- `.gsd/DECISIONS.md`\n",
       "description": "Make the canonical deployment path executable instead of handwritten. Build a testable smoke-verification library plus a CLI script that can target a provisioned URL, create DB-backed share/gallery proof records through the real app, verify those public routes render real data instead of branded no-DB fallbacks, and confirm the cron/admin boundaries reject and accept requests according to their secrets.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Provisioned deployment URL | Fail the smoke run with the named step and preserve the HTTP/body snippet needed for diagnosis. | Abort the step with timeout classification instead of hanging the whole proof. | Mark the route as malformed/unexpected and stop treating the deployment as launch-ready. |\n| Neon-backed share/gallery persistence | Stop the proof if create/browse/detail routes return unavailable-state markers or 5xx responses. | Fail with a DB-backed route timeout classification. | Reject missing IDs/fields and show which route broke the contract. |\n| `CRON_SECRET` / `ADMIN_SECRET` protected routes | Fail if unauthorized access succeeds or authorized access still returns 401/503. | Surface which protected route timed out. | Fail on non-JSON or schema drift in the operator response. |\n\n## Load Profile\n\n- **Shared resources**: deployed HTTP routes, Neon write/read paths, and operator-only endpoints.\n- **Per-operation cost**: one share create + read flow, one gallery create + browse/detail flow, one unauthorized/authorized cron check, and one unauthorized/authorized admin check.\n- **10x breakpoint**: repeated smoke runs will stress gallery/share persistence and can create noisy proof data if the script is not deterministic and bounded.\n\n## Negative Tests\n\n- **Malformed inputs**: missing base URL, invalid secrets, and malformed JSON responses fail the smoke run with explicit step names.\n- **Error paths**: 401/403/503 responses, branded unavailable-state HTML, and missing DB-backed IDs are treated as failures rather than soft warnings.\n- **Boundary conditions**: unauthorized cron/admin requests must stay blocked while authorized requests succeed on the same deployment.\n\n## Steps\n\n1. Add a reusable smoke helper under `src/lib/deployment/` that executes the deployed share/gallery/cron/admin checks and returns structured step results.\n2. Add `scripts/verify-deployment.mjs` as the canonical CLI entrypoint, including bounded timeouts, response validation, and secret redaction in output.\n3. Add package scripts for migrate and deployed smoke execution so docs and later slices can reuse exact commands.\n4. Add focused tests for the smoke helper/CLI contract, including fallback detection and operator-auth assertions.\n\n## Must-Haves\n\n- [ ] One command can prove the deployed app is serving DB-backed share/gallery behavior instead of local-proof unavailable states.\n- [ ] The smoke path explicitly checks both unauthorized and authorized behavior for cron/admin routes.\n- [ ] Smoke output localizes failures by step without printing secrets.",
       "estimate": "1h 15m",
       "files": [
@@ -4020,6 +4030,18 @@
       "revisable": "Yes — if a later hosting target or CI pipeline requires a different proof harness.",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 70,
+      "id": "D064",
+      "when_context": "M005/S01/T02",
+      "scope": "deployment",
+      "decision": "Runtime structure for deployment smoke tooling",
+      "choice": "Keep the canonical entrypoint as scripts/verify-deployment.mjs and have it spawn Node with --experimental-strip-types to execute src/lib/deployment/smoke.ts.",
+      "rationale": "T03 and the slice contract require a plain `node scripts/verify-deployment.mjs` command, while the reusable smoke logic belongs in TypeScript under src/lib/deployment/. A small JS wrapper preserves the documented CLI shape, avoids duplicating the smoke implementation, and keeps Node strip-types warnings out of the operator-facing proof output.",
+      "revisable": "Yes",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -4407,6 +4429,39 @@
       "verdict": "❌ fail",
       "duration_ms": 66,
       "created_at": "2026-03-28T19:03:23.941Z"
+    },
+    {
+      "id": 36,
+      "task_id": "T02",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm test -- --run src/__tests__/deployment/smoke.test.ts",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 1000,
+      "created_at": "2026-03-28T19:14:06.043Z"
+    },
+    {
+      "id": 37,
+      "task_id": "T02",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "node scripts/verify-deployment.mjs",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 1,
+      "created_at": "2026-03-28T19:14:06.043Z"
+    },
+    {
+      "id": 38,
+      "task_id": "T02",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm run deploy:smoke",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 2,
+      "created_at": "2026-03-28T19:14:06.043Z"
     }
   ]
 }

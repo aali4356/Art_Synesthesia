@@ -7,6 +7,8 @@
     "build": "next build",
     "deploy:preflight": "node --experimental-strip-types --input-type=module -e \"import { runDeploymentPreflightCli } from './src/lib/deployment/env.ts'; runDeploymentPreflightCli(process.env.DEPLOYMENT_ENV_MODE);\"",
     "deploy:build": "npm run deploy:preflight && next build",
+    "deploy:migrate": "npm run db:migrate",
+    "deploy:smoke": "node scripts/verify-deployment.mjs",
     "db:migrate": "node --experimental-strip-types src/db/migrate.ts",
     "start": "next start",
     "lint": "eslint",

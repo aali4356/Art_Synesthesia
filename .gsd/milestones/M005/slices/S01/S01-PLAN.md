@@ -40,7 +40,7 @@
   - Estimate: 1h
   - Files: .env.example, package.json, src/lib/deployment/env.ts, src/__tests__/deployment/env-contract.test.ts
   - Verify: npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build
-- [ ] **T02: Add executable migration and deployed smoke verification tooling** — Make the canonical deployment path executable instead of handwritten. Build a testable smoke-verification library plus a CLI script that can target a provisioned URL, create DB-backed share/gallery proof records through the real app, verify those public routes render real data instead of branded no-DB fallbacks, and confirm the cron/admin boundaries reject and accept requests according to their secrets.
+- [x] **T02: Added a reusable deployment smoke verifier plus a canonical CLI that proves DB-backed share/gallery routes and cron/admin auth boundaries with named, redacted step output.** — Make the canonical deployment path executable instead of handwritten. Build a testable smoke-verification library plus a CLI script that can target a provisioned URL, create DB-backed share/gallery proof records through the real app, verify those public routes render real data instead of branded no-DB fallbacks, and confirm the cron/admin boundaries reject and accept requests according to their secrets.
 
 ## Failure Modes
 
