@@ -10,7 +10,7 @@ Deterministic synesthetic art that feels emotionally rich, visually unforgettabl
 
 ## Current State
 
-M001, M002, M003, and M004/S01 are complete. The product now has:
+M001, M002, M003, and M004 are complete. The product now has:
 - deterministic canonicalization, analysis, normalization, synesthetic mapping, curated palette-family selection, palette realization, and scene-graph rendering
 - text, URL, and data inputs flowing through a branded landing → generation → results journey on the real homepage
 - geometric, organic, particle, and typographic renderers, with live `ResultsView` proof diagnostics exposing palette family, harmony, mapping posture, active style, supported styles, and renderer expressiveness
@@ -20,11 +20,13 @@ M001, M002, M003, and M004/S01 are complete. The product now has:
 - restored local no-DB build health through runtime-guarded DB-backed share/gallery/admin boundaries with truthful unavailable-state messaging
 - anonymous-first browser-local continuity for returning users: results can be saved into recent local work, rediscovered from the homepage/header continuity seam, and reopened in the same browser without storing raw source text, full URLs, or dataset bodies
 - adaptive onboarding and repeat-use route discovery across Home, Results, Compare, and Gallery, including first-visit versus returning-user copy, a real shared navigation landmark with semantic active-route state, and explicit results next steps that keep browser-local continuity distinct from public routes
+- privacy-filtered observability across client and server flows, including shared redaction-owned PostHog/Sentry helpers, safe product-loop/public-route event taxonomy, categorized no-DB/unavailable-state capture, and browser-verified truthful diagnostics
+- keyboard-complete skip-link, tab/selector, modal focus, and reduced-motion coverage across the redesigned repeat-use product loop
 
-Current gaps are now centered on observability breadth and launch hardening rather than foundational product identity:
-- privacy-filtered analytics/error-monitoring integration and broader accessibility breadth still need M004/S03 work
-- URL analysis in local no-DB mode still surfaces a real blocked runtime dependency on DB-backed snapshot storage, and the user-facing failure copy still needs stronger explanation
-- shipping surfaces like deploy guidance and public-launch operational hardening still need M005 work
+Current gaps are now centered on M005 launch hardening rather than M004 product coherence:
+- URL analysis in local no-DB mode still runs uncached and surfaces truthful backend limitations, so deeper deploy/runtime hardening still belongs to M005
+- shipping surfaces like deploy guidance, production environment setup, and broader public-launch operational hardening still need M005 work
+- minor follow-up attention remains on the dev-only textarea hydration warning seen during local proof if it persists outside development
 
 ## Architecture / Key Patterns
 
@@ -44,5 +46,5 @@ See `.gsd/REQUIREMENTS.md` for the explicit capability contract, requirement sta
 - [x] M001: Migration — Ship the complete deterministic v1 product foundation across inputs, renderers, gallery/share/compare, export, and privacy-aware infrastructure.
 - [x] M002: Chromatic Synesthesia Overhaul — Expand palette families, deepen synesthetic mapping and renderer expressiveness, and make the artwork itself feel premium, varied, and emotionally intentional.
 - [x] M003: Signature Product Experience — Completed the editorial gallery-luxe redesign across the real homepage, results, gallery, compare, share, and export-adjacent surfaces with browser-verified continuity and truthful diagnostics.
-- [ ] M004: Product Coherence and Continuity — Strengthen onboarding, primary user loops, saved state, account/identity decisions, analytics, and continuity across sessions and surfaces.
+- [x] M004: Product Coherence and Continuity — Completed anonymous-first continuity, adaptive onboarding/navigation, privacy-filtered observability, and accessibility coverage across the repeat-use product loop.
 - [ ] M005: Public Launch Readiness — Harden build/deploy reliability, fix operational gaps, improve observability, document production setup, and make the product ready for public portfolio launch.

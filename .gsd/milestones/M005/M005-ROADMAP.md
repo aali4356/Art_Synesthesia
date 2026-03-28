@@ -1,4 +1,4 @@
-# M005: M005: Public Launch Readiness — Context
+# M005: M005: Public Launch Readiness - Context
 
 ## Vision
 M005: Public Launch Readiness — Context

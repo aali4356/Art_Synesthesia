@@ -37,28 +37,6 @@ This file is the explicit capability and coverage contract for the project.
 - Validation: mapped
 - Notes: Current known failure is eager Neon initialization during `next build` without `DATABASE_URL`.
 
-### R007 — The product should expose enough diagnostics, analytics, and error visibility to understand failures and real-world usage after launch.
-- Class: failure-visibility
-- Status: active
-- Description: The product should expose enough diagnostics, analytics, and error visibility to understand failures and real-world usage after launch.
-- Why it matters: Public launch without visibility creates blind spots that slow iteration and incident response.
-- Source: user
-- Primary owning slice: M004/S03
-- Supporting slices: M005/S02
-- Validation: mapped
-- Notes: Includes analytics and observability, not just test-time signals.
-
-### R010 — Full keyboard navigation and accessible interaction semantics must be completed across redesigned surfaces.
-- Class: quality-attribute
-- Status: active
-- Description: Full keyboard navigation and accessible interaction semantics must be completed across redesigned surfaces.
-- Why it matters: A launch-ready premium product cannot regress usability while improving visual polish.
-- Source: inferred
-- Primary owning slice: M004/S03
-- Supporting slices: M003/S03, M005/S03
-- Validation: mapped
-- Notes: Existing alt-text work is validated; interaction/accessibility breadth is still active.
-
 ## Validated
 
 ### R001 — The artwork engine must produce substantially broader and more intentional color families so outputs no longer collapse into the same few purple/orange/green-feeling combinations.
@@ -94,6 +72,17 @@ This file is the explicit capability and coverage contract for the project.
 - Validation: validated
 - Notes: S01 shipped and browser-verified the real homepage landing→generation→results journey in an editorial gallery-luxe system, proving the direction works in the actual app rather than only in static mockup-like surfaces.
 
+### R007 — The product should expose enough diagnostics, analytics, and error visibility to understand failures and real-world usage after launch.
+- Class: failure-visibility
+- Status: validated
+- Description: The product should expose enough diagnostics, analytics, and error visibility to understand failures and real-world usage after launch.
+- Why it matters: Public launch without visibility creates blind spots that slow iteration and incident response.
+- Source: user
+- Primary owning slice: M004/S03
+- Supporting slices: M005/S02
+- Validation: Validated by M004/S03: privacy-filtered PostHog/Sentry seams capture safe product-loop and public-route/server failure events, with passing privacy-filtering, product-loop-events, public-route-failures, and shared-brand-surfaces suites plus live browser proof of truthful unavailable-state diagnostics without raw source leakage.
+- Notes: Core analytics/error visibility is now inspectable through shared redaction-owned observability helpers and categorized no-DB proof-mode handling.
+
 ### R008 — The product needs an intentional continuity layer for returning users, whether through lightweight accounts, identity, or another explicit persistence strategy.
 - Class: continuity
 - Status: validated
@@ -115,6 +104,17 @@ This file is the explicit capability and coverage contract for the project.
 - Supporting slices: M003/S03, M004/S01
 - Validation: validated
 - Notes: S01 added and browser-verified branded landing copy, private-first framing, curated prompt context, and continuity messaging that explain the product and how to begin on the real entry route.
+
+### R010 — Full keyboard navigation and accessible interaction semantics must be completed across redesigned surfaces.
+- Class: quality-attribute
+- Status: validated
+- Description: Full keyboard navigation and accessible interaction semantics must be completed across redesigned surfaces.
+- Why it matters: A launch-ready premium product cannot regress usability while improving visual polish.
+- Source: inferred
+- Primary owning slice: M004/S03
+- Supporting slices: M003/S03, M005/S03
+- Validation: Validated by M004/S03: shared shell skip-link navigation, keyboard-complete input/style selection, gallery modal focus lifecycle, and reduced-motion behavior passed accessibility/interaction regression suites and live browser proof across home, results, gallery modal, and share unavailable surfaces.
+- Notes: Keyboard/focus semantics are now covered across the redesigned M004 continuity/onboarding/results/public seams.
 
 ### R011 — The product deterministically converts text, URL, and data inputs into versioned algorithmic artwork.
 - Class: core-capability
@@ -229,10 +229,10 @@ This file is the explicit capability and coverage contract for the project.
 | R004 | primary-user-loop | active | M003/S03 | M004/S01, M004/S02 | mapped |
 | R005 | launchability | active | M005/S03 | M003/S03, M004/S03, M005/S01, M005/S02 | mapped |
 | R006 | operability | active | M005/S01 | M005/S02 | mapped |
-| R007 | failure-visibility | active | M004/S03 | M005/S02 | mapped |
+| R007 | failure-visibility | validated | M004/S03 | M005/S02 | Validated by M004/S03: privacy-filtered PostHog/Sentry seams capture safe product-loop and public-route/server failure events, with passing privacy-filtering, product-loop-events, public-route-failures, and shared-brand-surfaces suites plus live browser proof of truthful unavailable-state diagnostics without raw source leakage. |
 | R008 | continuity | validated | M004/S01 | M004/S02, M005/S03 | Validated by M004/S01: recent browser-local work can be saved from results, rediscovered from the homepage/header continuity seam, and reopened in the same browser without persisting raw source text, full URLs, or dataset bodies. Proven by passing recent-work, anonymous-continuity, and product-family-coherence suites plus live browser save/return/resume verification. |
 | R009 | primary-user-loop | validated | M003/S01 | M003/S03, M004/S01 | validated |
-| R010 | quality-attribute | active | M004/S03 | M003/S03, M005/S03 | mapped |
+| R010 | quality-attribute | validated | M004/S03 | M003/S03, M005/S03 | Validated by M004/S03: shared shell skip-link navigation, keyboard-complete input/style selection, gallery modal focus lifecycle, and reduced-motion behavior passed accessibility/interaction regression suites and live browser proof across home, results, gallery modal, and share unavailable surfaces. |
 | R011 | core-capability | validated | M001/S01 | M001/S02, M001/S03, M001/S04, M001/S05, M001/S06 | validated |
 | R012 | core-capability | validated | M001/S04 | M001/S05 | validated |
 | R013 | primary-user-loop | validated | M001/S07 | M001/S08, M001/S09 | validated |
@@ -245,7 +245,7 @@ This file is the explicit capability and coverage contract for the project.
 
 ## Coverage Summary
 
-- Active requirements: 5
-- Mapped to slices: 5
-- Validated: 10 (R001, R002, R003, R008, R009, R011, R012, R013, R014, R015)
+- Active requirements: 3
+- Mapped to slices: 3
+- Validated: 12 (R001, R002, R003, R007, R008, R009, R010, R011, R012, R013, R014, R015)
 - Unmapped active requirements: 0
