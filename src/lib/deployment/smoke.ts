@@ -51,6 +51,10 @@ export interface DeploymentSmokeOptions {
   timeoutMs?: number;
 }
 
+interface ValidatedDeploymentSmokeOptions extends DeploymentSmokeOptions {
+  timeoutMs: number;
+}
+
 export interface DeploymentSmokeDependencies {
   fetchImpl?: typeof fetch;
   now?: () => number;
@@ -248,7 +252,7 @@ export async function runDeploymentSmoke(
   const startedAtMs = now();
   const steps: DeploymentSmokeStepResult[] = [];
 
-  let normalizedOptions: DeploymentSmokeOptions;
+  let normalizedOptions: ValidatedDeploymentSmokeOptions;
   try {
     normalizedOptions = validateDeploymentSmokeOptions(options);
   } catch (error) {
@@ -323,7 +327,7 @@ export async function runDeploymentSmoke(
         url: failure.url,
         snippet: failure.snippet,
       });
-      failRun(failure);
+      return failRun(failure);
     }
   };
 
@@ -739,7 +743,7 @@ function quote(value: string): string {
   return JSON.stringify(value);
 }
 
-function validateDeploymentSmokeOptions(options: DeploymentSmokeOptions): DeploymentSmokeOptions {
+function validateDeploymentSmokeOptions(options: DeploymentSmokeOptions): ValidatedDeploymentSmokeOptions {
   const baseUrl = options.baseUrl?.trim();
   const cronSecret = options.cronSecret?.trim();
   const adminSecret = options.adminSecret?.trim();
