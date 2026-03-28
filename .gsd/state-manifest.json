@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exported_at": "2026-03-28T04:32:05.370Z",
+  "exported_at": "2026-03-28T19:03:23.982Z",
   "milestones": [
     {
       "id": "M001",
@@ -141,17 +141,58 @@
       "depends_on": [],
       "created_at": "2026-03-26T03:20:46.084Z",
       "completed_at": null,
-      "vision": "",
-      "success_criteria": [],
-      "key_risks": [],
-      "proof_strategy": [],
-      "verification_contract": "",
-      "verification_integration": "",
-      "verification_operational": "",
-      "verification_uat": "",
-      "definition_of_done": [],
-      "requirement_coverage": "",
-      "boundary_map_markdown": ""
+      "vision": "Make Synesthesia Machine credibly shippable as a public flagship portfolio piece by proving the real deployment path, operational diagnostics, and final public product loop rather than relying on local proof-only behavior.",
+      "success_criteria": [
+        "Canonical launch hosting/runtime strategy is explicit and matches the repository’s real architecture.",
+        "The application can be built, deployed, and run with a documented environment contract and without hidden local-machine assumptions.",
+        "DB-backed public routes are proven in a provisioned environment, not only in local no-DB fallback mode.",
+        "Operational seams (telemetry, cron, admin/support flows) are configured, privacy-safe, and inspectable.",
+        "A public launch runbook and integrated acceptance bundle make the flagship product demoable and supportable."
+      ],
+      "key_risks": [
+        {
+          "risk": "The project may still contain hidden deploy/runtime assumptions that only surface in the provisioned environment, especially around DB-backed routes and migration order.",
+          "whyItMatters": "A locally green build is not enough if public deployment still fails or boots into degraded states."
+        },
+        {
+          "risk": "Operational seams added in prior milestones exist in code but may not be wired or inspectable in the real launch environment.",
+          "whyItMatters": "Launching without working telemetry, cron hygiene, or admin/operator guidance creates blind spots and brittle recovery paths."
+        },
+        {
+          "risk": "Launch hardening can regress the polished flagship user loop if deploy fixes are treated as infrastructure-only work.",
+          "whyItMatters": "The milestone succeeds only if the real public product remains coherent and demoable after hardening."
+        }
+      ],
+      "proof_strategy": [
+        {
+          "riskOrUnknown": "Whether the canonical hosted app shape can build, migrate, and serve DB-backed public routes without hidden environment assumptions",
+          "retireIn": "S01",
+          "whatWillBeProven": "A provisioned deployment using the real stack succeeds and the share/gallery/url boundaries behave as documented."
+        },
+        {
+          "riskOrUnknown": "Whether observability, cron cleanup, and admin/operator controls are real operational capabilities rather than dormant code paths",
+          "retireIn": "S02",
+          "whatWillBeProven": "Sanitized telemetry is inspectable, scheduled cleanup is exercisable, and operator-only routes can be configured and used safely."
+        },
+        {
+          "riskOrUnknown": "Whether the assembled public product is genuinely launch-ready instead of only individually hardened",
+          "retireIn": "S03",
+          "whatWillBeProven": "The flagship user loop, support artifacts, and launch checklist all hold together in a public-demoable package."
+        }
+      ],
+      "verification_contract": "Verification for this milestone must include executable build/setup commands, provisioned-environment route proof, and durable written artifacts. A slice is not complete if it only adds configuration without proving the real interface or runtime path that consumes it.",
+      "verification_integration": "Integration proof must happen against the assembled canonical stack: Vercel-hosted Next.js runtime, Neon-backed DB access, DB-backed share/gallery/url boundaries, and the real public/browser entrypoints. At least one slice must explicitly prove the deployed stack rather than localhost-only behavior.",
+      "verification_operational": "Operational verification must show that required secrets are understood, cron/admin secrets are usable, telemetry stays privacy-safe, and failure states are inspectable enough for post-launch support.",
+      "verification_uat": "UAT must cover the flagship public loop through the deployed product family: homepage entry, generation/results, at least one share/gallery/public-route behavior, and confirmation that launch/runbook instructions are sufficient for a human to operate and demo the release.",
+      "definition_of_done": [
+        "Canonical launch environment is chosen and documented with a repeatable setup order.",
+        "A real provisioned deployment has been built and exercised against DB-backed public routes.",
+        "Required environment variables, migration steps, cron/admin secrets, and operator expectations are documented in project artifacts.",
+        "Production-safe observability and failure diagnostics are verified without violating privacy guarantees.",
+        "Public-route acceptance evidence exists for the flagship launch loop and support/runbook guidance is complete."
+      ],
+      "requirement_coverage": "Active requirement coverage for M005 is complete and explicit: **R006** is primarily owned by **S01** (deploy/env/build reliability), **R005** is primarily owned by **S03** with substantial support from **S01** and **S02**, and **R004** remains owned by M003/S03 but is materially supported by **S03** through deployed-loop regression and launch acceptance proof. Previously validated requirements **R007**, **R008**, and **R010** are treated as guardrails/regression constraints for this milestone rather than remapped primaries: S02 expands R007 operationally, while S03 verifies continuity/accessibility/coherence are preserved in the launch environment. No relevant active requirement is left orphaned.",
+      "boundary_map_markdown": "- **Public browser user** → `src/app/page.tsx`, `src/app/compare`, `src/app/share/[id]`, `src/app/gallery`, `src/app/gallery/[id]`\n- **Next.js App Router / route handlers** → `src/app/api/share*`, `src/app/api/gallery*`, `src/app/api/analyze-url`, `src/app/api/admin/review`, `src/app/api/cron/cleanup`\n- **DB boundary** → `src/db/index.ts` + Drizzle schema via `src/lib/gallery/db-gallery.ts` and `src/lib/cache/db-cache.ts`\n- **Deployment/runtime contract** → Vercel build/runtime + `vercel.json` cron + env injection + Drizzle migration flow (`drizzle.config.ts`, `src/db/migrate.ts`)\n- **Observability boundary** → client `src/components/observability/ObservabilityProvider.tsx`, server `src/lib/observability/server.ts`, privacy filter `src/lib/observability/privacy.ts`\n- **Operator boundary** → `ADMIN_SECRET`-protected moderation review route, `CRON_SECRET`-protected cleanup route, deploy/runbook artifacts\n- **Canonical launch stack** → Vercel-hosted Next.js app + Neon Postgres + optional PostHog/Sentry wired through existing privacy-safe seams"
     }
   ],
   "slices": [
@@ -567,6 +608,71 @@
       "proof_level": "- This slice proves: integration and operational.\n- Real runtime required: yes.\n- Human/UAT required: yes.",
       "integration_closure": "- Upstream surfaces consumed: `src/app/page.tsx`, `src/hooks/useTextAnalysis.ts`, `src/hooks/useUrlAnalysis.ts`, `src/hooks/useDataAnalysis.ts`, `src/hooks/useRecentWorks.ts`, `src/components/results/ResultsView.tsx`, `src/components/results/ShareButton.tsx`, `src/components/results/ExportControls.tsx`, `src/components/gallery/GallerySaveModal.tsx`, `src/components/layout/Shell.tsx`, `src/components/input/InputTabs.tsx`, `src/components/viewers/BrandedViewerScaffold.tsx`, and the App Router route handlers under `src/app/api/`.\n- New wiring introduced in this slice: env-gated observability provider/helpers in root layout, manual product-loop event calls in client/server boundaries, filtered unavailable-state/error capture, and keyboard/focus semantics across shell, selector, and modal seams.\n- What remains before the milestone is truly usable end-to-end: nothing inside M004; after this slice the milestone has its planned continuity, onboarding/navigation, observability, and accessibility breadth coverage.",
       "observability_impact": "- Runtime signals: PostHog pageviews/manual product-loop events, Sentry browser/server/route-handler error capture, and categorized unavailable-state / continuity-failure tags that distinguish browser-local proof mode from true incidents.\n- Inspection surfaces: configured analytics dashboard, configured Sentry project/issues, browser-local UI states/live regions, and focused Vitest suites that assert redaction and keyboard/focus behavior.\n- Failure visibility: generation/share/gallery/export/url-analysis failures, recent-local save failures, unavailable-state views, and modal focus regressions become inspectable with stable categories.\n- Redaction constraints: never emit raw source text, full URLs, dataset bodies, gallery preview text, or session-replay/autocapture DOM content.",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M005",
+      "id": "S01",
+      "title": "Canonical Deployment Path",
+      "status": "pending",
+      "risk": "high",
+      "depends": [],
+      "demo": "A provisioned Vercel + Neon deployment builds, boots, runs migrations/setup in the documented order, and serves DB-backed public routes through the real app instead of local no-DB fallback behavior.",
+      "created_at": "2026-03-28T18:19:41.473Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Establish the canonical Vercel + Neon deployment path, environment contract, and live backend proof for the real public runtime.",
+      "success_criteria": "## Must-Haves\n\n- A checked-in environment contract names every launch-critical variable, distinguishes deploy-required values from local-proof-only fallbacks, and keeps build/setup from depending on undocumented machine state.\n- The repo exposes one canonical migration and smoke-verification path for the Vercel + Neon stack instead of ad-hoc manual setup steps.\n- A provisioned deployment is exercised through DB-backed share/gallery flows and the protected cron/admin seams so launch proof no longer relies on local no-DB unavailable states.\n\n## Threat Surface\n\n- **Abuse**: Misconfigured deploys could leave admin/cron endpoints unprotected or falsely treat branded no-DB fallback pages as launch success; the proof path must fail on both cases.\n- **Data exposure**: `DATABASE_URL`, `CRON_SECRET`, `ADMIN_SECRET`, `SENTRY_AUTH_TOKEN`, and public-route payloads must stay redacted from docs, scripts, and logs.\n- **Input trust**: Environment variables, deployment URLs, CLI arguments, and deployed HTTP responses are untrusted and must be validated before use.\n\n## Requirement Impact\n\n- **Requirements touched**: R006, R005, R004\n- **Re-verify**: production build health, migration order, Home → Results → Share/Gallery continuity on the deployed app, and auth protection for `/api/cron/cleanup` and `/api/admin/review`.\n- **Decisions revisited**: D030, D060, D061\n\n## Proof Level\n\n- This slice proves: operational\n- Real runtime required: yes\n- Human/UAT required: yes\n\n## Verification\n\n- `npm test -- --run src/__tests__/deployment/env-contract.test.ts src/__tests__/deployment/smoke.test.ts && npm run build`\n- `npm run db:migrate`\n- `node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\"`\n\n## Observability / Diagnostics\n\n- Runtime signals: migration step logs, smoke-check step/status output, and explicit detection when a route falls back to branded unavailable/no-DB behavior.\n- Inspection surfaces: Vercel deployment logs, Neon-backed public routes, `node scripts/verify-deployment.mjs` output, and the checked-in live-proof artifact.\n- Failure visibility: failing step name, HTTP status, fallback-detection reason, and timestamp are surfaced in smoke output.\n- Redaction constraints: never print database URLs, operator secrets, auth tokens, or raw source text.\n\n## Integration Closure\n\n- Upstream surfaces consumed: `src/db/index.ts`, `drizzle.config.ts`, `src/db/migrate.ts`, `vercel.json`, `src/app/api/share/route.ts`, `src/app/api/gallery/route.ts`, `src/app/api/cron/cleanup/route.ts`, `src/app/api/admin/review/route.ts`, and the branded unavailable-state seams from M004.\n- New wiring introduced in this slice: checked-in deployment env helpers, automated smoke verification against the deployed URL, and the canonical Vercel + Neon runbook/proof artifact.\n- What remains before the milestone is truly usable end-to-end: S02 must prove production diagnostics/operator workflows on the same deployed stack; S03 must prove the full public flagship loop and release checklist.",
+      "proof_level": "Operational proof against the real Vercel-hosted Next.js + Neon runtime: the slice is not complete until migrations, DB-backed public routes, and protected operator endpoints are exercised on a provisioned deployment rather than local no-DB fallback mode.",
+      "integration_closure": "This slice closes the highest-risk integration seam by making the env contract explicit, wiring a repeatable migration/smoke path, and proving the real deployed app serves DB-backed share/gallery surfaces while keeping cron/admin endpoints secret-protected.",
+      "observability_impact": "- Runtime signals: deployment smoke steps should emit pass/fail output for env validation, share creation, gallery save/browse, cron auth, and admin auth.\n- Inspection surfaces: `npm run db:migrate`, `node scripts/verify-deployment.mjs`, Vercel deployment/build logs, and the checked-in deployment proof markdown.\n- Failure state exposed: missing env keys, migration failure, degraded no-DB route fallbacks, and misconfigured operator secrets become localized to a named step instead of a generic deployment failure.\n- Redaction constraints: scripts and proof artifacts must mask secrets and avoid raw user/source payloads.",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M005",
+      "id": "S02",
+      "title": "Production Diagnostics and Operator Controls",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01"
+      ],
+      "demo": "In the provisioned environment, privacy-safe telemetry, cron cleanup, and admin/operator controls are configured and can be exercised with concrete evidence.",
+      "created_at": "2026-03-28T18:19:41.473Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Turn the existing observability and operations seams into real launch-time operator capabilities.",
+      "success_criteria": "- PostHog/Sentry wiring (or explicit launch-time scope exclusions) is documented and verified against the deployed app.\n- Cron cleanup can be authenticated and exercised with the intended platform scheduler contract.\n- Admin/operator routes have clear secret/setup guidance and verification steps.\n- Production diagnostics remain privacy-safe and inspectable when failures occur.",
+      "proof_level": "Live provider/configuration proof with sanitized event/error emission and operator-path verification.",
+      "integration_closure": "Builds on the deployed runtime from S01 and closes the provider/configuration gap across PostHog, Sentry, cron cleanup, and admin review flows.",
+      "observability_impact": "Promotes the current env-optional observability code into a verified production surface with documented signals, secrets, and response expectations.",
+      "sequence": 0,
+      "replan_triggered_at": null
+    },
+    {
+      "milestone_id": "M005",
+      "id": "S03",
+      "title": "Launch Acceptance and Release Package",
+      "status": "pending",
+      "risk": "medium",
+      "depends": [
+        "S01",
+        "S02"
+      ],
+      "demo": "A human can use the public deployment through the flagship Home → Results → Share/Gallery/Compare family and follow a launch runbook/checklist for smoke validation, support, and rollback.",
+      "created_at": "2026-03-28T18:19:41.473Z",
+      "completed_at": null,
+      "full_summary_md": "",
+      "full_uat_md": "",
+      "goal": "Finish launch readiness with integrated public-route acceptance evidence and a durable release package.",
+      "success_criteria": "- The flagship public loop is exercised on the real deployment, not just localhost.\n- Launch docs cover setup, smoke checks, known degraded modes, rollback/support expectations, and verification commands.\n- Product-family coherence survives deployment hardening across Home, Results, Share, Gallery, and Compare.\n- Milestone evidence leaves the project credibly presentation-ready for a public portfolio launch.",
+      "proof_level": "Integrated browser/UAT proof on the deployed stack plus durable runbook/checklist artifacts.",
+      "integration_closure": "Assembles the hardened runtime, diagnostics, and flagship product loop into one final launch verification surface.",
+      "observability_impact": "Defines which launch smoke checks, diagnostics, and support steps operators should use after release.",
       "sequence": 0,
       "replan_triggered_at": null
     }
@@ -3008,6 +3114,154 @@
       "observability_impact": "- Signals added/changed: modal error/status and reduced-motion behavior become regression-visible; final browser proof confirms telemetry and fallback states on the real UI.\n- How a future agent inspects this: run the full verification command, then reproduce the keyboard/modal flow in the browser on an open dev port.\n- Failure state exposed: trapped focus, motion regressions, and end-to-end telemetry drift become slice-blocking rather than latent.",
       "full_plan_md": "",
       "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S01",
+      "id": "T01",
+      "title": "Added a shared deployment env contract, canonical preflight/build/migrate scripts, and build-safe DB bootstrap validation for the Vercel + Neon launch path.",
+      "status": "complete",
+      "one_liner": "Added a shared deployment env contract, canonical preflight/build/migrate scripts, and build-safe DB bootstrap validation for the Vercel + Neon launch path.",
+      "narrative": "Added a checked-in .env.example for the canonical Vercel + Neon path, created src/lib/deployment/env.ts as the single source of truth for launch-critical env validation across local-proof, migrate, and deployed-runtime modes, and wired that helper into drizzle.config.ts, src/db/migrate.ts, src/db/index.ts, and package scripts. The DB entrypoint now initializes lazily so no-DB local proof mode stays build-safe while DB-backed routes still fail truthfully at access time. Added focused Vitest coverage in src/__tests__/deployment/env-contract.test.ts to lock required-vs-optional classification, malformed input handling, operator secret requirements, and redacted preflight output. Also documented the Node 22 strip-types import gotcha in .gsd/KNOWLEDGE.md because it affected the canonical migration runner wiring.",
+      "verification_result": "Ran npm run deploy:preflight and confirmed redacted key/status output in local-proof mode. Ran DEPLOYMENT_ENV_MODE=migrate DATABASE_URL='   ' npm run deploy:preflight and confirmed a named malformed DATABASE_URL failure. Ran the task gate npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build and it passed. Ran npm run db:migrate and confirmed it now fails for the correct reason in an unconfigured shell: a named missing DATABASE_URL error from the shared helper. Ran node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\" and confirmed it still fails because the T02 verification script has not been created yet.",
+      "duration": "",
+      "completed_at": "2026-03-28T19:03:23.941Z",
+      "blocker_discovered": false,
+      "deviations": "Touched src/db/index.ts, src/db/migrate.ts, and drizzle.config.ts in addition to the planner's explicit output files so the shared helper became the real single source of truth and the build remained green. Appended one non-obvious runtime/import note to .gsd/KNOWLEDGE.md because Node 22 strip-types behavior materially affected the implementation.",
+      "known_issues": "scripts/verify-deployment.mjs and the smoke verification flow do not exist yet, so the slice-level live-proof command still fails until T02 lands. npm run db:migrate now fails correctly when DATABASE_URL is absent; a real Neon connection string will still be required in T03 for live proof.",
+      "key_files": [
+        ".env.example",
+        "src/lib/deployment/env.ts",
+        "src/__tests__/deployment/env-contract.test.ts",
+        "package.json",
+        "src/db/index.ts",
+        "src/db/migrate.ts",
+        "drizzle.config.ts",
+        ".gsd/KNOWLEDGE.md"
+      ],
+      "key_decisions": [
+        "Centralized launch-critical env validation in src/lib/deployment/env.ts and reused it from preflight, Drizzle config, DB bootstrap, and the migration runner.",
+        "Kept DATABASE_URL optional for local-proof builds while making migrate and deployed-runtime modes fail fast on missing or malformed required keys.",
+        "Used a runtime .ts import in src/db/migrate.ts so Node 22 strip-types could share the TypeScript helper without breaking Next build typecheck."
+      ],
+      "full_summary_md": "---\nid: T01\nparent: S01\nmilestone: M005\nkey_files:\n  - .env.example\n  - src/lib/deployment/env.ts\n  - src/__tests__/deployment/env-contract.test.ts\n  - package.json\n  - src/db/index.ts\n  - src/db/migrate.ts\n  - drizzle.config.ts\n  - .gsd/KNOWLEDGE.md\nkey_decisions:\n  - Centralized launch-critical env validation in src/lib/deployment/env.ts and reused it from preflight, Drizzle config, DB bootstrap, and the migration runner.\n  - Kept DATABASE_URL optional for local-proof builds while making migrate and deployed-runtime modes fail fast on missing or malformed required keys.\n  - Used a runtime .ts import in src/db/migrate.ts so Node 22 strip-types could share the TypeScript helper without breaking Next build typecheck.\nduration: \"\"\nverification_result: mixed\ncompleted_at: 2026-03-28T19:03:23.941Z\nblocker_discovered: false\n---\n\n# T01: Added a shared deployment env contract, canonical preflight/build/migrate scripts, and build-safe DB bootstrap validation for the Vercel + Neon launch path.\n\n**Added a shared deployment env contract, canonical preflight/build/migrate scripts, and build-safe DB bootstrap validation for the Vercel + Neon launch path.**\n\n## What Happened\n\nAdded a checked-in .env.example for the canonical Vercel + Neon path, created src/lib/deployment/env.ts as the single source of truth for launch-critical env validation across local-proof, migrate, and deployed-runtime modes, and wired that helper into drizzle.config.ts, src/db/migrate.ts, src/db/index.ts, and package scripts. The DB entrypoint now initializes lazily so no-DB local proof mode stays build-safe while DB-backed routes still fail truthfully at access time. Added focused Vitest coverage in src/__tests__/deployment/env-contract.test.ts to lock required-vs-optional classification, malformed input handling, operator secret requirements, and redacted preflight output. Also documented the Node 22 strip-types import gotcha in .gsd/KNOWLEDGE.md because it affected the canonical migration runner wiring.\n\n## Verification\n\nRan npm run deploy:preflight and confirmed redacted key/status output in local-proof mode. Ran DEPLOYMENT_ENV_MODE=migrate DATABASE_URL='   ' npm run deploy:preflight and confirmed a named malformed DATABASE_URL failure. Ran the task gate npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build and it passed. Ran npm run db:migrate and confirmed it now fails for the correct reason in an unconfigured shell: a named missing DATABASE_URL error from the shared helper. Ran node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\" and confirmed it still fails because the T02 verification script has not been created yet.\n\n## Verification Evidence\n\n| # | Command | Exit Code | Verdict | Duration |\n|---|---------|-----------|---------|----------|\n| 1 | `npm run deploy:preflight` | 0 | ✅ pass | 550ms |\n| 2 | `DEPLOYMENT_ENV_MODE=migrate DATABASE_URL='   ' npm run deploy:preflight` | 1 | ✅ pass | 550ms |\n| 3 | `npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build` | 0 | ✅ pass | 13276ms |\n| 4 | `npm run db:migrate` | 1 | ✅ pass | 905ms |\n| 5 | `node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\"` | 1 | ❌ fail | 66ms |\n\n\n## Deviations\n\nTouched src/db/index.ts, src/db/migrate.ts, and drizzle.config.ts in addition to the planner's explicit output files so the shared helper became the real single source of truth and the build remained green. Appended one non-obvious runtime/import note to .gsd/KNOWLEDGE.md because Node 22 strip-types behavior materially affected the implementation.\n\n## Known Issues\n\nscripts/verify-deployment.mjs and the smoke verification flow do not exist yet, so the slice-level live-proof command still fails until T02 lands. npm run db:migrate now fails correctly when DATABASE_URL is absent; a real Neon connection string will still be required in T03 for live proof.\n\n## Files Created/Modified\n\n- `.env.example`\n- `src/lib/deployment/env.ts`\n- `src/__tests__/deployment/env-contract.test.ts`\n- `package.json`\n- `src/db/index.ts`\n- `src/db/migrate.ts`\n- `drizzle.config.ts`\n- `.gsd/KNOWLEDGE.md`\n",
+      "description": "Create one checked-in environment contract that launch setup, scripts, and docs can all share. This task should add a root-level example env file, a small deployment helper that classifies required versus optional variables by runtime mode, package scripts for preflight/build/migrate usage, and focused tests that lock the contract so R006 cannot silently regress.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Process environment (`DATABASE_URL`, operator secrets, observability keys) | Fail fast with a named missing-key error and clear local-vs-deployed guidance. | N/A — env reads are synchronous. | Reject blank/whitespace or malformed values before later scripts consume them. |\n| Next.js/Drizzle build boundary | Keep `npm run build` as the truth test after helper changes so deployment work does not reopen eager-bootstrap fragility. | N/A — handled by build command outcome. | Surface the exact module/script that still assumes undocumented env state. |\n\n## Load Profile\n\n- **Shared resources**: build-time env reads, deployment scripts, and every later operator/deploy step that consumes the contract.\n- **Per-operation cost**: trivial config parsing plus one build verification.\n- **10x breakpoint**: contract drift across scripts/docs; one shared helper must remain the single source of truth.\n\n## Negative Tests\n\n- **Malformed inputs**: blank strings, malformed URLs/hosts, and deploy mode without `DATABASE_URL` fail with deterministic messages.\n- **Error paths**: local-proof mode without deploy-only secrets remains allowed while deployed mode blocks on missing required keys.\n- **Boundary conditions**: optional observability vars stay optional, but operator secrets are still required for protected runtime paths.\n\n## Steps\n\n1. Add a checked-in `.env.example` that lists deploy-required, operator-only, and optional observability variables for the canonical Vercel + Neon path.\n2. Add a small deployment env helper under `src/lib/deployment/` that validates and classifies the env contract for local proof, migration, and deployed runtime modes.\n3. Add package scripts that point at the canonical build/migrate/preflight commands so later tasks and docs reuse one path.\n4. Add focused tests that lock the helper behavior and then re-run `npm run build` to ensure deployment hardening does not reintroduce eager DB fragility.\n\n## Must-Haves\n\n- [ ] `.env.example` names every launch-critical variable with truthful local-vs-deploy expectations.\n- [ ] One helper owns env validation/classification for scripts and docs instead of copy-pasted key lists.\n- [ ] `npm run build` remains green after the deployment contract is introduced.",
+      "estimate": "1h",
+      "files": [
+        ".env.example",
+        "package.json",
+        "src/lib/deployment/env.ts",
+        "src/__tests__/deployment/env-contract.test.ts"
+      ],
+      "verify": "npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build",
+      "inputs": [
+        "`package.json`",
+        "`drizzle.config.ts`",
+        "`src/db/index.ts`",
+        "`src/db/migrate.ts`",
+        "`vercel.json`",
+        "`.gsd/milestones/M005/M005-SECRETS.md`"
+      ],
+      "expected_output": [
+        "`.env.example`",
+        "`package.json`",
+        "`src/lib/deployment/env.ts`",
+        "`src/__tests__/deployment/env-contract.test.ts`"
+      ],
+      "observability_impact": "- Signals added/changed: preflight/env validation should emit named missing-key or malformed-value failures before deploy-time surprises.\n- How a future agent inspects this: run the env-contract test file and the package preflight/build scripts.\n- Failure state exposed: the exact missing/malformed env key and intended runtime mode become visible immediately.",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S01",
+      "id": "T02",
+      "title": "Add executable migration and deployed smoke verification tooling",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Make the canonical deployment path executable instead of handwritten. Build a testable smoke-verification library plus a CLI script that can target a provisioned URL, create DB-backed share/gallery proof records through the real app, verify those public routes render real data instead of branded no-DB fallbacks, and confirm the cron/admin boundaries reject and accept requests according to their secrets.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Provisioned deployment URL | Fail the smoke run with the named step and preserve the HTTP/body snippet needed for diagnosis. | Abort the step with timeout classification instead of hanging the whole proof. | Mark the route as malformed/unexpected and stop treating the deployment as launch-ready. |\n| Neon-backed share/gallery persistence | Stop the proof if create/browse/detail routes return unavailable-state markers or 5xx responses. | Fail with a DB-backed route timeout classification. | Reject missing IDs/fields and show which route broke the contract. |\n| `CRON_SECRET` / `ADMIN_SECRET` protected routes | Fail if unauthorized access succeeds or authorized access still returns 401/503. | Surface which protected route timed out. | Fail on non-JSON or schema drift in the operator response. |\n\n## Load Profile\n\n- **Shared resources**: deployed HTTP routes, Neon write/read paths, and operator-only endpoints.\n- **Per-operation cost**: one share create + read flow, one gallery create + browse/detail flow, one unauthorized/authorized cron check, and one unauthorized/authorized admin check.\n- **10x breakpoint**: repeated smoke runs will stress gallery/share persistence and can create noisy proof data if the script is not deterministic and bounded.\n\n## Negative Tests\n\n- **Malformed inputs**: missing base URL, invalid secrets, and malformed JSON responses fail the smoke run with explicit step names.\n- **Error paths**: 401/403/503 responses, branded unavailable-state HTML, and missing DB-backed IDs are treated as failures rather than soft warnings.\n- **Boundary conditions**: unauthorized cron/admin requests must stay blocked while authorized requests succeed on the same deployment.\n\n## Steps\n\n1. Add a reusable smoke helper under `src/lib/deployment/` that executes the deployed share/gallery/cron/admin checks and returns structured step results.\n2. Add `scripts/verify-deployment.mjs` as the canonical CLI entrypoint, including bounded timeouts, response validation, and secret redaction in output.\n3. Add package scripts for migrate and deployed smoke execution so docs and later slices can reuse exact commands.\n4. Add focused tests for the smoke helper/CLI contract, including fallback detection and operator-auth assertions.\n\n## Must-Haves\n\n- [ ] One command can prove the deployed app is serving DB-backed share/gallery behavior instead of local-proof unavailable states.\n- [ ] The smoke path explicitly checks both unauthorized and authorized behavior for cron/admin routes.\n- [ ] Smoke output localizes failures by step without printing secrets.",
+      "estimate": "1h 15m",
+      "files": [
+        "package.json",
+        "scripts/verify-deployment.mjs",
+        "src/lib/deployment/smoke.ts",
+        "src/__tests__/deployment/smoke.test.ts"
+      ],
+      "verify": "npm test -- --run src/__tests__/deployment/smoke.test.ts",
+      "inputs": [
+        "`package.json`",
+        "`src/app/api/share/route.ts`",
+        "`src/app/api/gallery/route.ts`",
+        "`src/app/api/cron/cleanup/route.ts`",
+        "`src/app/api/admin/review/route.ts`",
+        "`src/app/share/[id]/page.tsx`",
+        "`src/app/gallery/[id]/page.tsx`",
+        "`src/components/viewers/BrandedViewerScaffold.tsx`"
+      ],
+      "expected_output": [
+        "`package.json`",
+        "`scripts/verify-deployment.mjs`",
+        "`src/lib/deployment/smoke.ts`",
+        "`src/__tests__/deployment/smoke.test.ts`"
+      ],
+      "observability_impact": "- Signals added/changed: smoke runs should emit structured per-step pass/fail output for share, gallery, cron, and admin checks.\n- How a future agent inspects this: execute `node scripts/verify-deployment.mjs ...` and read the named step results.\n- Failure state exposed: route name, status code, timeout, malformed response, or fallback-marker detection are surfaced directly.",
+      "full_plan_md": "",
+      "sequence": 0
+    },
+    {
+      "milestone_id": "M005",
+      "slice_id": "S01",
+      "id": "T03",
+      "title": "Publish the canonical Vercel + Neon runbook and capture live deployment proof",
+      "status": "pending",
+      "one_liner": "",
+      "narrative": "",
+      "verification_result": "",
+      "duration": "",
+      "completed_at": null,
+      "blocker_discovered": false,
+      "deviations": "",
+      "known_issues": "",
+      "key_files": [],
+      "key_decisions": [],
+      "full_summary_md": "",
+      "description": "Close the slice by using the checked-in contract and smoke tooling against the real provisioned stack. This task should document the exact setup order, collect any required secrets through the secure env flow, run migrations, deploy/update the Vercel app, execute the deployed smoke command, and record the resulting URL plus proof outcomes in durable markdown artifacts that downstream slices can trust.\n\n## Failure Modes\n\n| Dependency | On error | On timeout | On malformed response |\n|------------|----------|-----------|----------------------|\n| Secret collection / platform configuration | Stop before deploy and record which required secret or project binding is still missing. | Retry only after the missing external step is confirmed, not in a blind loop. | Reject malformed project URLs/IDs and fix the config source before deployment continues. |\n| Vercel build/deploy pipeline | Fail the task with the named build/deploy stage and link the runbook to the remediation point. | Treat as deployment failure and do not continue to smoke verification on a partial rollout. | Record the unexpected platform response in the live-proof artifact for follow-up. |\n| Live smoke verification | Treat any failing step as a launch blocker and capture the exact failing route/step in the proof artifact. | Abort with timeout classification and timestamp. | Record the malformed response/fallback marker so the next slice knows the deployment is not yet trustworthy. |\n\n## Load Profile\n\n- **Shared resources**: Vercel build pipeline, Neon migrations, and the live deployed public/operator routes.\n- **Per-operation cost**: one migration run, one deploy/update, and one bounded smoke pass against the live URL.\n- **10x breakpoint**: repeated redeploy/smoke loops can create proof noise and stale artifacts; the task should overwrite/update one canonical proof artifact per run.\n\n## Negative Tests\n\n- **Malformed inputs**: missing deployment URL, wrong project binding, or absent secrets block the run before false proof is recorded.\n- **Error paths**: build failure, migration failure, 401/503 operator responses, and branded unavailable states on share/gallery routes are captured as explicit blockers.\n- **Boundary conditions**: the same runbook must distinguish local-proof allowances from deployed-runtime requirements so later operators do not conflate them.\n\n## Steps\n\n1. Write a checked-in runbook that spells out environment setup, migration order, deploy/update steps, smoke commands, rollback hooks, and known degraded-mode interpretations.\n2. Use secure secret collection for any missing launch keys, then run the canonical migrate + deploy steps against the real Vercel + Neon environment.\n3. Execute `scripts/verify-deployment.mjs` against the resulting public URL and capture the exact output/results in a durable live-proof markdown artifact.\n4. Cross-check the runbook so every command and artifact path matches the implemented package scripts and smoke tooling from T01/T02.\n\n## Must-Haves\n\n- [ ] The repo contains one canonical Vercel + Neon runbook with exact command order and secret expectations.\n- [ ] A live deployed URL is recorded alongside passing migration/smoke proof for DB-backed share/gallery routes and protected cron/admin endpoints.\n- [ ] The proof artifact makes any blocker or degraded fallback unmistakable to downstream slices.",
+      "estimate": "1h 30m",
+      "files": [
+        "docs/deployment/vercel-neon-launch.md",
+        "docs/deployment/live-proof.md",
+        ".gsd/milestones/M005/M005-SECRETS.md",
+        "package.json",
+        "scripts/verify-deployment.mjs"
+      ],
+      "verify": "npm run db:migrate && node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\" && grep -q \"## Deployment order\" docs/deployment/vercel-neon-launch.md && grep -q \"## Live proof\" docs/deployment/live-proof.md",
+      "inputs": [
+        "`.env.example`",
+        "`package.json`",
+        "`scripts/verify-deployment.mjs`",
+        "`src/lib/deployment/env.ts`",
+        "`src/lib/deployment/smoke.ts`",
+        "`.gsd/milestones/M005/M005-SECRETS.md`",
+        "`vercel.json`"
+      ],
+      "expected_output": [
+        "`docs/deployment/vercel-neon-launch.md`",
+        "`docs/deployment/live-proof.md`",
+        "`.gsd/milestones/M005/M005-SECRETS.md`"
+      ],
+      "observability_impact": "- Signals added/changed: the live-proof artifact should capture deployment timestamp, public base URL, migrate/smoke command results, and any failing step.\n- How a future agent inspects this: read `docs/deployment/live-proof.md`, then rerun the documented migrate/smoke commands.\n- Failure state exposed: missing secrets, failed deploy stage, migration failure, or degraded share/gallery/operator checks are recorded explicitly.",
+      "full_plan_md": "",
+      "sequence": 0
     }
   ],
   "decisions": [
@@ -3718,6 +3972,54 @@
       "revisable": "Yes",
       "made_by": "agent",
       "superseded_by": null
+    },
+    {
+      "seq": 66,
+      "id": "D060",
+      "when_context": "M005 planning",
+      "scope": "architecture",
+      "decision": "Canonical launch environment for M005",
+      "choice": "Use Vercel-hosted Next.js with Neon Postgres as the authoritative public-launch stack.",
+      "rationale": "The repository already encodes this path through Next.js App Router, `vercel.json` cron scheduling, Neon HTTP + Drizzle in `src/db/index.ts`, and migration tooling driven by `DATABASE_URL`. Treating hosting as unresolved would create unnecessary planning drift away from the real codebase seams.",
+      "revisable": "Yes — if future productization needs exceed the single-stack portfolio launch shape.",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 67,
+      "id": "D061",
+      "when_context": "M005 planning",
+      "scope": "verification",
+      "decision": "Final proof target for launch readiness",
+      "choice": "Keep local no-DB proof mode as a development/degraded fallback, but require provisioned-environment proof for launch acceptance.",
+      "rationale": "The codebase now renders truthful unavailable states when `DATABASE_URL` is absent, which is useful for local proof and privacy-safe development. Public launch readiness, however, can only be claimed after DB-backed routes and public surfaces are exercised in the real provisioned runtime.",
+      "revisable": "Yes — if the product later adopts a fully offline/public-static launch mode.",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 68,
+      "id": "D062",
+      "when_context": "M005 planning",
+      "scope": "planning",
+      "decision": "M005 slice ordering strategy",
+      "choice": "Order slices as deployment/env contract first, production diagnostics/operator controls second, and final launch acceptance/runbook last.",
+      "rationale": "The hardest remaining uncertainty is not UI polish but whether the real deployed stack is explicit, repeatable, and live. Once that path exists, operator tooling can be proven on top of it, and only then does final public-loop acceptance carry trustworthy weight.",
+      "revisable": "Yes — if execution uncovers a blocker that forces roadmap reassessment.",
+      "made_by": "agent",
+      "superseded_by": null
+    },
+    {
+      "seq": 69,
+      "id": "D063",
+      "when_context": "M005/S01 planning",
+      "scope": "verification",
+      "decision": "S01 deployment proof gate",
+      "choice": "Use a checked-in env contract plus an automated smoke script that creates/verifies share and gallery records against the deployed Vercel URL, while also checking authorized and unauthorized cron/admin behavior.",
+      "rationale": "This turns launch-readiness from a doc-only claim into a repeatable operational proof path, fails explicitly when the app falls back to no-DB unavailable states, and gives later slices one trustworthy deploy/runtime verification seam.",
+      "revisable": "Yes — if a later hosting target or CI pipeline requires a different proof harness.",
+      "made_by": "agent",
+      "superseded_by": null
     }
   ],
   "verification_evidence": [
@@ -4050,6 +4352,61 @@
       "verdict": "✅ pass",
       "duration_ms": 300000,
       "created_at": "2026-03-27T03:15:35.488Z"
+    },
+    {
+      "id": 31,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm run deploy:preflight",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 550,
+      "created_at": "2026-03-28T19:03:23.941Z"
+    },
+    {
+      "id": 32,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "DEPLOYMENT_ENV_MODE=migrate DATABASE_URL='   ' npm run deploy:preflight",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 550,
+      "created_at": "2026-03-28T19:03:23.941Z"
+    },
+    {
+      "id": 33,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm test -- --run src/__tests__/deployment/env-contract.test.ts && npm run build",
+      "exit_code": 0,
+      "verdict": "✅ pass",
+      "duration_ms": 13276,
+      "created_at": "2026-03-28T19:03:23.941Z"
+    },
+    {
+      "id": 34,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "npm run db:migrate",
+      "exit_code": 1,
+      "verdict": "✅ pass",
+      "duration_ms": 905,
+      "created_at": "2026-03-28T19:03:23.941Z"
+    },
+    {
+      "id": 35,
+      "task_id": "T01",
+      "slice_id": "S01",
+      "milestone_id": "M005",
+      "command": "node scripts/verify-deployment.mjs --base-url \"$SYNESTHESIA_PUBLIC_BASE_URL\" --cron-secret \"$CRON_SECRET\" --admin-secret \"$ADMIN_SECRET\"",
+      "exit_code": 1,
+      "verdict": "❌ fail",
+      "duration_ms": 66,
+      "created_at": "2026-03-28T19:03:23.941Z"
     }
   ]
 }
