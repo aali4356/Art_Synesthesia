@@ -10,6 +10,9 @@ import { generatePalette } from '@/lib/color/palette';
 import { sha256 } from '@/lib/engine/hash';
 import { loadCorpus, computeCalibrationDistributions } from '@/lib/pipeline/calibration';
 import type { CalibrationData } from '@/lib/pipeline/normalize';
+import { captureClientEvent } from '@/lib/observability/client';
+import { OBSERVABILITY_EVENTS } from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -46,6 +49,58 @@ function getUrlCalibration(): CalibrationData {
   return cachedUrlCalibration;
 }
 
+function getNow(): number {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+    return performance.now();
+  }
+
+  return Date.now();
+}
+
+function getGenerationMode(mode: UrlMode, refetch: boolean): 'live' | 'cached' | 'standard' {
+  if (mode === 'live') {
+    return 'live';
+  }
+
+  return refetch ? 'standard' : 'cached';
+}
+
+function getStatusBucket(status: number): '2xx' | '4xx' | '5xx' {
+  if (status >= 500) {
+    return '5xx';
+  }
+
+  if (status >= 400) {
+    return '4xx';
+  }
+
+  return '2xx';
+}
+
+function captureGenerationStarted(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.started, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function captureGenerationCompleted(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.completed, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function captureGenerationFailed(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.failed, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
@@ -60,6 +115,14 @@ export function useUrlAnalysis() {
   const generate = useCallback(async (url: string, mode: UrlMode = 'snapshot', refetch = false) => {
     abortRef.current = false;
     setError(null);
+    const startedAt = getNow();
+    const generationMode = getGenerationMode(mode, refetch);
+
+    captureGenerationStarted({
+      sourceKind: 'url',
+      mode: generationMode,
+      status: 'started',
+    });
 
     // Stage 1: Parsing
     setStage('parsing');
@@ -70,6 +133,13 @@ export function useUrlAnalysis() {
     } catch {
       setError('Invalid URL. Please enter a valid URL starting with https:// or http://');
       setStage('idle');
+      captureGenerationFailed({
+        sourceKind: 'url',
+        mode: generationMode,
+        status: 'failed',
+        failureCategory: 'invalid-input',
+        durationMs: Math.round(getNow() - startedAt),
+      });
       return;
     }
 
@@ -96,27 +166,66 @@ export function useUrlAnalysis() {
       if (response.status === 429) {
         setError('Rate limit reached. You can analyze 10 URLs per hour.');
         setStage('idle');
+        captureGenerationFailed({
+          sourceKind: 'url',
+          mode: generationMode,
+          status: 'failed',
+          failureCategory: 'rate-limited',
+          statusBucket: '4xx',
+          durationMs: Math.round(getNow() - startedAt),
+        });
         return;
       }
 
       if (!response.ok) {
-        const body = await response.json().catch(() => ({ error: 'Unknown error' }));
-        setError((body as { error?: string }).error ?? `Request failed: ${response.status}`);
+        const body = await response.json().catch(() => null);
+        setError((body as { error?: string } | null)?.error ?? `Request failed: ${response.status}`);
         setStage('idle');
+        captureGenerationFailed({
+          sourceKind: 'url',
+          mode: generationMode,
+          status: 'failed',
+          failureCategory: body ? 'request-failed' : 'malformed-payload',
+          statusBucket: getStatusBucket(response.status),
+          durationMs: Math.round(getNow() - startedAt),
+        });
         return;
       }
 
       const data = await response.json() as {
-        signals: Record<string, number>;
+        signals?: Record<string, number>;
         title?: string;
         metadata?: { linkCount: number; imageCount: number; dominantColors: string[] };
       };
+
+      if (!data.signals || typeof data.signals !== 'object') {
+        setError('URL analysis returned an unexpected response. Please try again.');
+        setStage('idle');
+        captureGenerationFailed({
+          sourceKind: 'url',
+          mode: generationMode,
+          status: 'failed',
+          failureCategory: 'malformed-payload',
+          statusBucket: '2xx',
+          durationMs: Math.round(getNow() - startedAt),
+        });
+        return;
+      }
+
       signals = data.signals;
       title = data.title ?? '';
       metadata = data.metadata ?? metadata;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error');
       setStage('idle');
+      captureGenerationFailed({
+        sourceKind: 'url',
+        mode: generationMode,
+        status: 'failed',
+        failureCategory: classifyObservabilityError(err),
+        statusBucket: classifyObservabilityError(err) === 'timeout' ? 'timeout' : 'network',
+        durationMs: Math.round(getNow() - startedAt),
+      });
       return;
     }
 
@@ -135,6 +244,14 @@ export function useUrlAnalysis() {
 
     setResult({ vector, provenance, palette, summaries, canonical, title, metadata });
     setStage('complete');
+
+    captureGenerationCompleted({
+      sourceKind: 'url',
+      mode: generationMode,
+      status: 'completed',
+      statusBucket: '2xx',
+      durationMs: Math.round(getNow() - startedAt),
+    });
   }, []);
 
   const reset = useCallback(() => {

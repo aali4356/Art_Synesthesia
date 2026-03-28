@@ -89,4 +89,12 @@ describe('ExportControls', () => {
     expect(body.format).toBe('png');
     expect(body.style).toBe('geometric');
   });
+
+  it('states truthful export limits in the action copy', () => {
+    render(<ExportControls parameterVector={vector} versionInfo={version} styleName="geometric" />);
+
+    expect(screen.getByText(/download this collector edition/i)).toBeDefined();
+    expect(screen.getByText(/4096×4096 server render/i)).toBeDefined();
+    expect(screen.getByText(/truth in export: this route currently ships 4096×4096 downloads only/i)).toBeDefined();
+  });
 });

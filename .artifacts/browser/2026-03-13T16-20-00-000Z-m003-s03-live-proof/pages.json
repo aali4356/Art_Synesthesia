@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Gallery — Synesthesia Machine",
+    "url": "http://localhost:3001/gallery",
+    "opener": null,
+    "isActive": false
+  },
+  {
+    "id": 2,
+    "title": "Compare — Synesthesia Machine",
+    "url": "http://localhost:3001/compare",
+    "opener": null,
+    "isActive": false
+  },
+  {
+    "id": 3,
+    "title": "Synesthesia Machine",
+    "url": "http://localhost:3001/share/test-id",
+    "opener": null,
+    "isActive": false
+  },
+  {
+    "id": 4,
+    "title": "Synesthesia Machine",
+    "url": "http://localhost:3001/gallery/test-id",
+    "opener": null,
+    "isActive": true
+  }
+]

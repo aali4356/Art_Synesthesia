@@ -343,7 +343,7 @@ export function CompareMode() {
   const bothHaveVectors = leftPane.vector !== null && rightPane.vector !== null;
 
   return (
-    <Shell>
+    <Shell currentRoute="compare">
       <section className="editorial-stage space-y-8" aria-labelledby="compare-atelier-title">
         <div className="space-y-6 max-w-4xl">
           <div className="editorial-kicker">Route intro</div>
@@ -352,14 +352,14 @@ export function CompareMode() {
               Compare atelier
             </h1>
             <p className="max-w-2xl text-base sm:text-lg text-[var(--foreground)]/88 leading-relaxed">
-              Two proof-safe inputs, one editorial stage, shared style control.
+              Two proof-safe inputs, one collector route, shared style control.
             </p>
             <p className="max-w-3xl text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
-              Generate both panes under one renderer family, then inspect the vector deltas without leaving the branded shell language.
+              Compare two editions under one renderer family, then inspect vector deltas without leaving the same route-discovery language used by Home, Gallery, results, share, and export.
             </p>
           </div>
           <div className="editorial-marquee" aria-label="Compare route traits">
-            <span>two-pane contract</span>
+            <span>two collector editions</span>
             <span>shared style selector</span>
             <span>viewer-safe diagnostics</span>
           </div>

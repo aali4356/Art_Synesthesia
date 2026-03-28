@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import Link from 'next/link';
+import { useState, useEffect, useRef, useCallback, useMemo, useId } from 'react';
 import { useTheme } from 'next-themes';
 import type { PipelineResult, PipelineStage } from '@/hooks/useTextAnalysis';
+import type { RecentWorkSaveState } from '@/hooks/useRecentWorks';
 import { CURRENT_VERSION } from '@/lib/engine/version';
 import { deriveSeed } from '@/lib/engine/prng';
 import { buildSceneGraph } from '@/lib/render/geometric';
@@ -28,6 +30,8 @@ import { PipelineProgress } from '@/components/progress';
 import { ShareButton } from './ShareButton';
 import { ExportControls } from './ExportControls';
 import { GallerySaveModal } from '@/components/gallery/GallerySaveModal';
+import { captureClientEvent } from '@/lib/observability/client';
+import { OBSERVABILITY_EVENTS } from '@/lib/observability/events';
 
 interface ResultsViewProps {
   result: PipelineResult;
@@ -36,6 +40,10 @@ interface ResultsViewProps {
   stage: PipelineStage;
   /** Input type — typographic style is disabled for 'data' inputs */
   inputType?: 'text' | 'url' | 'data';
+  initialStyle?: StyleName;
+  continuityMode?: 'fresh' | 'resumed';
+  onSaveToRecentLocal?: (style: StyleName) => unknown;
+  recentLocalSaveState?: RecentWorkSaveState;
 }
 
 interface ProofDiagnosticRow {
@@ -53,6 +61,10 @@ export function ResultsView({
   onRegenerate,
   stage,
   inputType = 'text',
+  initialStyle = 'geometric',
+  continuityMode = 'fresh',
+  onSaveToRecentLocal,
+  recentLocalSaveState = { status: 'idle' },
 }: ResultsViewProps) {
   const { resolvedTheme } = useTheme();
   const theme = (resolvedTheme === 'light' ? 'light' : 'dark') as 'dark' | 'light';
@@ -64,12 +76,15 @@ export function ResultsView({
     particle: null,
     typographic: null,
   });
-  const [activeStyle, setActiveStyle] = useState<StyleName>('geometric');
+  const [activeStyle, setActiveStyle] = useState<StyleName>(initialStyle);
   const [animationKey, setAnimationKey] = useState(0);
   const [shouldAnimate, setShouldAnimate] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [savedGalleryId, setSavedGalleryId] = useState<string | null>(null);
+  const styleTabsId = useId();
+  const stylePanelId = `${styleTabsId}-panel`;
   const mainCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const gallerySaveButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const prevCanonicalRef = useRef<string>('');
   const prevThemeRef = useRef<string>(theme);
@@ -79,6 +94,10 @@ export function ResultsView({
     : false;
 
   const maxParticles = typeof window !== 'undefined' && window.innerWidth < 768 ? 2000 : 10000;
+
+  useEffect(() => {
+    setActiveStyle(inputType === 'data' && initialStyle === 'typographic' ? 'geometric' : initialStyle);
+  }, [initialStyle, inputType, result.canonical]);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,14 +154,45 @@ export function ResultsView({
   }, [activeStyle, inputType]);
 
   const handleStyleChange = useCallback((style: StyleName) => {
+    if (style === activeStyle) {
+      return;
+    }
+
     setActiveStyle(style);
     setShouldAnimate(true);
     setAnimationKey((k) => k + 1);
-  }, []);
+
+    try {
+      captureClientEvent(OBSERVABILITY_EVENTS.results.styleChanged, {
+        continuityMode,
+        sourceKind: inputType,
+        styleName: style,
+      });
+    } catch {
+      // Observability is non-blocking by contract.
+    }
+  }, [activeStyle, continuityMode, inputType]);
 
   const handleRenderComplete = useCallback(() => {
     setShouldAnimate(false);
   }, []);
+
+  const handleSaveLocal = useCallback(() => {
+    if (!onSaveToRecentLocal) return;
+
+    try {
+      captureClientEvent(OBSERVABILITY_EVENTS.results.saveIntent, {
+        continuityMode,
+        sourceKind: inputType,
+        styleName: activeStyle,
+        action: 'recent-local-save',
+      });
+    } catch {
+      // Observability is non-blocking by contract.
+    }
+
+    onSaveToRecentLocal(activeStyle);
+  }, [activeStyle, continuityMode, inputType, onSaveToRecentLocal]);
 
   function captureCurrentThumbnail(): string {
     if (!mainCanvasRef.current) return '';
@@ -228,6 +278,24 @@ export function ResultsView({
 
     return rows;
   }, [scenes.organic, scenes.typographic]);
+
+  const nextStepContent = useMemo(() => {
+    if (continuityMode === 'resumed') {
+      return {
+        label: 'Repeat-use guidance',
+        title: 'Return home for private browser-local recall, or step into public routes deliberately.',
+        body: 'This reopened edition came from recent local work in this browser. Return Home when you want to resume or start fresh from the editorial desk, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes.',
+        localCue: 'Home keeps browser-local recall and fresh-start controls in one place for this device only.',
+      };
+    }
+
+    return {
+      label: 'Next steps',
+      title: 'Keep the same edition moving without guessing where each route leads.',
+      body: 'Return Home to start fresh or revisit recent local work, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes rather than browser-local recall.',
+      localCue: 'Recent local work stays private to this browser, while Compare and Gallery stay route-based and shareable.',
+    };
+  }, [continuityMode]);
 
   function renderCanvas() {
     const key = `${activeStyle}-${animationKey}`;
@@ -335,15 +403,27 @@ export function ResultsView({
                 activeStyle={activeStyle}
                 onStyleChange={handleStyleChange}
                 inputType={inputType}
+                idPrefix={styleTabsId}
+                panelId={stylePanelId}
               />
             </div>
           </section>
 
-          <section className="editorial-panel editorial-canvas-frame overflow-hidden">
+          <section
+            id={stylePanelId}
+            role="tabpanel"
+            aria-labelledby={`${styleTabsId}-${activeStyle}-tab`}
+            className="editorial-panel editorial-canvas-frame overflow-hidden"
+          >
             <div
               className={`transition-opacity duration-500 ${isGenerating ? 'opacity-40' : 'opacity-100'}`}
             >
-              {renderCanvas()}
+              <div ref={(node) => {
+                const canvas = node?.querySelector('canvas') ?? null;
+                mainCanvasRef.current = canvas;
+              }}>
+                {renderCanvas()}
+              </div>
             </div>
           </section>
         </div>
@@ -434,16 +514,75 @@ export function ResultsView({
               </p>
             </div>
 
+            <div className="editorial-action-card mb-4 space-y-4">
+              <div className="space-y-2">
+                <p className="editorial-note-label mb-0">{nextStepContent.label}</p>
+                <h3 className="text-base font-medium text-[var(--foreground)]">{nextStepContent.title}</h3>
+                <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                  {nextStepContent.body}
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3" aria-label="Results next-step routes">
+                <Link href="/" className="btn-ghost text-sm text-center">
+                  Home / Recent local work
+                </Link>
+                <Link href="/compare" className="btn-ghost text-sm text-center">
+                  Compare side by side
+                </Link>
+                <Link href="/gallery" className="btn-ghost text-sm text-center">
+                  Browse public gallery
+                </Link>
+              </div>
+
+              <p className="text-xs text-[var(--muted-foreground)] leading-relaxed">
+                {nextStepContent.localCue}
+              </p>
+            </div>
+
             <div className="space-y-4">
+              <div className="editorial-action-card continuity-save-card">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="space-y-1">
+                    <p className="editorial-note-label mb-0">Recent local work</p>
+                    <h3 className="text-base font-medium text-[var(--foreground)]">Keep a browser-local continuity copy.</h3>
+                    <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                      Save this edition family for private same-browser recall. This is distinct from Share and Save to Gallery, and it never stores the raw source.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSaveLocal}
+                    className="btn-ghost text-sm"
+                    aria-label="Save this edition to recent local work"
+                  >
+                    {recentLocalSaveState.status === 'saved' ? 'Saved in this browser' : 'Save in this browser'}
+                  </button>
+                </div>
+
+                {recentLocalSaveState.status === 'saved' && (
+                  <p className="mt-3 text-xs text-[var(--muted-foreground)]" role="status">
+                    Saved to recent local work. Reopen it later from the homepage continuity panel.
+                  </p>
+                )}
+                {recentLocalSaveState.status === 'error' && (
+                  <p className="mt-3 text-xs text-[var(--color-accent)]" role="alert">
+                    {recentLocalSaveState.message}
+                  </p>
+                )}
+              </div>
+
               <ExportControls
                 parameterVector={result.vector}
                 versionInfo={CURRENT_VERSION}
                 styleName={activeStyle}
+                continuityMode={continuityMode}
               />
               <ShareButton
                 parameterVector={result.vector}
                 versionInfo={CURRENT_VERSION}
                 styleName={activeStyle}
+                continuityMode={continuityMode}
               />
 
               <div className="editorial-action-card">
@@ -460,6 +599,7 @@ export function ResultsView({
                     </a>
                   ) : (
                     <button
+                      ref={gallerySaveButtonRef}
                       type="button"
                       onClick={() => setShowSaveModal(true)}
                       className="btn-accent text-sm"
@@ -493,8 +633,10 @@ export function ResultsView({
           parameterVector={result.vector}
           versionInfo={CURRENT_VERSION}
           styleName={activeStyle}
+          continuityMode={continuityMode}
           inputTextPreview={inputText.slice(0, 50)}
           thumbnailDataUrl={captureCurrentThumbnail()}
+          openerElement={gallerySaveButtonRef.current}
           onClose={() => setShowSaveModal(false)}
           onSaved={(id) => {
             setSavedGalleryId(id);

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 import { containsProfanity } from '@/lib/moderation/profanity';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
+import { captureRouteFailure } from '@/lib/observability/server';
 
 async function getGalleryDb() {
   return import('@/lib/gallery/db-gallery');
@@ -60,6 +62,12 @@ export async function POST(request: Request): Promise<Response> {
 
   const { allowed, remaining } = getGalleryRateLimit(ip);
   if (!allowed) {
+    captureRouteFailure(new Error('Gallery save rate limit exceeded'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'rate-limited',
+    });
     return NextResponse.json(
       { error: 'Gallery save rate limit exceeded (10 per day)' },
       { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
@@ -71,7 +79,13 @@ export async function POST(request: Request): Promise<Response> {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
-  } catch {
+  } catch (error) {
+    captureRouteFailure(error, {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'malformed-payload',
+    });
     return NextResponse.json(
       { error: 'Invalid JSON body' },
       { status: 400, headers: rateLimitHeader }
@@ -80,6 +94,12 @@ export async function POST(request: Request): Promise<Response> {
 
   // Privacy gate: no raw input fields (PRIV-02, PRIV-03)
   if ('rawInput' in body || 'inputText' in body || 'raw_input' in body) {
+    captureRouteFailure(new Error('Gallery entries must not contain raw input text'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Gallery entries must not contain raw input text' },
       { status: 400, headers: rateLimitHeader }
@@ -97,18 +117,36 @@ export async function POST(request: Request): Promise<Response> {
   } = body;
 
   if (!parameterVector || typeof parameterVector !== 'object') {
+    captureRouteFailure(new Error('Missing parameterVector'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing parameterVector' },
       { status: 400, headers: rateLimitHeader }
     );
   }
   if (!versionInfo || typeof versionInfo !== 'object') {
+    captureRouteFailure(new Error('Missing versionInfo'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing versionInfo' },
       { status: 400, headers: rateLimitHeader }
     );
   }
   if (!styleName || typeof styleName !== 'string') {
+    captureRouteFailure(new Error('Missing styleName'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing styleName' },
       { status: 400, headers: rateLimitHeader }
@@ -116,6 +154,12 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (title && typeof title === 'string' && containsProfanity(title)) {
+    captureRouteFailure(new Error('Title contains inappropriate content'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Title contains inappropriate content' },
       { status: 422, headers: rateLimitHeader }
@@ -127,6 +171,12 @@ export async function POST(request: Request): Promise<Response> {
     typeof inputPreview === 'string' &&
     containsProfanity(inputPreview)
   ) {
+    captureRouteFailure(new Error('Input preview contains inappropriate content'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Input preview contains inappropriate content' },
       { status: 422, headers: rateLimitHeader }
@@ -138,6 +188,12 @@ export async function POST(request: Request): Promise<Response> {
     typeof inputPreview === 'string' &&
     inputPreview.length > 50
   ) {
+    captureRouteFailure(new Error('Input preview must be 50 characters or fewer'), {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Input preview must be 50 characters or fewer' },
       { status: 400, headers: rateLimitHeader }
@@ -163,6 +219,14 @@ export async function POST(request: Request): Promise<Response> {
       { status: 201, headers: rateLimitHeader }
     );
   } catch (error) {
+    const category = classifyObservabilityError(error);
+    captureRouteFailure(error, {
+      routeFamily: 'gallery',
+      method: 'POST',
+      statusBucket: '5xx',
+      failureCategory: 'gallery-backend-unavailable',
+      localProofMode: category === 'local-proof-unavailable',
+    });
     const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
     return NextResponse.json({ error: message }, { status: 503, headers: rateLimitHeader });
   }
@@ -170,8 +234,7 @@ export async function POST(request: Request): Promise<Response> {
 
 /**
  * GET /api/gallery
- * Browse gallery items with optional style filter and sort (GAL-03, GAL-05).
- * Query params: style, sort (recent|popular), page, limit
+ * Browse gallery items with optional style filter and sort (recent|popular), page, limit
  */
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -186,6 +249,14 @@ export async function GET(request: Request): Promise<Response> {
     const items = await getGalleryItems({ style, sort, limit, offset });
     return NextResponse.json({ items, page, limit });
   } catch (error) {
+    const category = classifyObservabilityError(error);
+    captureRouteFailure(error, {
+      routeFamily: 'gallery',
+      method: 'GET',
+      statusBucket: '5xx',
+      failureCategory: 'gallery-browse-unavailable',
+      localProofMode: category === 'local-proof-unavailable',
+    });
     const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
     return NextResponse.json({ error: message }, { status: 503 });
   }

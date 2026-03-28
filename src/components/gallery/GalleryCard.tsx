@@ -42,13 +42,11 @@ export function GalleryCard({
   const [upvoteCount, setUpvoteCount] = useState(initialUpvoteCount);
   const [upvoted, setUpvoted] = useState(false);
 
-  // Check ownership client-side (creator token in localStorage)
   useEffect(() => {
     const token = getCreatorToken();
     if (token && creatorToken && token === creatorToken) {
       setIsOwner(true);
     }
-    // Check if already upvoted
     const upvotedIds = JSON.parse(localStorage.getItem('synesthesia-upvoted') ?? '[]') as string[];
     if (upvotedIds.includes(id)) {
       setUpvoted(true);
@@ -97,96 +95,132 @@ export function GalleryCard({
   });
 
   return (
-    <div className="border border-border rounded-xl overflow-hidden bg-background hover:border-accent/60 transition-colors">
-      {/* Thumbnail — links to detail page (GAL-06) */}
-      <Link href={`/gallery/${id}`} aria-label={`View ${title ?? styleName} artwork`}>
-        <div className="w-full aspect-square bg-muted flex items-center justify-center">
-          {thumbnailData ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={thumbnailData}
-              alt={title ?? `${styleName} artwork`}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-muted-foreground text-xs">No preview</span>
-          )}
-        </div>
-      </Link>
+    <article
+      className="gallery-collector-card"
+      data-testid="gallery-collector-card"
+      aria-label={`${title ?? styleName} collector card`}
+    >
+      <div className="gallery-collector-card__ambient" aria-hidden="true" />
 
-      {/* Card body */}
-      <div className="p-3">
-        {/* Title and style */}
-        <div className="flex items-start justify-between gap-2 mb-1">
+      <div className="gallery-collector-card__content">
+        <header className="gallery-collector-card__header">
           <div>
-            {title && (
-              <p className="text-sm font-medium leading-snug truncate">{title}</p>
-            )}
-            <p className="text-xs text-muted-foreground capitalize">{styleName}</p>
+            <p className="gallery-collector-card__eyebrow">Collector edition</p>
+            <div className="gallery-collector-card__headline">
+              <h3 className="gallery-collector-card__title">
+                {title ?? `${styleName} study`}
+              </h3>
+              <p className="gallery-collector-card__style">{styleName}</p>
+            </div>
           </div>
-          <span className="text-xs text-muted-foreground shrink-0">{formattedDate}</span>
-        </div>
+          <div className="gallery-collector-card__meta" aria-label="Edition metadata">
+            <span className="gallery-collector-card__meta-label">Published</span>
+            <span className="gallery-collector-card__meta-value">{formattedDate}</span>
+          </div>
+        </header>
 
-        {/* Input preview — hidden by default (GAL-04) */}
-        {inputPreview && (
-          <div className="mt-2">
-            {previewRevealed ? (
-              <p className="text-xs text-muted-foreground italic">&quot;{inputPreview}&quot;</p>
+        <Link
+          href={`/gallery/${id}`}
+          aria-label={`View ${title ?? styleName} artwork`}
+          className="gallery-collector-card__media-link"
+        >
+          <div className="gallery-collector-card__media-frame">
+            {thumbnailData ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={thumbnailData}
+                alt={title ?? `${styleName} artwork`}
+                className="gallery-collector-card__image"
+              />
+            ) : (
+              <div className="gallery-collector-card__empty-state">
+                <span className="gallery-collector-card__empty-kicker">Preview pending</span>
+                <span className="gallery-collector-card__empty-copy">No archived thumbnail available yet.</span>
+              </div>
+            )}
+          </div>
+        </Link>
+
+        <section className="gallery-collector-card__hint" aria-label="Gallery hint">
+          <div>
+            <p className="gallery-collector-card__section-label">Optional hint</p>
+            <p className="gallery-collector-card__section-copy">
+              Collector browse keeps hints concealed unless you intentionally reveal the contributor-approved excerpt.
+            </p>
+          </div>
+          {inputPreview ? (
+            previewRevealed ? (
+              <p className="gallery-collector-card__hint-copy">&quot;{inputPreview}&quot;</p>
             ) : (
               <button
                 type="button"
                 onClick={() => setPreviewRevealed(true)}
-                className="text-xs text-accent underline"
+                className="gallery-collector-card__hint-button"
                 aria-label="Reveal input preview"
               >
-                Click to reveal hint
+                Reveal optional hint
+              </button>
+            )
+          ) : (
+            <p className="gallery-collector-card__hint-state">No public hint attached to this edition.</p>
+          )}
+        </section>
+
+        <footer className="gallery-collector-card__footer">
+          <div className="gallery-collector-card__action-row" aria-label="Edition actions">
+            <button
+              type="button"
+              onClick={handleUpvote}
+              disabled={upvoted}
+              className="gallery-collector-card__action-button"
+              aria-label={upvoted ? 'Already upvoted' : 'Upvote this artwork'}
+            >
+              <span aria-hidden="true">{upvoted ? '♥' : '♡'}</span>
+              <span>{upvoteCount} {upvoteCount === 1 ? 'vote' : 'votes'}</span>
+            </button>
+
+            <Link
+              href={`/gallery/${id}`}
+              className="gallery-collector-card__detail-link"
+              aria-label={`Open collector detail for ${title ?? styleName}`}
+            >
+              Open detail
+            </Link>
+
+            {!reported ? (
+              <button
+                type="button"
+                onClick={handleReport}
+                disabled={reporting}
+                className="gallery-collector-card__text-action gallery-collector-card__text-action--danger"
+                aria-label="Report this artwork"
+              >
+                {reporting ? 'Reporting…' : 'Report'}
+              </button>
+            ) : (
+              <span className="gallery-collector-card__status">Reported</span>
+            )}
+
+            {isOwner && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="gallery-collector-card__text-action gallery-collector-card__text-action--delete"
+                aria-label="Delete your gallery entry"
+              >
+                Delete
               </button>
             )}
           </div>
-        )}
 
-        {/* Actions row */}
-        <div className="flex items-center gap-3 mt-3 pt-2 border-t border-border/50">
-          {/* Upvote */}
-          <button
-            type="button"
-            onClick={handleUpvote}
-            disabled={upvoted}
-            className="text-xs text-muted-foreground flex items-center gap-1 disabled:opacity-50"
-            aria-label={upvoted ? 'Already upvoted' : 'Upvote this artwork'}
-          >
-            <span aria-hidden="true">{upvoted ? '♥' : '♡'}</span>
-            <span>{upvoteCount}</span>
-          </button>
-
-          {/* Report (GAL-07) */}
-          {!reported ? (
-            <button
-              type="button"
-              onClick={handleReport}
-              disabled={reporting}
-              className="text-xs text-muted-foreground ml-auto hover:text-red-500"
-              aria-label="Report this artwork"
-            >
-              {reporting ? 'Reporting…' : 'Report'}
-            </button>
-          ) : (
-            <span className="text-xs text-muted-foreground ml-auto">Reported</span>
-          )}
-
-          {/* Delete — owner only (GAL-08) */}
-          {isOwner && (
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-xs text-red-500 hover:underline"
-              aria-label="Delete your gallery entry"
-            >
-              Delete
-            </button>
-          )}
-        </div>
+          <div className="gallery-collector-card__footer-note">
+            <span className="gallery-collector-card__section-label">Browse contract</span>
+            <p>
+              Public archive card with route-safe detail access, lightweight reactions, and no raw input exposure.
+            </p>
+          </div>
+        </footer>
       </div>
-    </div>
+    </article>
   );
 }

@@ -176,6 +176,11 @@ describe('S04 live art proof contract — ResultsView metadata seam', () => {
     expect(screen.getByText('active style')).toBeDefined();
     expect(screen.getByText('geometric')).toBeDefined();
     expect(screen.getByText('derived diagnostics only — raw input hidden')).toBeDefined();
+    expect(screen.getByText('Next steps')).toBeDefined();
+    expect(screen.getByText('Keep the same edition moving without guessing where each route leads.')).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Home / Recent local work' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Compare side by side' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Browse public gallery' })).toBeDefined();
 
     expect(screen.queryByText(/Private launch memo about confidential findings/)).toBeNull();
     expect(screen.queryByText('canonical')).toBeNull();

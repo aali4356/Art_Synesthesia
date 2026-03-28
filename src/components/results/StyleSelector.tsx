@@ -1,7 +1,14 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import type { AnySceneGraph, StyleName, SceneGraph, OrganicSceneGraph, ParticleSceneGraph, TypographicSceneGraph } from '@/lib/render/types';
+import { useRef, useEffect, useId } from 'react';
+import type {
+  AnySceneGraph,
+  StyleName,
+  SceneGraph,
+  OrganicSceneGraph,
+  ParticleSceneGraph,
+  TypographicSceneGraph,
+} from '@/lib/render/types';
 import { drawSceneComplete } from '@/lib/render/geometric';
 import { drawOrganicSceneComplete } from '@/lib/render/organic';
 import { drawParticleSceneComplete } from '@/lib/render/particle';
@@ -30,6 +37,10 @@ interface StyleSelectorProps {
   inputType?: 'text' | 'url' | 'data';
   /** Additional CSS classes */
   className?: string;
+  /** Stable id prefix for tab ids */
+  idPrefix?: string;
+  /** Panel that reflects the active style selection */
+  panelId?: string;
 }
 
 /** Renders any scene type into a 200x200 thumbnail canvas */
@@ -51,7 +62,6 @@ function StyleThumbnail({ scene }: { scene: AnySceneGraph }) {
     const scaleFactor = (thumbSize * dpr) / scene.width;
     ctx.scale(scaleFactor, scaleFactor);
 
-    // Dispatch to correct draw function based on style discriminant
     switch (scene.style) {
       case 'geometric':
         drawSceneComplete(ctx, scene as SceneGraph);
@@ -101,7 +111,44 @@ export function StyleSelector({
   onStyleChange,
   inputType = 'text',
   className = '',
+  idPrefix,
+  panelId,
 }: StyleSelectorProps) {
+  const autoSelectorId = useId();
+  const selectorId = idPrefix ?? autoSelectorId;
+  const styleRefs = useRef<Record<StyleName, HTMLButtonElement | null>>({
+    geometric: null,
+    organic: null,
+    particle: null,
+    typographic: null,
+  });
+
+  const enabledStyles = STYLES.filter(
+    (style) => !(style.id === 'typographic' && inputType === 'data'),
+  );
+
+  const focusStyle = (style: StyleName) => {
+    const nextStyle = enabledStyles.find((candidate) => candidate.id === style);
+    if (!nextStyle) {
+      return;
+    }
+
+    onStyleChange(nextStyle.id);
+    styleRefs.current[nextStyle.id]?.focus();
+  };
+
+  const getAdjacentStyle = (currentStyle: StyleName, direction: 'next' | 'previous') => {
+    const currentIndex = enabledStyles.findIndex((style) => style.id === currentStyle);
+
+    if (currentIndex === -1) {
+      return enabledStyles[0]?.id;
+    }
+
+    const delta = direction === 'next' ? 1 : -1;
+    const nextIndex = (currentIndex + delta + enabledStyles.length) % enabledStyles.length;
+    return enabledStyles[nextIndex]?.id;
+  };
+
   return (
     <div
       className={`flex flex-row gap-3 items-center overflow-x-auto pb-2 ${className}`}
@@ -112,24 +159,72 @@ export function StyleSelector({
         const isActive = style.id === activeStyle;
         const isTypographicDisabled = style.id === 'typographic' && inputType === 'data';
         const scene = scenes[style.id];
+        const tabId = `${selectorId}-${style.id}-tab`;
 
         return (
-          <div
+          <button
             key={style.id}
+            ref={(node) => {
+              styleRefs.current[style.id] = node;
+            }}
+            type="button"
+            id={tabId}
             data-style={style.id}
             data-active={isActive ? 'true' : undefined}
             data-disabled={isTypographicDisabled ? 'true' : undefined}
             role="tab"
             aria-selected={isActive}
+            aria-controls={panelId}
             aria-disabled={isTypographicDisabled}
+            tabIndex={isActive ? 0 : -1}
             title={isTypographicDisabled ? 'Text or URL input required' : undefined}
+            disabled={isTypographicDisabled}
             onClick={() => {
-              if (!isTypographicDisabled) onStyleChange(style.id);
+              if (!isTypographicDisabled) {
+                onStyleChange(style.id);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (isTypographicDisabled) {
+                return;
+              }
+
+              if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                const nextStyle = getAdjacentStyle(style.id, 'next');
+                if (nextStyle) {
+                  focusStyle(nextStyle);
+                }
+              }
+
+              if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                const previousStyle = getAdjacentStyle(style.id, 'previous');
+                if (previousStyle) {
+                  focusStyle(previousStyle);
+                }
+              }
+
+              if (event.key === 'Home') {
+                event.preventDefault();
+                const firstStyle = enabledStyles[0]?.id;
+                if (firstStyle) {
+                  focusStyle(firstStyle);
+                }
+              }
+
+              if (event.key === 'End') {
+                event.preventDefault();
+                const lastStyle = enabledStyles.at(-1)?.id;
+                if (lastStyle) {
+                  focusStyle(lastStyle);
+                }
+              }
             }}
             className={`
-              flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all flex-shrink-0
+              flex flex-col items-center gap-1.5 p-2 rounded-lg transition-all flex-shrink-0 text-left
               ${isActive ? 'ring-2 ring-[var(--color-accent)]' : ''}
-              ${isTypographicDisabled ? 'opacity-50 cursor-default' : 'cursor-pointer hover:bg-[var(--muted)]'}
+              ${isTypographicDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--muted)]'}
             `}
           >
             <div className="w-[200px] h-[200px] rounded overflow-hidden flex-shrink-0">
@@ -153,7 +248,7 @@ export function StyleSelector({
             >
               {style.name}
             </span>
-          </div>
+          </button>
         );
       })}
     </div>

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import React from 'react';
+import { RECENT_WORK_STORAGE_KEY } from '@/lib/continuity/recent-work';
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -196,9 +197,10 @@ vi.mock('@/hooks/useDataAnalysis', () => ({ useDataAnalysis: () => dataState }))
 
 import Home from '@/app/page';
 
-describe('S01 editorial homepage proof contract', () => {
+describe('S02 editorial homepage onboarding contract', () => {
   beforeEach(() => {
     cleanup();
+    localStorage.clear();
     textState.stage = 'idle';
     textState.result = null;
     urlState.stage = 'idle';
@@ -215,20 +217,46 @@ describe('S01 editorial homepage proof contract', () => {
     dataReset.mockReset();
   });
 
-  it('defines branded editorial continuity from landing through results while preserving privacy-safe diagnostics', async () => {
+  it('guides first-time visitors from the landing surface into the existing private-by-default controls', async () => {
     const { rerender } = render(<Home />);
 
+    expect(screen.getByText('First visit')).toBeDefined();
     expect(screen.getByText('Synesthesia Machine')).toBeDefined();
     expect(
-      screen.getByText('Editorial chromatic portraits for text, links, and living datasets.')
+      screen.getByText(
+        'Start with text, a reference URL, or a dataset, then generate your first editorial chromatic portrait from the controls below.'
+      )
     ).toBeDefined();
     expect(
-      screen.getByText('A launch gallery for language, references, and research artifacts.')
+      screen.getByText(
+        'The homepage is the full start path: choose a source, keep it private by default, and move directly into the existing input controls.'
+      )
     ).toBeDefined();
-    expect(screen.getByText('Choose your source')).toBeDefined();
-    expect(screen.getByText('Private-by-default generation. Raw source stays off the proof surface.')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Pick Text for the fastest first edition, or switch to URL/Data when the work should answer to a live reference or table.'
+      )
+    ).toBeDefined();
+    expect(screen.getByText('Choose a source and generate your first edition')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Private-by-default generation. Raw source stays off the proof surface, and recent local work stays in this browser only when you choose to save it.'
+      )
+    ).toBeDefined();
     expect(screen.getByText('Curated prompts')).toBeDefined();
     expect(screen.getByRole('button', { name: 'a haiku' })).toBeDefined();
+
+    const textTab = screen.getByRole('tab', { name: 'Text' });
+    const urlTab = screen.getByRole('tab', { name: 'URL' });
+    expect(textTab.getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tabpanel', { name: 'Text' })).toBeDefined();
+
+    fireEvent.keyDown(textTab, { key: 'ArrowRight' });
+    expect(urlTab.getAttribute('aria-selected')).toBe('true');
+    expect(screen.getByRole('tabpanel', { name: 'URL' })).toBeDefined();
+
+    fireEvent.keyDown(urlTab, { key: 'Home' });
+    expect(textTab.getAttribute('aria-selected')).toBe('true');
 
     fireEvent.change(screen.getByLabelText('Text input for artwork generation'), {
       target: { value: 'Cathedral brass and midnight rain' },
@@ -253,13 +281,91 @@ describe('S01 editorial homepage proof contract', () => {
     expect(screen.getByText('palette family')).toBeDefined();
     expect(screen.getByText('orchid-nocturne')).toBeDefined();
     expect(screen.getByText('renderer expressiveness')).toBeDefined();
+    expect(screen.getByRole('tablist', { name: 'Rendering styles' })).toBeDefined();
+    expect(screen.getByRole('tab', { name: 'Geometric' }).getAttribute('aria-selected')).toBe('true');
     expect(screen.getByText('Share')).toBeDefined();
     expect(screen.getByText('Save to Gallery')).toBeDefined();
+    expect(screen.getByText('Next steps')).toBeDefined();
+    expect(screen.getByText('Keep the same edition moving without guessing where each route leads.')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Return Home to start fresh or revisit recent local work, use Compare for side-by-side evaluation, and treat Share or Gallery as explicit public routes rather than browser-local recall.'
+      )
+    ).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Home / Recent local work' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Compare side by side' })).toBeDefined();
+    expect(screen.getByRole('link', { name: 'Browse public gallery' })).toBeDefined();
+    expect(
+      screen.getByText(
+        'Recent local work stays private to this browser, while Compare and Gallery stay route-based and shareable.'
+      )
+    ).toBeDefined();
     expect(screen.queryByText('Cathedral brass and midnight rain')).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: /back to the editorial desk/i }));
     expect(textReset).toHaveBeenCalled();
     expect(urlReset).toHaveBeenCalled();
     expect(dataReset).toHaveBeenCalled();
+  });
+
+  it('switches to truthful returning-visitor guidance when this browser already has recent local work', async () => {
+    localStorage.setItem(
+      RECENT_WORK_STORAGE_KEY,
+      JSON.stringify([
+        {
+          id: 'recent-home-proof',
+          contractVersion: 1,
+          posture: 'edition-family-recall',
+          preferredStyle: 'organic',
+          sourceLabel: {
+            kind: 'text',
+            primary: 'Private text source',
+            secondary: 'Same-browser continuity only',
+          },
+          edition: {
+            vector: textResult.vector,
+            palette: textResult.palette,
+          },
+          savedAt: '2026-03-20T12:00:00.000Z',
+          lastOpenedAt: '2026-03-21T12:00:00.000Z',
+        },
+      ])
+    );
+
+    render(<Home />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'Resume a recent local edition from this browser or start a fresh text, URL, or dataset study from the same editorial desk.'
+        )
+      ).toBeDefined();
+    });
+
+    expect(
+      screen.getByText(
+        'Resume a recent local edition from this browser or start a fresh text, URL, or dataset study from the same editorial desk.'
+      )
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        'Recent local work above is private to this device only. Share links and Gallery saves remain separate public routes.'
+      )
+    ).toBeDefined();
+    expect(screen.getByText('Resume path')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Reopen a saved local edition from this browser when you want to continue from prior palette and vector metadata.'
+      )
+    ).toBeDefined();
+    expect(screen.getByText('Resume private browser-local editions from this device.')).toBeDefined();
+    expect(screen.getByText('Resume in results')).toBeDefined();
+    expect(screen.getByText('Resume recent local work or start a fresh edition')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Recent local work stays browser-local to this device. Share links and Gallery saves remain separate public routes and never expose your raw source here.'
+      )
+    ).toBeDefined();
+    expect(screen.queryByText(/Cathedral brass and midnight rain/)).toBeNull();
   });
 });

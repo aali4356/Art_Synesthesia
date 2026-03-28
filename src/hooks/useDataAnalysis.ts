@@ -20,6 +20,9 @@ import { generatePalette } from '@/lib/color/palette';
 import { sha256 } from '@/lib/engine/hash';
 import { loadCorpus, computeCalibrationDistributions } from '@/lib/pipeline/calibration';
 import type { CalibrationData } from '@/lib/pipeline/normalize';
+import { captureClientEvent } from '@/lib/observability/client';
+import { OBSERVABILITY_EVENTS } from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -60,6 +63,38 @@ function getDataCalibration(): CalibrationData {
   return cachedDataCalibration;
 }
 
+function getNow(): number {
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
+    return performance.now();
+  }
+
+  return Date.now();
+}
+
+function captureGenerationStarted(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.started, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function captureGenerationCompleted(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.completed, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
+function captureGenerationFailed(properties: Record<string, unknown>) {
+  try {
+    captureClientEvent(OBSERVABILITY_EVENTS.generation.failed, properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Format detection
 // ---------------------------------------------------------------------------
@@ -83,6 +118,27 @@ export function useDataAnalysis() {
   const generate = useCallback(async (raw: string, hint: DataFormat = 'auto') => {
     abortRef.current = false;
     setError(null);
+    const startedAt = getNow();
+
+    captureGenerationStarted({
+      sourceKind: 'data',
+      mode: hint,
+      status: 'started',
+    });
+
+    if (raw.trim().length === 0) {
+      captureGenerationFailed({
+        sourceKind: 'data',
+        mode: hint,
+        status: 'failed',
+        failureCategory: 'invalid-input',
+        durationMs: Math.round(getNow() - startedAt),
+      });
+      setStage('idle');
+      setResult(null);
+      setError('Data input is empty. Paste CSV or JSON to analyze it.');
+      return;
+    }
 
     try {
       // Stage 1: Parsing
@@ -120,9 +176,23 @@ export function useDataAnalysis() {
         columnCount: signals.columnCount,
       });
       setStage('complete');
+
+      captureGenerationCompleted({
+        sourceKind: 'data',
+        mode: format,
+        status: 'completed',
+        durationMs: Math.round(getNow() - startedAt),
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed');
       setStage('idle');
+      captureGenerationFailed({
+        sourceKind: 'data',
+        mode: hint,
+        status: 'failed',
+        failureCategory: classifyObservabilityError(err),
+        durationMs: Math.round(getNow() - startedAt),
+      });
     }
   }, []);
 

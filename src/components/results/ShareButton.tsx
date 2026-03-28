@@ -1,12 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import { captureClientEvent } from '@/lib/observability/client';
+import {
+  OBSERVABILITY_EVENTS,
+  buildPublicActionEventProperties,
+  getStatusBucket,
+} from '@/lib/observability/events';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
 import type { ParameterVector, VersionInfo } from '@/types/engine';
 
 interface ShareButtonProps {
   parameterVector: ParameterVector;
   versionInfo: VersionInfo;
   styleName: string;
+  continuityMode?: 'fresh' | 'resumed';
   className?: string;
 }
 
@@ -15,6 +23,17 @@ type ShareState =
   | { status: 'loading' }
   | { status: 'success'; shareId: string; shareUrl: string; fullUrl: string }
   | { status: 'error'; message: string };
+
+function captureShareEvent(
+  eventName: string,
+  properties: Record<string, unknown>,
+) {
+  try {
+    captureClientEvent(eventName as Parameters<typeof captureClientEvent>[0], properties);
+  } catch {
+    // Observability is non-blocking by contract.
+  }
+}
 
 /**
  * ShareButton creates a share link for the current artwork.
@@ -27,12 +46,24 @@ export function ShareButton({
   parameterVector,
   versionInfo,
   styleName,
+  continuityMode = 'fresh',
   className = '',
 }: ShareButtonProps) {
   const [state, setState] = useState<ShareState>({ status: 'idle' });
 
   async function handleShare() {
     setState({ status: 'loading' });
+    captureShareEvent(
+      OBSERVABILITY_EVENTS.publicActions.shareRequested,
+      buildPublicActionEventProperties({
+        routeFamily: 'share',
+        publicMode: 'share-link',
+        continuityMode,
+        styleName,
+        action: 'requested',
+      }),
+    );
+
     try {
       const response = await fetch('/api/share', {
         method: 'POST',
@@ -41,16 +72,69 @@ export function ShareButton({
       });
 
       if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: 'Share failed' }));
-        setState({ status: 'error', message: err.error ?? 'Share failed' });
+        const err = await response.json().catch(() => null) as { error?: string } | null;
+        setState({ status: 'error', message: err?.error ?? 'Share failed' });
+        captureShareEvent(
+          OBSERVABILITY_EVENTS.publicActions.shareFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'share',
+            publicMode: 'share-link',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            statusBucket: getStatusBucket(response.status),
+            failureCategory: err ? 'request-failed' : 'malformed-payload',
+          }),
+        );
         return;
       }
 
-      const { shareId, url } = await response.json();
-      const fullUrl = `${window.location.origin}${url}`;
-      setState({ status: 'success', shareId, shareUrl: url, fullUrl });
-    } catch {
+      const data = await response.json().catch(() => null) as { shareId?: string; url?: string } | null;
+      if (!data?.shareId || !data?.url) {
+        setState({ status: 'error', message: 'Share failed' });
+        captureShareEvent(
+          OBSERVABILITY_EVENTS.publicActions.shareFailed,
+          buildPublicActionEventProperties({
+            routeFamily: 'share',
+            publicMode: 'share-link',
+            continuityMode,
+            styleName,
+            action: 'failed',
+            statusBucket: '2xx',
+            failureCategory: 'malformed-payload',
+          }),
+        );
+        return;
+      }
+
+      const fullUrl = `${window.location.origin}${data.url}`;
+      setState({ status: 'success', shareId: data.shareId, shareUrl: data.url, fullUrl });
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareCompleted,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'completed',
+          statusBucket: '2xx',
+        }),
+      );
+    } catch (error) {
       setState({ status: 'error', message: 'Network error. Please try again.' });
+      const category = classifyObservabilityError(error);
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          statusBucket: category === 'timeout' ? 'timeout' : 'network',
+          failureCategory: category,
+        }),
+      );
     }
   }
 
@@ -58,7 +142,30 @@ export function ShareButton({
     if (state.status !== 'success') return;
     try {
       await navigator.clipboard.writeText(state.fullUrl);
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareCopied,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'copied',
+          statusBucket: '2xx',
+        }),
+      );
     } catch {
+      captureShareEvent(
+        OBSERVABILITY_EVENTS.publicActions.shareFailed,
+        buildPublicActionEventProperties({
+          routeFamily: 'share',
+          publicMode: 'share-link',
+          continuityMode,
+          styleName,
+          action: 'failed',
+          statusBucket: 'network',
+          failureCategory: 'clipboard-unavailable',
+        }),
+      );
       // Clipboard API unavailable -- user can copy manually
     }
   }
@@ -71,7 +178,7 @@ export function ShareButton({
             <p className="editorial-note-label mb-1">Share</p>
             <h3 className="text-base font-medium text-[var(--foreground)]">Create a public proof link.</h3>
             <p className="text-sm text-[var(--muted-foreground)] mt-1">
-              The share payload includes only vector, version, and style metadata — never the raw source.
+              This opens the shared collector viewer with public parameter-only data: vector, version, and style metadata — never the raw source.
             </p>
           </div>
           <button
@@ -81,6 +188,10 @@ export function ShareButton({
             Create new link
           </button>
         </div>
+
+        <p className="mt-4 text-xs text-[var(--muted-foreground)] leading-relaxed">
+          Anyone with this URL can open the public proof route. It stays parameter-only and routes to the shared collector viewer without the original prompt.
+        </p>
 
         <div className="mt-4 editorial-link-strip">
           <span className="flex-1 font-mono text-sm text-[var(--muted-foreground)] break-all">{state.fullUrl}</span>
@@ -101,9 +212,9 @@ export function ShareButton({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1">
           <p className="editorial-note-label mb-0">Share</p>
-          <h3 className="text-base font-medium text-[var(--foreground)]">Publish a view-only edition link.</h3>
+          <h3 className="text-base font-medium text-[var(--foreground)]">Publish a public, view-only collector link.</h3>
           <p className="text-sm text-[var(--muted-foreground)]">
-            Generate a public route for this artwork without attaching the original prompt or source payload.
+            Generate a public parameter-only proof route for this artwork so the shared viewer can reopen the same edition family without attaching the original prompt or source payload.
           </p>
         </div>
         <button

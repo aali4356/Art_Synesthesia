@@ -3,6 +3,8 @@ import { safeFetch } from '@/lib/fetch/safe-fetch';
 import { analyzeUrlContent } from '@/lib/analysis/url';
 import { canonicalizeUrl } from '@/lib/canonicalize/url';
 import { getUrlSnapshot, setUrlSnapshot } from '@/lib/cache/db-cache';
+import { classifyObservabilityError } from '@/lib/observability/privacy';
+import { captureRouteFailure } from '@/lib/observability/server';
 
 // ---------------------------------------------------------------------------
 // Rate limiting (SEC-03): 10 requests per IP per hour, sliding window
@@ -41,6 +43,12 @@ export async function POST(request: Request): Promise<Response> {
   // Rate limit check
   const { allowed, remaining } = getRateLimit(ip);
   if (!allowed) {
+    captureRouteFailure(new Error('Rate limit exceeded'), {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'rate-limited',
+    });
     return NextResponse.json(
       { error: 'Rate limit exceeded' },
       { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
@@ -53,7 +61,13 @@ export async function POST(request: Request): Promise<Response> {
   let body: { url?: unknown; mode?: unknown; refetch?: unknown };
   try {
     body = await request.json();
-  } catch {
+  } catch (error) {
+    captureRouteFailure(error, {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'malformed-payload',
+    });
     return NextResponse.json(
       { error: 'Invalid JSON body' },
       { status: 400, headers: rateLimitHeader }
@@ -64,6 +78,12 @@ export async function POST(request: Request): Promise<Response> {
 
   // Validate URL field
   if (!url || typeof url !== 'string' || url.trim() === '') {
+    captureRouteFailure(new Error('Missing or empty URL field'), {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
       { error: 'Missing or empty URL field' },
       { status: 400, headers: rateLimitHeader }
@@ -75,9 +95,15 @@ export async function POST(request: Request): Promise<Response> {
   try {
     const result = canonicalizeUrl(url.trim());
     canonical = result.canonical;
-  } catch (err) {
+  } catch (error) {
+    captureRouteFailure(error, {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket: '4xx',
+      failureCategory: 'invalid-input',
+    });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Invalid URL' },
+      { error: error instanceof Error ? error.message : 'Invalid URL' },
       { status: 400, headers: rateLimitHeader }
     );
   }
@@ -87,18 +113,29 @@ export async function POST(request: Request): Promise<Response> {
   const shouldRefetch = refetch === true;
 
   if (!isLive && !shouldRefetch) {
-    const cached = await getUrlSnapshot(canonical);
-    if (cached) {
-      return NextResponse.json(
-        {
-          signals: cached.signals,
-          canonical,
-          title: cached.title,
-          metadata: cached.metadata,
-          cached: true,
-        },
-        { status: 200, headers: rateLimitHeader }
-      );
+    try {
+      const cached = await getUrlSnapshot(canonical);
+      if (cached) {
+        return NextResponse.json(
+          {
+            signals: cached.signals,
+            canonical,
+            title: cached.title,
+            metadata: cached.metadata,
+            cached: true,
+          },
+          { status: 200, headers: rateLimitHeader }
+        );
+      }
+    } catch (error) {
+      const category = classifyObservabilityError(error);
+      captureRouteFailure(error, {
+        routeFamily: 'analyze-url',
+        method: 'POST',
+        statusBucket: '5xx',
+        failureCategory: 'snapshot-cache-unavailable',
+        localProofMode: category === 'local-proof-unavailable',
+      });
     }
   }
 
@@ -106,9 +143,22 @@ export async function POST(request: Request): Promise<Response> {
   let html: string;
   try {
     html = await safeFetch(canonical);
-  } catch (err) {
+  } catch (error) {
+    const category = classifyObservabilityError(error);
+    captureRouteFailure(error, {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket:
+        category === 'timeout'
+          ? 'timeout'
+          : category === 'network-failure'
+            ? 'network'
+            : '4xx',
+      failureCategory: category === 'unknown' ? 'fetch-failed' : category,
+      localProofMode: category === 'local-proof-unavailable',
+    });
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : 'Fetch failed' },
+      { error: error instanceof Error ? error.message : 'Fetch failed' },
       { status: 400, headers: rateLimitHeader }
     );
   }
@@ -117,11 +167,22 @@ export async function POST(request: Request): Promise<Response> {
   const result = analyzeUrlContent(html, canonical);
 
   // Store in DB snapshot cache
-  await setUrlSnapshot(canonical, {
-    signals: result.signals,
-    title: result.title,
-    metadata: result.metadata,
-  });
+  try {
+    await setUrlSnapshot(canonical, {
+      signals: result.signals,
+      title: result.title,
+      metadata: result.metadata,
+    });
+  } catch (error) {
+    const category = classifyObservabilityError(error);
+    captureRouteFailure(error, {
+      routeFamily: 'analyze-url',
+      method: 'POST',
+      statusBucket: '5xx',
+      failureCategory: 'snapshot-cache-write-failed',
+      localProofMode: category === 'local-proof-unavailable',
+    });
+  }
 
   return NextResponse.json(
     {

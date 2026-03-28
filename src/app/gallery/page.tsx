@@ -46,7 +46,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
     });
 
     return (
-      <Shell>
+      <Shell currentRoute="gallery">
         <section className="editorial-stage space-y-8" aria-labelledby="gallery-browse-title">
           <div className="space-y-6 max-w-4xl">
             <div className="editorial-kicker">Route intro</div>
@@ -55,10 +55,10 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
                 Gallery browse
               </h1>
               <p className="max-w-2xl text-base sm:text-lg text-[var(--foreground)]/88 leading-relaxed">
-                A collector view for public opt-ins inside the same editorial shell.
+                A public collector route inside the same editorial product family.
               </p>
               <p className="max-w-3xl text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed">
-                Review saved editions, filter by renderer family, and move through the archive without leaving the branded proof surface.
+                Review public opt-in editions, filter by renderer family, and move through the archive with the same route-discovery language used by Home and Compare.
               </p>
             </div>
             <div className="editorial-marquee" aria-label="Gallery browse traits">
@@ -82,7 +82,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
     const message = error instanceof Error ? error.message : 'Gallery backend unavailable';
 
     return (
-      <Shell>
+      <Shell currentRoute="gallery">
         <section className="editorial-stage max-w-3xl" aria-labelledby="gallery-unavailable-title">
           <div className="editorial-panel editorial-control-surface space-y-6">
             <div className="space-y-3">
